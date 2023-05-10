@@ -150,7 +150,7 @@ function SignIn() {
                   // label="Password"
                   rules={[
                     {
-                      min: 5,
+                      min: 4,
                       required: true,
                       message: "Password should be greater than 4 characters",
                     },
