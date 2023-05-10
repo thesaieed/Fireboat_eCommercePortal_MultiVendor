@@ -8,7 +8,36 @@ app.use(express.json());
 
 //login route
 app.post("/login", async (req, res) => {
-  console.log("login Post route");
+  // console.log("body: ", req.body);
+  try {
+    // console.log(req.body);
+    const { email, password } = req.body; //geting data from body
+    let data = {}; // defing data obj to be sent back based on diffent conditions below
+
+    const foundUser = await pool.query(
+      `select * from users where email='${email}'`
+    ); //checking if the email exists in db
+
+    if (foundUser.rows.length > 0) {
+      // if email exists, a row array is sent back in foundUser obj
+      if (password === foundUser.rows[0].password) {
+        //checking if body password === db.password
+        //if password matches, delete password field and send that obj to user with another field loginStatus set to 200. this variable will be used in cliet side for verification
+        delete foundUser.rows[0].password;
+        // console.log("foundUser : ", foundUser.rows[0]);
+        data = { loginStatus: 200, user: foundUser.rows[0] };
+      } else {
+        // console.log("Invalid Credentials");
+        data = { loginStatus: 401 }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
+      }
+    } else {
+      data = { loginStatus: 404 }; //if no user found, that means user entered wrong info
+    }
+
+    res.send(data); //finaly send the data variable(obj)
+  } catch (error) {
+    console.log("Error : ", error.message);
+  }
 });
 
 //Signup up route handling
