@@ -82,12 +82,12 @@ export default function SignUp() {
   return (
     <>
       <div className="layout-default ant-layout layout-sign-up">
-        <Header>
+        {/* <Header>
           <div className="header-col header-brand">
             <h5 className="brandText">AlSaleels</h5>
           </div>
           <div className="header-col header-nav">
-            {/* <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
+            <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
                 <Link to="/">
                   <span> Home</span>
@@ -98,7 +98,7 @@ export default function SignUp() {
                   <span>Our Products</span>
                 </Link>
               </Menu.Item>
-            </Menu> */}
+            </Menu>
           </div>
           <div className="header-col header-btn">
             <Button type="primary">
@@ -106,9 +106,9 @@ export default function SignUp() {
               Cart
             </Button>
           </div>
-        </Header>
+        </Header> */}
 
-        <Content className="p-0">
+        <Content className="signupContent">
           <div className="sign-up-header">
             <div className="content">
               <Title>Sign Up</Title>
@@ -116,7 +116,7 @@ export default function SignUp() {
           </div>
 
           <Card
-            className="card-signup header-solid h-full ant-card pt-0"
+            className="card-signup header-solid h-full ant-card pt-0  mb-2"
             title={<h5>Register With</h5>}
             bordered="false"
           >
@@ -140,7 +140,7 @@ export default function SignUp() {
               initialValues={{ remember: true }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
-              className="row-col"
+              className="row-col p-15"
             >
               <Form.Item
                 name="name"
@@ -167,7 +167,7 @@ export default function SignUp() {
               >
                 <Input
                   prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder="email"
+                  placeholder="Email"
                 />
               </Form.Item>
 
@@ -285,7 +285,7 @@ export default function SignUp() {
             </p>
           </Card>
         </Content>
-        <Footer>
+        <Footer className="signupFooter">
           {/* <Menu mode="horizontal">
             <Menu.Item key="13">About Us</Menu.Item>
 
@@ -304,7 +304,7 @@ export default function SignUp() {
               <Link to="#">{<FacebookOutlined />}</Link>
             </Menu.Item>
           </Menu>
-          <p className="copyright"> Copyright © 2021 AlSaleels</p>
+          <p className="copyright"> Copyright © 2021</p>
         </Footer>
       </div>
     </>
