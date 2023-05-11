@@ -25,7 +25,7 @@ import {
   Alert,
 } from "antd";
 
-import signinbg from "../assets/images/img-signin.jpg";
+import signinbg from "../assets/images/1.png";
 
 import {
   TwitterOutlined,
@@ -87,7 +87,7 @@ function SignIn() {
             <h5>AlSaleels</h5>
           </div>
           <div className="header-col header-nav">
-            <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
+            {/* <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
                 <Link to="/">
                   <span> Home</span>
@@ -98,7 +98,7 @@ function SignIn() {
                   <span>Our Products</span>
                 </Link>
               </Menu.Item>
-            </Menu>
+            </Menu> */}
           </div>
           <div className="header-col header-btn">
             <Button type="primary">
@@ -213,13 +213,13 @@ function SignIn() {
           </Row>
         </Content>
         <Footer>
-          <Menu mode="horizontal">
+          {/* <Menu mode="horizontal">
             <Menu.Item key="13">About Us</Menu.Item>
 
             <Menu.Item key="15">Products</Menu.Item>
             <Menu.Item key="16">Blogs</Menu.Item>
             <Menu.Item key="17">Pricing</Menu.Item>
-          </Menu>
+          </Menu> */}
           <Menu mode="horizontal" className="menu-nav-social">
             <Menu.Item key="19">
               <Link to="#">{<TwitterOutlined />}</Link>

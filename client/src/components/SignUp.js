@@ -84,10 +84,10 @@ export default function SignUp() {
       <div className="layout-default ant-layout layout-sign-up">
         <Header>
           <div className="header-col header-brand">
-            <h5>AlSaleels</h5>
+            <h5 className="brandText">AlSaleels</h5>
           </div>
           <div className="header-col header-nav">
-            <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
+            {/* <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
                 <Link to="/">
                   <span> Home</span>
@@ -98,7 +98,7 @@ export default function SignUp() {
                   <span>Our Products</span>
                 </Link>
               </Menu.Item>
-            </Menu>
+            </Menu> */}
           </div>
           <div className="header-col header-btn">
             <Button type="primary">
@@ -120,7 +120,7 @@ export default function SignUp() {
             title={<h5>Register With</h5>}
             bordered="false"
           >
-            <div className="sign-up-gateways">
+            {/* <div className="sign-up-gateways">
               <Button type="false">
                 <img src={logo1} alt="logo 1" />
               </Button>
@@ -131,7 +131,7 @@ export default function SignUp() {
                 <img src={logo3} alt="logo 3" />
               </Button>
             </div>
-            <p className="text-center my-25 font-semibold text-muted">Or</p>
+            <p className="text-center my-25 font-semibold text-muted">Or</p> */}
 
             {/* Form starts */}
             <Form
@@ -286,13 +286,13 @@ export default function SignUp() {
           </Card>
         </Content>
         <Footer>
-          <Menu mode="horizontal">
+          {/* <Menu mode="horizontal">
             <Menu.Item key="13">About Us</Menu.Item>
 
             <Menu.Item key="15">Products</Menu.Item>
             <Menu.Item key="16">Blogs</Menu.Item>
             <Menu.Item key="17">Pricing</Menu.Item>
-          </Menu>
+          </Menu> */}
           <Menu mode="horizontal" className="menu-nav-social">
             <Menu.Item key="19">
               <Link to="#">{<TwitterOutlined />}</Link>
