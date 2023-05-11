@@ -23,6 +23,7 @@ import {
   Form,
   Input,
   Alert,
+  Space,
 } from "antd";
 
 import signinbg from "../assets/images/1.png";
@@ -81,13 +82,13 @@ function SignIn() {
 
   return (
     <>
-      <Layout className="layout-default layout-signin">
-        <Header>
+      <Layout className="layout-default layout-signin bg-none">
+        {/* <Header>
           <div className="header-col header-brand">
             <h5>AlSaleels</h5>
           </div>
           <div className="header-col header-nav">
-            {/* <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
+            <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
                 <Link to="/">
                   <span> Home</span>
@@ -98,7 +99,7 @@ function SignIn() {
                   <span>Our Products</span>
                 </Link>
               </Menu.Item>
-            </Menu> */}
+            </Menu>
           </div>
           <div className="header-col header-btn">
             <Button type="primary">
@@ -106,10 +107,12 @@ function SignIn() {
               Cart
             </Button>
           </div>
-        </Header>
+        </Header> */}
         <Content className="signin">
           <Row gutter={[24, 0]} justify="space-around">
             <Col
+              className=""
+              id="loginColumn"
               xs={{ span: 24, offset: 0 }}
               lg={{ span: 6, offset: 2 }}
               md={{ span: 12 }}
@@ -201,6 +204,7 @@ function SignIn() {
                 </p>
               </Form>
             </Col>
+
             <Col
               className="sign-img"
               style={{ padding: 12 }}
@@ -231,7 +235,7 @@ function SignIn() {
               <Link to="#">{<FacebookOutlined />}</Link>
             </Menu.Item>
           </Menu>
-          <p className="copyright"> Copyright © 2021 AlSaleels</p>
+          <p className="copyright"> Copyright © 2021</p>
         </Footer>
       </Layout>
     </>

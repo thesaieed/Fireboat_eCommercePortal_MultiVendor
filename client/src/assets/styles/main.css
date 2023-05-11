@@ -28,6 +28,7 @@ body {
   position: relative;
   overflow-x: hidden;
 }
+
 @media (min-width: 992px) {
   .layout-dashboard {
     overflow: auto;
@@ -1841,7 +1842,7 @@ body {
   line-height: 33px;
 }
 .sign-up-header .content {
-  padding-top: 40px;
+  padding-top: 00px;
   max-width: 480px;
   margin: auto;
 }
@@ -1854,6 +1855,9 @@ body {
 }
 .text-lg {
   font-size: 16px;
+}
+.bg-none {
+  background-color: transparent !important;
 }
 .card-signup .sign-up-gateways .ant-btn {
   margin-right: 10px;
@@ -1869,8 +1873,8 @@ body {
   margin: auto;
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
   border-radius: 12px;
-  margin-top: -190px;
-  margin-bottom: 20px;
+  margin-top: -250px;
+  margin-bottom: auto;
 }
 .card-signup h5 {
   text-align: center;
@@ -2008,6 +2012,9 @@ body {
   width: 18px;
   height: 18px;
 }
+.menu-nav-social {
+  margin-top: 50px !important;
+}
 .layout-default .ant-layout-footer .menu-nav-social a svg {
   fill: #8c8c8c;
   vertical-align: middle;
@@ -2107,6 +2114,21 @@ body {
 .sign-in {
   padding: 0 20px;
 }
+#loginColumn {
+  /*border-right: 1px solid #b1b1b1;
+  */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #ffffff;
+  box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+  padding: 30px !important;
+}
+.signupFooter {
+  padding: 0 !important;
+  margin-top: 0 !important;
+}
+
 .layout-default .ant-layout-content {
   padding-top: 40px;
 }
@@ -2148,9 +2170,8 @@ body {
 }
 .sign-img img {
   width: 100%;
-  max-width: 500px;
   margin: auto;
-  display: block;
+  display: flex;
 }
 .layout-signin {
   background: #fff;
@@ -3047,4 +3068,9 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
   svg
   path {
   fill: #8c8c8c;
+}
+@media (max-width: 768px) {
+  .sign-img img {
+    display: none;
+  }
 }
