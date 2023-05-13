@@ -31,14 +31,14 @@ import {
   TwitterOutlined,
   InstagramOutlined,
   FacebookOutlined,
-  ShoppingCartOutlined,
+  // ShoppingCartOutlined,
   LockOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const { Title } = Typography;
-const { Header, Footer, Content } = Layout;
+const { /*Header,*/ Footer, Content } = Layout;
 
 function SignIn() {
   const [errorMessage, setErrorMessage] = useState("");

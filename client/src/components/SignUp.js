@@ -19,19 +19,19 @@ import {
   UserOutlined,
   IdcardOutlined,
   MobileOutlined,
-  ShoppingCartOutlined,
+  // ShoppingCartOutlined,
   LockOutlined,
 } from "@ant-design/icons";
 
-import logo1 from "../assets/images/logos-facebook.svg";
-import logo2 from "../assets/images/logo-apple.svg";
-import logo3 from "../assets/images/Google__G__Logo.svg.png";
+// import logo1 from "../assets/images/logos-facebook.svg";
+// import logo2 from "../assets/images/logo-apple.svg";
+// import logo3 from "../assets/images/Google__G__Logo.svg.png";
 import useAllContext from "../context/useAllContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
-const { Header, Footer, Content } = Layout;
+const { /*Header,*/ Footer, Content } = Layout;
 
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -209,6 +209,7 @@ export default function SignUp() {
 
               <Form.Item
                 name="confirmPassword"
+                dependencies={["password"]}
                 rules={[
                   { required: true, message: "Password does not match" },
                   ({ getFieldValue }) => ({
