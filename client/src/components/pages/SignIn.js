@@ -11,7 +11,6 @@
 */
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import useAllContext from "../context/useAllContext";
 
 import {
   Layout,
@@ -25,7 +24,7 @@ import {
   Alert,
 } from "antd";
 
-import signinbg from "../assets/images/1.png";
+import signinbg from "../../assets/images/1.png";
 
 import {
   TwitterOutlined,
@@ -37,13 +36,13 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import useAllContext from "../../context/useAllContext";
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
 
 function SignIn() {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-
   const { setAppUser } = useAllContext();
 
   const [form] = Form.useForm();
@@ -56,7 +55,7 @@ function SignIn() {
       case 200:
         // console.log(res.data.user);
         setAppUser(res.data.user);
-        navigate("/dashboard");
+        navigate("/admin/dashboard");
         break;
       case 401:
         // console.log("Invalid Credentials");
