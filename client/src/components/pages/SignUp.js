@@ -26,9 +26,9 @@ import {
 // import logo1 from "../assets/images/logos-facebook.svg";
 // import logo2 from "../assets/images/logo-apple.svg";
 // import logo3 from "../assets/images/Google__G__Logo.svg.png";
-import useAllContext from "../context/useAllContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import useAllContext from "../../context/useAllContext";
 
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
@@ -62,7 +62,7 @@ export default function SignUp() {
         // );
         setAppUser(response.data.user);
         form.resetFields();
-        navigate("/dashboard");
+        navigate("/admin/dashboard");
       } else {
         setErrorMessage("Something went Wrong !");
       }
