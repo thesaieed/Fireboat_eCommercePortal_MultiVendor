@@ -55,7 +55,25 @@ app.post("/signup", async (req, res) => {
     res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
     console.error(error);
-    res.status(401).json({ message: "user already exists, please signIn" });
+    res.status(409).json({ message: "user already exists, please signIn" });
+  }
+});
+
+app.post("/addcategory", async (req, res) => {
+  const { name } = req.body;
+
+  try {
+    const newCategory = await pool.query(
+      "insert into categories(name) values ($1) returning *",
+      [name]
+    );
+    res.send(newCategory.rows[0]);
+  } catch (err) {
+    if (err.code == 23505) {
+      res.status(409).send();
+    } else {
+      res.status(500).send("Internal Server Error");
+    }
   }
 });
 
