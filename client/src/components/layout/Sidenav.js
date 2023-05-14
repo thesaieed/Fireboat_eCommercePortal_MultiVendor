@@ -13,6 +13,7 @@
 import { Menu } from "antd";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
+import { PlusCircleOutlined, UnorderedListOutlined } from "@ant-design/icons";
 
 function Sidenav({ setAppUser, color }) {
   const dashboard = [
@@ -97,11 +98,58 @@ function Sidenav({ setAppUser, color }) {
             <span className="label">Dashboard</span>
           </NavLink>
         </Menu.Item>
-
+        <Menu.Item className="menu-item-header" key="2">
+          Products
+        </Menu.Item>
+        <Menu.Item key="3">
+          <NavLink to="/admin/products/allproducts">
+            <span
+              className="icon"
+              style={{
+                background: color,
+              }}
+            >
+              <UnorderedListOutlined />
+            </span>
+            <span className="label">All Products</span>
+          </NavLink>
+        </Menu.Item>
+        <Menu.Item key="4">
+          <NavLink to="/admin/products/addproduct">
+            <span
+              className="icon"
+              style={{
+                background: color,
+              }}
+            >
+              <PlusCircleOutlined />
+            </span>
+            <span className="label">Add Product</span>
+          </NavLink>
+        </Menu.Item>
         <Menu.Item className="menu-item-header" key="5">
-          Account Pages
+          Categories
         </Menu.Item>
         <Menu.Item key="6">
+          <NavLink to="/admin/categories">
+            <span
+              className="icon"
+              style={{
+                background: color,
+              }}
+            >
+              {/* {profile} */}
+
+              <UnorderedListOutlined />
+            </span>
+            <span className="label">All Categories</span>
+          </NavLink>
+        </Menu.Item>
+
+        <Menu.Item className="menu-item-header" key="7">
+          Account Pages
+        </Menu.Item>
+        <Menu.Item key="8">
           <NavLink to="/admin/profile">
             <span
               className="icon"
@@ -116,7 +164,7 @@ function Sidenav({ setAppUser, color }) {
         </Menu.Item>
       </Menu>
       <Menu className="SidebarlogoutMenu">
-        <Menu.Item key="8">
+        <Menu.Item key="9">
           <NavLink
             onClick={() => {
               setAppUser({});
