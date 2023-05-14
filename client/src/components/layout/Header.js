@@ -11,7 +11,6 @@
 */
 
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { Row, Col, Button, Input, Space } from "antd";
 
 import { SearchOutlined, UserOutlined } from "@ant-design/icons";
@@ -30,7 +29,6 @@ const toggler = [
 
 function Header({ subName, onPress, appUser }) {
   useEffect(() => window.scrollTo(0, 0));
-  const { pathname } = useLocation();
 
   return (
     <>
