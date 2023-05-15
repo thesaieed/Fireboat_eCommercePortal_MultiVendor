@@ -53,7 +53,7 @@ function Header({ subName, onPress, appUser }) {
           </Button>
           <Space>
             <UserOutlined />
-            <span>{appUser.name}</span>
+            <span>{appUser?.name}</span>
           </Space>
 
           <Input
