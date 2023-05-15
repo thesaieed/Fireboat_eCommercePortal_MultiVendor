@@ -32,7 +32,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 60vh;
 }
 .SidebarlogoutMenu a {
   border-top: 1px solid #d3d3d3 !important;
@@ -65,7 +64,7 @@ body {
   margin: 18px 0;
   border: none;
   height: 1px;
-  background-color: #f5f5f5;
+  background-color: #e7e4e4;
 }
 .layout-dashboard .ant-layout-sider.sider-primary .brand {
   font-weight: 600;
@@ -187,7 +186,8 @@ body {
   .ant-menu-item
   .active
   .icon {
-  background-color: #1890ff;
+  /* background-color: #1890ff; */
+  background-color: #ff9c0a;
 }
 .layout-dashboard
   .ant-layout-sider.sider-primary
@@ -206,6 +206,7 @@ body {
   .active
   .icon {
   background-color: #1890ff;
+  background-color: #ff9c0a;
 }
 
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item .icon,
@@ -248,9 +249,10 @@ body {
   path {
   fill: #fff;
 }
+/* profileICon color */
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item svg path,
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu svg path {
-  fill: #bfbfbf;
+  fill: #fff;
 }
 
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item a:hover,
@@ -315,7 +317,8 @@ body {
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
-  background-color: #1890ff;
+  /* background-color: #1890ff; */
+  background-color: #ff9c0a;
 }
 
 .layout-dashboard
@@ -741,6 +744,7 @@ ul.ant-menu.ant-menu-root.ant-menu-inline.ant-menu-light.left-nav
   li.ant-menu-item-selected
   span.anticon {
   background: #1890ff;
+
   color: #fff;
 }
 
@@ -1150,8 +1154,21 @@ span.blue {
 .d-flex {
   display: flex !important;
 }
+.align-items-center {
+  align-items: center !important;
+}
 .justify-content-center {
   justify-content: center !important;
+}
+.justify-content-around {
+  justify-content: space-around !important;
+}
+.border-right {
+  /* border-right: 1px solid white; */
+  box-shadow: 1px 0px 3px lightgrey;
+}
+.m-auto {
+  margin: auto;
 }
 .flex-column {
   flex-direction: column !important;
@@ -1521,7 +1538,7 @@ ul.ant-menu.ant-menu-root.ant-menu-inline.ant-menu-light.left-nav li:active {
 }
 
 ul.ant-menu.ant-menu-root.ant-menu-inline.ant-menu-light.left-nav li svg path {
-  color: #bfbfbf;
+  color: #fff;
 }
 
 .cardbody .ant-card-body {
@@ -1892,6 +1909,15 @@ body {
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
   border-radius: 12px;
   margin-top: -250px;
+  margin-bottom: auto;
+}
+.card-category {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+  border-radius: 12px;
+  margin-top: 0px;
   margin-bottom: auto;
 }
 .card-signup h5 {

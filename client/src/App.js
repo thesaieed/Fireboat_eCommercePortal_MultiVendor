@@ -4,7 +4,7 @@ import SignUp from "./components/pages/SignUp";
 import Main from "./components/layout/Main";
 import Dashboard from "./components/pages/admin/Dashboard";
 import Profile from "./components/pages/admin/Profile";
-import AddProduct from "./components/pages/admin/AddProduct";
+
 import Home from "./components/pages/Home";
 import "antd/dist/antd.min.css";
 import "./assets/styles/main.css";
@@ -14,13 +14,24 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/login" element={<SignIn />}></Route>
+        <Route index element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<SignIn />} />
         <Route path="/admin" element={<Main />}>
-          <Route path="dashboard" element={<Dashboard />}></Route>
-          <Route path="profile" element={<Profile />}></Route>
-          <Route path="addproduct" element={<AddProduct/>}></Route>
+
+
+
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="products">
+            <Route index element={<AllProducts />} />
+            <Route path="allproduct" element={<AllProducts />} />
+            <Route path="addproduct" element={<NewProduct />} />
+            <Route path="*" element={<AllProducts />} />
+          </Route>
+          <Route path="categories" element={<AllCategories />} />
+
         </Route>
         <Route index path="*" element={<Home />} />
       </Routes>
