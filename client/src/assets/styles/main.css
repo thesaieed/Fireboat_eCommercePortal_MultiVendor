@@ -1933,7 +1933,7 @@ body {
   border-radius: 6px;
 }
 .ant-input {
-  font-weight: 600;
+  font-weight: 400;
   color: #8c8c8c;
 }
 .ant-input {
@@ -3091,4 +3091,17 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
   .sign-img img {
     display: none;
   }
+}
+
+/* css added */
+
+.cardAddProduct{
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+    border-radius: 12px;
+    margin-top: 20px;
+    margin-bottom: auto;
+  
 }
