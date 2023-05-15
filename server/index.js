@@ -77,6 +77,45 @@ app.post("/addcategory", async (req, res) => {
   }
 });
 
+  //handle the get request for categories from client
+
+app.get("/admin/categories", async(req,res) =>{
+  try {
+    const categories = await pool.query(
+      'select name from categories'
+    )
+
+    const data = {categories: categories.rows}
+    console.log(data)
+    res.send(data)
+    
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//AddProduct handling
+
+app.post("/admin/addproduct", async (req, res) => {
+  const {category, name, description, price, stock_available } = req.body;
+
+  try {
+    const newProduct = await pool.query(
+      "insert into products(category,name,description,price,stock_available) values ($1,$2,$3,$4,$5) returning *",
+      [category,name, description, price, stock_available]
+    );
+    // console.log("newProduct", newProduct);
+    const data = { product: newProduct.rows[0] };
+
+    res.send(data); //send data.. it will be under res.data in client
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+
+
+
 //listen
 app.listen(5000, () => {
   console.log("Listening on Port 5000");
