@@ -11,7 +11,6 @@
 */
 
 import { useState, useEffect } from "react";
-
 import { useLocation, Outlet } from "react-router-dom";
 import { Layout, Drawer, Affix } from "antd";
 import Sidenav from "./Sidenav";
@@ -24,8 +23,8 @@ const { Header: AntHeader, Content, Sider } = Layout;
 
 function Main() {
   const [visible, setVisible] = useState(false);
-  const [placement, setPlacement] = useState("right");
-  const [sidenavColor, setSidenavColor] = useState("#1890ff");
+  const [placement] = useState("right");
+  const [sidenavColor, setSidenavColor] = useState("#ff9c0a");
   const [sidenavType, setSidenavType] = useState("transparent");
   const [fixed, setFixed] = useState(false);
 
@@ -56,7 +55,7 @@ function Main() {
         open={visible}
         key={placement === "right" ? "left" : "right"}
         width={250}
-        className={`drawer-sidebar ${
+        className={` drawer-sidebar ${
           pathname === "rtl" ? "drawer-sidebar-rtl" : ""
         } `}
       >
@@ -74,7 +73,7 @@ function Main() {
             }`}
             style={{ background: sidenavType }}
           >
-            <Sidenav color={sidenavColor} />
+            <Sidenav color={sidenavColor} setAppUser={setAppUser} />
           </Sider>
         </Layout>
       </Drawer>
@@ -87,10 +86,11 @@ function Main() {
         trigger={null}
         width={250}
         theme="light"
-        className={`sider-primary ant-layout-sider-primary ${
+        className={`border-right sider-primary ant-layout-sider-primary ${
           sidenavType === "#fff" ? "active-route" : ""
         }`}
-        style={{ background: sidenavType }}
+        // style={{ background: sidenavType }}
+        style={{ background: "white" }}
       >
         <Sidenav color={sidenavColor} setAppUser={setAppUser} />
       </Sider>
