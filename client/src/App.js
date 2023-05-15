@@ -4,6 +4,7 @@ import SignUp from "./components/pages/SignUp";
 import Main from "./components/layout/Main";
 import Dashboard from "./components/pages/admin/Dashboard";
 import Profile from "./components/pages/admin/Profile";
+import AddProduct from "./components/pages/admin/AddProduct";
 import Home from "./components/pages/Home";
 import "antd/dist/antd.min.css";
 import "./assets/styles/main.css";
@@ -19,6 +20,7 @@ function App() {
         <Route path="/admin" element={<Main />}>
           <Route path="dashboard" element={<Dashboard />}></Route>
           <Route path="profile" element={<Profile />}></Route>
+          <Route path="addproduct" element={<AddProduct/>}></Route>
         </Route>
         <Route index path="*" element={<Home />} />
       </Routes>
