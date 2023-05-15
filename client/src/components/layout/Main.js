@@ -40,7 +40,7 @@ function Main() {
   pathname = pathname.replace("/", "");
 
   useEffect(() => {
-    if (!appUser.id) {
+    if (!appUser) {
       navigate("/login");
     }
   }, [appUser, navigate]);

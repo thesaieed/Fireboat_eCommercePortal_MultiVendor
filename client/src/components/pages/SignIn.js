@@ -37,6 +37,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAllContext from "../../context/useAllContext";
+
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
 
@@ -53,8 +54,10 @@ function SignIn() {
     const res = await axios.post("http://localhost:5000/login", values);
     switch (res.data.loginStatus) {
       case 200:
-        // console.log(res.data.user);
+        // console.log("Res.data.user : ", res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         setAppUser(res.data.user);
+        // console.log("Local Storage : ", localStorage.getItem("user"));
         navigate("/admin/dashboard");
         break;
       case 401:
