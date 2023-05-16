@@ -181,6 +181,7 @@ function Sidenav({ setAppUser, color }) {
         <Menu.Item key="99">
           <NavLink
             onClick={() => {
+              localStorage.removeItem("user");
               setAppUser({});
             }}
           >
