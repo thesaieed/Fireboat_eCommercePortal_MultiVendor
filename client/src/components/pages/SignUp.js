@@ -60,6 +60,7 @@ export default function SignUp() {
         //     {result.message}
         //   </p>
         // );
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         setAppUser(response.data.user);
         form.resetFields();
         navigate("/admin/dashboard");
