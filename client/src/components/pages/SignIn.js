@@ -9,8 +9,8 @@
 =========================================================
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Layout,
@@ -35,16 +35,28 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import useAllContext from "../../context/useAllContext";
 
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
 
 function SignIn() {
-  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const { setAppUser } = useAllContext();
+  useEffect(() => {
+    if (isValidToken) {
+      navigate("/admin/dashboard");
+    }
+  }, [isValidToken]);
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const {
+    setAppUser,
+    generateRandomString,
+    setIsValidToken,
+    setUserToken,
+    isValidToken,
+  } = useAllContext();
 
   const [form] = Form.useForm();
 
@@ -54,10 +66,21 @@ function SignIn() {
     const res = await axios.post("http://localhost:5000/login", values);
     switch (res.data.loginStatus) {
       case 200:
+        const userToken = generateRandomString(12);
         // console.log("Res.data.user : ", res.data.user);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+        console.log("Login UserToken : ", userToken);
+        localStorage.setItem("userToken", userToken);
+        setUserToken(userToken);
         setAppUser(res.data.user);
-        // console.log("Local Storage : ", localStorage.getItem("user"));
+        try {
+          await axios.post("http://localhost:5000/addusersloggedintokens", {
+            token: userToken,
+            id: res.data.user.id,
+          });
+          setIsValidToken(true);
+        } catch (err) {
+          console.error(err);
+        }
         navigate("/admin/dashboard");
         break;
       case 401:

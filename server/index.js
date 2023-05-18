@@ -22,10 +22,9 @@ app.post("/login", async (req, res) => {
       // if email exists, a row array is sent back in foundUser obj
       if (password === foundUser.rows[0].password) {
         //checking if body password === db.password
-        //if password matches, delete password field and send that obj to user with another field loginStatus set to 200. this variable will be used in cliet side for verification
-        delete foundUser.rows[0].password;
-        // console.log("foundUser : ", foundUser.rows[0]);
-        data = { loginStatus: 200, user: foundUser.rows[0] };
+
+        const { id, name } = foundUser.rows[0];
+        data = { loginStatus: 200, user: { id, name } };
       } else {
         // console.log("Invalid Credentials");
         data = { loginStatus: 401 }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
@@ -42,20 +41,25 @@ app.post("/login", async (req, res) => {
 
 //Signup up route handling
 app.post("/signup", async (req, res) => {
-  const { name, email, password, phone } = req.body;
-
+  console.log("req.body : ", req.body);
+  const { fullname, email, password, phone } = req.body;
   try {
     const newUser = await pool.query(
-      "insert into users(name,email,password,phone) values ($1,$2,$3,$4) returning *",
-      [name, email, password, phone]
+      `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
     );
-    console.log("newUSer", newUser);
-    const data = { user: newUser.rows[0] };
+    // console.log("newUSer", newUser);
 
+    const { id, name } = newUser.rows[0];
+    const data = { user: { id, name } };
     res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
     console.error(error);
-    res.status(409).json({ message: "user already exists, please signIn" });
+    if (error.code == 23505) {
+      console.log("User already exists");
+      res.status(409).json({ message: "user already exists, please signIn" });
+    } else {
+      res.status(409).json({ message: "Something went wrong at Server !" });
+    }
   }
 });
 
@@ -77,32 +81,29 @@ app.post("/addcategory", async (req, res) => {
   }
 });
 
-  //handle the get request for categories from client
+//handle the get request for categories from client
 
-app.get("/admin/categories", async(req,res) =>{
+app.get("/admin/categories", async (req, res) => {
   try {
-    const categories = await pool.query(
-      'select name from categories'
-    )
+    const categories = await pool.query("select name from categories");
 
-    const data = {categories: categories.rows}
-    console.log(data)
-    res.send(data)
-    
+    const data = { categories: categories.rows };
+    console.log(data);
+    res.send(data);
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-})
+});
 
 //AddProduct handling
 
 app.post("/admin/addproduct", async (req, res) => {
-  const {category, name, description, price, stock_available } = req.body;
+  const { category, name, description, price, stock_available } = req.body;
 
   try {
     const newProduct = await pool.query(
       "insert into products(category,name,description,price,stock_available) values ($1,$2,$3,$4,$5) returning *",
-      [category,name, description, price, stock_available]
+      [category, name, description, price, stock_available]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
@@ -113,8 +114,75 @@ app.post("/admin/addproduct", async (req, res) => {
   }
 });
 
+app.post("/checkusersloggedintokens", async (req, res) => {
+  const { userToken } = req.body;
+  console.log("token :", userToken);
+  try {
+    const user = await pool.query(
+      `select * from users where '${userToken}' = ANY (logged_in_tokens)`
+    );
+    console.log(user);
+    if (user.rows.length) {
+      res.send(true);
+    } else {
+      res.send(false);
+    }
+  } catch (error) {
+    console.error(error);
+    res.send(false);
+  }
+});
 
+app.post("/addusersloggedintokens", async (req, res) => {
+  const { id, token } = req.body;
+  // console.log("token :", token);
+  try {
+    const oldTokens = await pool.query(
+      `SELECT logged_in_tokens from users WHERE id=${id}`
+    );
+    var newTokens = oldTokens.rows[0].logged_in_tokens;
+    // console.log("new Tokens", newTokens);
+    if (!newTokens) {
+      newTokens = [token];
+    } else {
+      newTokens.push(token);
+    }
+    await pool.query(
+      `UPDATE users SET logged_in_tokens = '{${newTokens}}'
+      WHERE id = ${id} returning *`
+    );
+    res.send(true);
+  } catch (error) {
+    // console.error(error);
+    res.send(false);
+  }
+});
+app.post("/removeusersloggedintokens", async (req, res) => {
+  const { id, userToken } = req.body;
+  // console.log("token :", token);
+  try {
+    await pool.query(
+      `update users set logged_in_tokens = array_remove(logged_in_tokens, '${userToken}') WHERE id=${id};`
+    );
+    res.send(true);
+  } catch (error) {
+    // console.error(error);
+    res.send(false);
+  }
+});
+app.post("/userdetails", async (req, res) => {
+  const { userToken } = req.body;
+  try {
+    const user = await pool.query(
+      `select * from users where '${userToken}' = ANY (logged_in_tokens)`
+    );
 
+    const { id, name, email, isadmin, address, phone } = user.rows[0];
+    res.send({ id, name, email, isadmin, address, phone });
+  } catch (err) {
+    res.send({});
+  }
+});
 
 //listen
 app.listen(5000, () => {
