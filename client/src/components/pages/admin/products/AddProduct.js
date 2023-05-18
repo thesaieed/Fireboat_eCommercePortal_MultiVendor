@@ -103,6 +103,8 @@ function AddProduct() {
         </Upload>
     </Form.Item>
 
+        <Row>
+         <Col style={{paddingRight:".5rem"}} span={12}>
           <Form.Item
             name="category"
             // label="Category"
@@ -113,8 +115,7 @@ function AddProduct() {
               },
             ]}
           >
-            <Select
-              style={{ fontWeight: "normal" }}
+            <Select  className="ant-input "    
               placeholder="Select a category"
             >
               {categories.map((category) => (
@@ -124,8 +125,9 @@ function AddProduct() {
               ))}
             </Select>
           </Form.Item>
+          </Col>
 
-
+                <Col style={{paddingLeft:".5rem"}} span={12}>
           <Form.Item
             //   label="Name"
             name="name"
@@ -133,6 +135,8 @@ function AddProduct() {
           >
             <Input placeholder="Enter product name" />
           </Form.Item>
+          </Col>
+        </Row>
 
           <Form.Item
             //   label="Description"
@@ -143,7 +147,8 @@ function AddProduct() {
           >
             <Input.TextArea placeholder="Enter product description" />
           </Form.Item>
-
+        <Row>
+        <Col style={{paddingRight:".5rem"}} span={12}>
           <Form.Item
             //   label="Price"
             name="price"
@@ -151,7 +156,8 @@ function AddProduct() {
           >
             <Input placeholder="Enter product price" type="number" min="0" />
           </Form.Item>
-
+          </Col>
+          <Col style={{paddingLeft:".5rem"}} span={12}>
           <Form.Item
             //   label="Stock Available"
             name="stock_available"
@@ -164,6 +170,8 @@ function AddProduct() {
           >
             <Input placeholder="Enter stock available" type="number" min="0" />
           </Form.Item>
+          </Col>
+          </Row>
           {errorMessage && (
             <Form.Item>
               <Alert
