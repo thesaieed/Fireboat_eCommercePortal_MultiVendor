@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { LoadingScreen } from "./components/layout/LoadingScreen";
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
 import Main from "./components/layout/Main";
@@ -12,9 +13,19 @@ import Home from "./components/pages/Home";
 import "antd/dist/antd.min.css";
 import "./assets/styles/main.css";
 import "./assets/styles/responsive.css";
+import { useEffect } from "react";
+import useAllContext from "./context/useAllContext";
 
 function App() {
-  return (
+  const { validateUserToken, isLoading, userToken } = useAllContext();
+
+  useEffect(() => {
+    validateUserToken();
+  }, [validateUserToken, userToken]);
+
+  return isLoading ? (
+    <LoadingScreen />
+  ) : (
     <div className="App">
       <Routes>
         <Route index element={<Home />} />
