@@ -11,11 +11,11 @@ function Provider({ children }) {
 
   const removeSavedUserToken = async (userToken, id) => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/removeusersloggedintokens",
-        { userToken, id }
-      );
-      console.log("remomve user TOken res :", res);
+      await axios.post("http://localhost:5000/removeusersloggedintokens", {
+        userToken,
+        id,
+      });
+      // console.log("remomve user TOken res :", res);
     } catch (err) {}
   };
 
@@ -40,7 +40,7 @@ function Provider({ children }) {
       const userdata = await axios.post("http://localhost:5000/userdetails", {
         userToken,
       });
-      console.log("user Data : ", userdata);
+      // console.log("user Data : ", userdata);
       setAppUser(userdata.data);
       setIsLoading(false);
     } catch (error) {

@@ -53,10 +53,10 @@ function Main() {
     if (!isValidToken) {
       navigate("/login");
     } else {
-      console.log("isLoading :", isLoading);
+      // console.log("isLoading :", isLoading);
       fetchUserDetails();
       setIsLoading(false);
-      console.log("isLoading :", isLoading);
+      // console.log("isLoading :", isLoading);
     }
   }, [userToken, isValidToken, fetchUserDetails, isLoading]);
 

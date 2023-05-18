@@ -43,6 +43,7 @@ export default function SignUp() {
     setUserToken,
     isValidToken,
   } = useAllContext();
+
   const navigate = useNavigate();
   useEffect(() => {
     if (isValidToken) {

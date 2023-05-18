@@ -42,13 +42,6 @@ const { /*Header,*/ Footer, Content } = Layout;
 
 function SignIn() {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (isValidToken) {
-      navigate("/admin/dashboard");
-    }
-  }, [isValidToken]);
-
-  const [errorMessage, setErrorMessage] = useState("");
 
   const {
     setAppUser,
@@ -57,6 +50,14 @@ function SignIn() {
     setUserToken,
     isValidToken,
   } = useAllContext();
+
+  useEffect(() => {
+    if (isValidToken) {
+      navigate("/admin/dashboard");
+    }
+  }, [isValidToken]);
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [form] = Form.useForm();
 
@@ -68,7 +69,7 @@ function SignIn() {
       case 200:
         const userToken = generateRandomString(12);
         // console.log("Res.data.user : ", res.data.user);
-        console.log("Login UserToken : ", userToken);
+        // console.log("Login UserToken : ", userToken);
         localStorage.setItem("userToken", userToken);
         setUserToken(userToken);
         setAppUser(res.data.user);
