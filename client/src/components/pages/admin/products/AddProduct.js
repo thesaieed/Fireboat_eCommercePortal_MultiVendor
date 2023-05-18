@@ -1,9 +1,10 @@
 import { React, useState, useEffect, useCallback } from "react";
-import { Alert, Button, Form, Input, Card, Select } from "antd";
+import { Alert, Button, Form, Input, Card, Select,Upload,Row,Col } from "antd";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // import useAllContext from "../../../context/useAllContext";
+import { UploadOutlined } from "@ant-design/icons";
 
 function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,11 +33,24 @@ function AddProduct() {
   }, []);
 
   const onFinish = async (values) => {
-    console.log("Success", values);
+    // console.log("Success", values);
     try {
+      const formData = new FormData();
+      formData.append("category", values.category);
+      formData.append("name", values.name);
+      formData.append("description", values.description);
+      formData.append("price", values.price);
+      formData.append("stock_available", values.stock_available);
+      formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
+
       const response = await axios.post(
         "http://localhost:5000/admin/addproduct",
-        values
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
       );
 
       if (response.status === 200) {
@@ -60,7 +74,7 @@ function AddProduct() {
       <Card
         //class name card-signup header-solid h-full ant-card pt-0  mb-2
         className=" cardAddProduct header-solid ant-card"
-        title={
+        title={ 
           <h5 style={{ fontWeight: "bold", fontSize: "1.5rem" }}>
             Enter Product Details
           </h5>
@@ -75,9 +89,22 @@ function AddProduct() {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           className="row-col"
+          // encType="multipart/form-data"
         >
-          {/* check */}
+        
+          
+    <Form.Item
+        name="image"
+        valuePropName="fileList"
+        getValueFromEvent={(e) => e.fileList}
+      >
+        <Upload name="image" accept="image/*" beforeUpload={() => false}>
+          <Button  icon={<UploadOutlined />}>Upload image</Button>
+        </Upload>
+    </Form.Item>
 
+        <Row>
+         <Col style={{paddingRight:".5rem"}} span={12}>
           <Form.Item
             name="category"
             // label="Category"
@@ -88,8 +115,7 @@ function AddProduct() {
               },
             ]}
           >
-            <Select
-              style={{ fontWeight: "normal" }}
+            <Select  className="ant-input "    
               placeholder="Select a category"
             >
               {categories.map((category) => (
@@ -99,6 +125,9 @@ function AddProduct() {
               ))}
             </Select>
           </Form.Item>
+          </Col>
+
+                <Col style={{paddingLeft:".5rem"}} span={12}>
           <Form.Item
             //   label="Name"
             name="name"
@@ -106,6 +135,8 @@ function AddProduct() {
           >
             <Input placeholder="Enter product name" />
           </Form.Item>
+          </Col>
+        </Row>
 
           <Form.Item
             //   label="Description"
@@ -116,7 +147,8 @@ function AddProduct() {
           >
             <Input.TextArea placeholder="Enter product description" />
           </Form.Item>
-
+        <Row>
+        <Col style={{paddingRight:".5rem"}} span={12}>
           <Form.Item
             //   label="Price"
             name="price"
@@ -124,7 +156,8 @@ function AddProduct() {
           >
             <Input placeholder="Enter product price" type="number" min="0" />
           </Form.Item>
-
+          </Col>
+          <Col style={{paddingLeft:".5rem"}} span={12}>
           <Form.Item
             //   label="Stock Available"
             name="stock_available"
@@ -137,6 +170,8 @@ function AddProduct() {
           >
             <Input placeholder="Enter stock available" type="number" min="0" />
           </Form.Item>
+          </Col>
+          </Row>
           {errorMessage && (
             <Form.Item>
               <Alert
@@ -150,7 +185,7 @@ function AddProduct() {
           )}
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button style={{marginLeft:'25.5rem'}} type="primary" htmlType="submit">
               Add
             </Button>
           </Form.Item>

@@ -3124,12 +3124,24 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
 
 /* css added */
 
-.cardAddProduct {
-  width: 100%;
-  max-width: 500px;
-  margin: auto;
-  box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
-  border-radius: 12px;
-  margin-top: 20px;
-  margin-bottom: auto;
+.cardAddProduct{
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+    border-radius: 12px;
+    margin-top: 20px;
+    margin-bottom: auto;
+  
 }
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  background-color: unset;
+  border: unset;
+}
+
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant0select-customize-input) .ant-select-selector{
+  border-color: unset;
+  box-shadow: unset;
+}
+
