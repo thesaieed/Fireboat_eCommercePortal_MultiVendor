@@ -1163,6 +1163,9 @@ span.blue {
 .justify-content-around {
   justify-content: space-around !important;
 }
+.vh-100 {
+  height: 100vh !important;
+}
 .border-right {
   /* border-right: 1px solid white; */
   box-shadow: 1px 0px 3px lightgrey;
@@ -3141,3 +3144,4 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
   border-color: unset;
   box-shadow: unset;
 }
+
