@@ -1,10 +1,36 @@
 const express = require("express");
 const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
-
+const multer = require("multer")
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
+
+//configuring disk storage
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads");
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+//     const fileExtension = file.originalname.split(".").pop();
+//     cb(null, file.fieldname + "-" + uniqueSuffix + "." + fileExtension);
+//   },
+// });
+
+//Alternate storage object with simple file name
+const storage = multer.diskStorage(
+  {
+    destination: function (req,file,cb){
+      return cb(null,"./uploads")
+    },
+    filename: function (req,file,cb){
+      return cb(null,`${Date.now()}-${file.originalname}`)
+    }
+  }
+)
+
+const upload = multer({ storage: storage });
 
 //login route
 app.post("/login", async (req, res) => {
@@ -85,25 +111,33 @@ app.post("/addcategory", async (req, res) => {
 
 app.get("/admin/categories", async (req, res) => {
   try {
-    const categories = await pool.query("select name from categories");
+    const categories = await pool.query(
+      'select name from categories'
+    )
 
-    const data = { categories: categories.rows };
-    console.log(data);
-    res.send(data);
+    const data = {categories: categories.rows}
+    // console.log(data)
+    res.send(data)
+    
   } catch (error) {
     console.error(error);
   }
 });
 
-//AddProduct handling
 
-app.post("/admin/addproduct", async (req, res) => {
-  const { category, name, description, price, stock_available } = req.body;
 
+//Modified addProduct handle to handle image upload also
+
+app.post("/admin/addproduct",upload.single("image"),async (req, res) => {
+  const {category, name, description, price, stock_available } = req.body;
+  // console.log(req.body)
+  // console.log(req.file)
+  const imagePath = req.file.path
+  
   try {
     const newProduct = await pool.query(
-      "insert into products(category,name,description,price,stock_available) values ($1,$2,$3,$4,$5) returning *",
-      [category, name, description, price, stock_available]
+      "insert into products(category,name,description,price,stock_available,image) values ($1,$2,$3,$4,$5,$6) returning *",
+      [category,name, description, price, stock_available,imagePath]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
