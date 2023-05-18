@@ -14,8 +14,9 @@ import { Menu } from "antd";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { PlusCircleOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import useAllContext from "../../context/useAllContext";
 
-function Sidenav({ setAppUser, color }) {
+function Sidenav({ setAppUser, color, setUserToken }) {
   const dashboard = [
     <svg
       width="20"
@@ -76,6 +77,8 @@ function Sidenav({ setAppUser, color }) {
       />
     </svg>,
   ];
+
+  const { removeSavedUserToken, userToken, appUser } = useAllContext();
 
   return (
     <>
@@ -181,8 +184,10 @@ function Sidenav({ setAppUser, color }) {
         <Menu.Item key="99">
           <NavLink
             onClick={() => {
-              localStorage.removeItem("user");
+              localStorage.removeItem("userToken");
               setAppUser({});
+              setUserToken("");
+              removeSavedUserToken(userToken, appUser.id);
             }}
           >
             <span className="icon">{signup}</span>
