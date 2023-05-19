@@ -1,5 +1,15 @@
 import { React, useState, useEffect, useCallback } from "react";
-import { Alert, Button, Form, Input, Card, Select,Upload,Row,Col } from "antd";
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  Card,
+  Select,
+  Upload,
+  Row,
+  Col,
+} from "antd";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -26,11 +36,11 @@ function AddProduct() {
     } catch (error) {
       console.error(error);
     }
-  });
+  }, []);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const onFinish = async (values) => {
     // console.log("Success", values);
@@ -48,8 +58,8 @@ function AddProduct() {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
@@ -74,7 +84,7 @@ function AddProduct() {
       <Card
         //class name card-signup header-solid h-full ant-card pt-0  mb-2
         className=" cardAddProduct header-solid ant-card"
-        title={ 
+        title={
           <h5 style={{ fontWeight: "bold", fontSize: "1.5rem" }}>
             Enter Product Details
           </h5>
@@ -91,48 +101,50 @@ function AddProduct() {
           className="row-col"
           // encType="multipart/form-data"
         >
-        
-          
-    <Form.Item
-        name="image"
-        valuePropName="fileList"
-        getValueFromEvent={(e) => e.fileList}
-      >
-        <Upload name="image" accept="image/*" beforeUpload={() => false}>
-          <Button  icon={<UploadOutlined />}>Upload image</Button>
-        </Upload>
-    </Form.Item>
-
           <Form.Item
-            name="category"
-            // label="Category"
-            rules={[
-              {
-                required: true,
-                message: "Please select a category",
-              },
-            ]}
+            name="image"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
           >
-            <Select
-              style={{ fontWeight: "normal" }}
-              placeholder="Select a category"
-            >
-              {categories.map((category) => (
-                <Option key={category.name} value={category.name}>
-                  {category.name}
-                </Option>
-              ))}
-            </Select>
+            <Upload name="image" accept="image/*" beforeUpload={() => false}>
+              <Button icon={<UploadOutlined />}>Upload image</Button>
+            </Upload>
           </Form.Item>
 
+          <Row>
+            <Col style={{ paddingRight: ".5rem" }} span={12}>
+              <Form.Item
+                name="category"
+                // label="Category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a category",
+                  },
+                ]}
+              >
+                <Select className="ant-input " placeholder="Select a category">
+                  {categories.map((category) => (
+                    <Option key={category.name} value={category.name}>
+                      {category.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
 
-          <Form.Item
-            //   label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please input product name!" }]}
-          >
-            <Input placeholder="Enter product name" />
-          </Form.Item>
+            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+              <Form.Item
+                //   label="Name"
+                name="name"
+                rules={[
+                  { required: true, message: "Please input product name!" },
+                ]}
+              >
+                <Input placeholder="Enter product name" />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             //   label="Description"
@@ -143,27 +155,41 @@ function AddProduct() {
           >
             <Input.TextArea placeholder="Enter product description" />
           </Form.Item>
-
-          <Form.Item
-            //   label="Price"
-            name="price"
-            rules={[{ required: true, message: "Please input product price!" }]}
-          >
-            <Input placeholder="Enter product price" type="number" min="0" />
-          </Form.Item>
-
-          <Form.Item
-            //   label="Stock Available"
-            name="stock_available"
-            rules={[
-              {
-                required: true,
-                message: "Please input the number of stock available!",
-              },
-            ]}
-          >
-            <Input placeholder="Enter stock available" type="number" min="0" />
-          </Form.Item>
+          <Row>
+            <Col style={{ paddingRight: ".5rem" }} span={12}>
+              <Form.Item
+                //   label="Price"
+                name="price"
+                rules={[
+                  { required: true, message: "Please input product price!" },
+                ]}
+              >
+                <Input
+                  placeholder="Enter product price"
+                  type="number"
+                  min="0"
+                />
+              </Form.Item>
+            </Col>
+            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+              <Form.Item
+                //   label="Stock Available"
+                name="stock_available"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the number of stock available!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter stock available"
+                  type="number"
+                  min="0"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
           {errorMessage && (
             <Form.Item>
               <Alert
@@ -177,7 +203,11 @@ function AddProduct() {
           )}
 
           <Form.Item>
-            <Button style={{marginLeft:'25.5rem'}} type="primary" htmlType="submit">
+            <Button
+              style={{ marginLeft: "25.5rem" }}
+              type="primary"
+              htmlType="submit"
+            >
               Add
             </Button>
           </Form.Item>

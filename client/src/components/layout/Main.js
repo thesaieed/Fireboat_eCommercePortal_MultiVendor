@@ -17,6 +17,7 @@ import Sidenav from "./Sidenav";
 import Header from "./Header";
 import Footer from "./Footer";
 import useAllContext from "../../context/useAllContext";
+import { LoadingScreen } from "./LoadingScreen";
 import { useNavigate } from "react-router-dom";
 
 const { Header: AntHeader, Content, Sider } = Layout;
@@ -27,25 +28,41 @@ function Main() {
   const [sidenavColor, setSidenavColor] = useState("#ff9c0a");
   const [sidenavType, setSidenavType] = useState("transparent");
   const [fixed, setFixed] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const openDrawer = () => setVisible(!visible);
   const handleSidenavType = (type) => setSidenavType(type);
   const handleSidenavColor = (color) => setSidenavColor(color);
   const handleFixedNavbar = (type) => setFixed(type);
 
-  const { appUser, setAppUser } = useAllContext();
+  const {
+    appUser,
+    setAppUser,
+    isValidToken,
+    fetchUserDetails,
+    userToken,
+    setUserToken,
+  } = useAllContext();
   const navigate = useNavigate();
 
   let { pathname } = useLocation();
   pathname = pathname.replace("/", "");
+  // console.log("main isValid TOken : ", isValidToken);
 
   useEffect(() => {
-    if (!appUser) {
+    if (!isValidToken) {
       navigate("/login");
+    } else {
+      // console.log("isLoading :", isLoading);
+      fetchUserDetails();
+      setIsLoading(false);
+      // console.log("isLoading :", isLoading);
     }
-  }, [appUser, navigate]);
+  }, [userToken, isValidToken, fetchUserDetails, isLoading]);
 
-  return (
+  return isLoading ? (
+    <LoadingScreen />
+  ) : (
     <Layout className={`layout-dashboard`}>
       <Drawer
         title={false}
@@ -73,7 +90,11 @@ function Main() {
             }`}
             style={{ background: sidenavType }}
           >
-            <Sidenav color={sidenavColor} setAppUser={setAppUser} />
+            <Sidenav
+              color={sidenavColor}
+              setAppUser={setAppUser}
+              setUserToken={setUserToken}
+            />
           </Sider>
         </Layout>
       </Drawer>
@@ -92,7 +113,11 @@ function Main() {
         // style={{ background: sidenavType }}
         style={{ background: "white" }}
       >
-        <Sidenav color={sidenavColor} setAppUser={setAppUser} />
+        <Sidenav
+          color={sidenavColor}
+          setAppUser={setAppUser}
+          setUserToken={setUserToken}
+        />
       </Sider>
       <Layout>
         {fixed ? (
