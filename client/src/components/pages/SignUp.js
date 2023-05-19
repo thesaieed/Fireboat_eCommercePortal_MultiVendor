@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Layout,
@@ -36,32 +36,43 @@ const { /*Header,*/ Footer, Content } = Layout;
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
   const [form] = Form.useForm();
-  const { setAppUser } = useAllContext();
+  const {
+    setAppUser,
+    generateRandomString,
+    setIsValidToken,
+    setUserToken,
+    isValidToken,
+  } = useAllContext();
+
   const navigate = useNavigate();
+  useEffect(() => {
+    if (isValidToken) {
+      navigate("/admin/dashboard");
+    }
+  }, [isValidToken]);
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
-
     try {
-      // const response = await fetch("http://localhost:5000/signup", {
-      //   method: "Post",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(values),
-      // });
       const response = await axios.post("http://localhost:5000/signup", values);
-
       // console.log("Responce : ", response);
-
+      //if signup is successfull
       if (response.status === 200) {
-        // setErrorMessage(
-        //   <p style={{ color: "green", textAlign: "center" }}>
-        //     {result.message}
-        //   </p>
-        // );
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        //keep a userToken saved locally and in database to keep loggedIn
+        const userToken = generateRandomString(12);
+        //set userToken in local Storage
+        localStorage.setItem("userToken", userToken);
+        setUserToken(userToken);
         setAppUser(response.data.user);
+        //add userToken to database
+        try {
+          await axios.post("http://localhost:5000/addusersloggedintokens", {
+            token: userToken,
+            id: response.data.user.id,
+          });
+          setIsValidToken(true);
+        } catch (err) {
+          console.error(err);
+        }
         form.resetFields();
         navigate("/admin/dashboard");
       } else {
@@ -69,9 +80,11 @@ export default function SignUp() {
       }
     } catch (error) {
       // console.error("Error : ", error);
-      if (error.response.status === 401) {
+      if (error.response?.status === 409) {
         form.resetFields();
         setErrorMessage("Email already registered !");
+      } else {
+        setErrorMessage("Soomething went wrong!");
       }
     }
   };
@@ -144,14 +157,14 @@ export default function SignUp() {
               className="row-col p-15"
             >
               <Form.Item
-                name="name"
+                name="fullname"
                 rules={[
                   { required: true, message: "Please input your username!" },
                 ]}
               >
                 <Input
                   prefix={<IdcardOutlined className="site-form-item-icon" />}
-                  placeholder="Name"
+                  placeholder="Full Name"
                 />
               </Form.Item>
               <Form.Item

@@ -22,3 +22,10 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
+
+
+.vscode/
+=======
+*.jpg
+>>>>>>> e6be2fad757fc95bd9b1128e8cd4bc13b2e28969
