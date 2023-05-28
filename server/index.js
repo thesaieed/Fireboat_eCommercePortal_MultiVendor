@@ -353,6 +353,7 @@ app.put("/cart/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 //Handle delete request from cart
 app.delete("/cart/:itemId", async (req, res) => {
   const itemId = req.params.itemId;
