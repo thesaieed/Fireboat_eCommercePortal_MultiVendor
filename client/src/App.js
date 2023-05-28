@@ -1,16 +1,18 @@
 import { Route, Routes } from "react-router-dom";
-import { LoadingScreen } from "./components/layout/LoadingScreen";
+import LoadingScreen from "./components/layout/LoadingScreen";
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
 import Cart from "./components/pages/Cart";
 import Main from "./components/layout/Main";
 import Dashboard from "./components/pages/admin/Dashboard";
 import Profile from "./components/pages/admin/Profile";
-import AllProducts from "./components/pages/admin/products/AllProducts";
+import Home from "./components/pages/user/Home";
 import AddProduct from "./components/pages/admin/products/AddProduct";
 import ShowProductDetails from "./components/pages/admin/products/ShowProductDetails";
 import AllCategories from "./components/pages/admin/categories/AllCategories";
-import Home from "./components/pages/Home";
+
+import Browse from "./components/pages/user/Browse";
+
 import "antd/dist/antd.min.css";
 import "./assets/styles/main.css";
 import "./assets/styles/responsive.css";
@@ -31,6 +33,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route index element={<Home />} />
+        <Route path="allproduct" element={<Home />} />
         <Route
           path="/404"
           element={
@@ -48,6 +51,7 @@ function App() {
             </h1>
           }
         />
+
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
         <Route
@@ -75,15 +79,19 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="products">
-            <Route index element={<AllProducts />} />
-            <Route path="allproduct" element={<AllProducts />} />
+            <Route index element={<AddProduct />} />
+
             <Route path="addproduct" element={<AddProduct />} />
+
+            <Route path="*" element={<AddProduct />} />
+
             {/* <Route path="productdetails" element={<ShowProductDetails/>}/> */}
-            <Route path="*" element={<AllProducts />} />
+
           </Route>
           <Route path="categories" element={<AllCategories />} />
         </Route>
-        <Route index path="*" element={<Home />} />
+        <Route path="/browse" element={<Browse />} />
+        <Route path="*" element={<Home />} />
       </Routes>
     </div>
   );

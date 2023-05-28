@@ -2,10 +2,16 @@ const express = require("express");
 const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
 const multer = require("multer");
+
+const path = require("path");
+const { log } = require("console");
+const { serialize } = require("v8");
+
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
+
 //configuring disk storage
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -47,8 +53,8 @@ app.post("/login", async (req, res) => {
       if (password === foundUser.rows[0].password) {
         //checking if body password === db.password
 
-        const { id, name } = foundUser.rows[0];
-        data = { loginStatus: 200, user: { id, name } };
+        const { id, name, isadmin } = foundUser.rows[0];
+        data = { loginStatus: 200, user: { id, name, isadmin } };
       } else {
         // console.log("Invalid Credentials");
         data = { loginStatus: 401 }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
@@ -141,6 +147,16 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
   }
 });
 
+//get all products route
+app.get("/allproducts", async (req, res) => {
+  try {
+    const products = await pool.query(`select * from products`);
+    res.send(products.rows);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 app.post("/checkusersloggedintokens", async (req, res) => {
   const { userToken } = req.body;
   // console.log("token :", userToken);
@@ -211,7 +227,6 @@ app.post("/userdetails", async (req, res) => {
   }
 });
 
-//handle get request from showproductdetails
 app.get("/admin/productdetails", async (req, res) => {
   const productId = req.query.id;
   // console.log(productId)
@@ -230,6 +245,33 @@ app.get("/admin/productdetails", async (req, res) => {
     res.status(500).send("internal Server error");
   }
 });
+
+
+//searchProducts
+app.post("/search", async (req, res) => {
+  // console.log("body", req.body);
+  const { searchTerms } = req.body;
+  let queryTerm = "";
+  if (searchTerms?.length) {
+    searchTerms.map((term, index) => {
+      if (index === searchTerms.length - 1) {
+        queryTerm += `${term}`;
+      } else {
+        queryTerm += `${term}&`;
+      }
+    });
+  }
+
+  try {
+    const searchResult = await pool.query(
+      `SELECT * FROM products WHERE to_tsvector(name) @@ to_tsquery( '${queryTerm}')`
+    );
+    res.send(searchResult.rows);
+  } catch (err) {
+    console.error(err);
+    res.send([]);
+
+//handle get request from showproductdetails
 
 // //handle Addtocart post request
 // app.post("/addtocart",async(req,res) =>{
@@ -367,6 +409,7 @@ app.delete("/cart/:itemId", async (req, res) => {
   } catch (error) {
     console.error("Error deleting item from cart:", error);
     res.status(500).send("Internal Server Error");
+
   }
 });
 

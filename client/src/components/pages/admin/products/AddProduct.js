@@ -15,6 +15,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // import useAllContext from "../../../context/useAllContext";
 import { UploadOutlined } from "@ant-design/icons";
+import cardImage from "../../../../assets/images/addproductCardImg.png";
 
 function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -85,11 +86,17 @@ function AddProduct() {
         //class name card-signup header-solid h-full ant-card pt-0  mb-2
         className=" cardAddProduct header-solid ant-card"
         title={
-          <h5 style={{ fontWeight: "bold", fontSize: "1.5rem" }}>
+          <h5
+            style={{
+              fontWeight: "bold",
+              fontSize: "1.3rem",
+            }}
+          >
             Enter Product Details
           </h5>
         }
         bordered="false"
+        cover={<img alt="example" src={cardImage} />}
       >
         <Form
           form={form}
@@ -101,6 +108,8 @@ function AddProduct() {
           className="row-col"
           // encType="multipart/form-data"
         >
+
+
           <Form.Item
             name="image"
             valuePropName="fileList"
@@ -116,8 +125,22 @@ function AddProduct() {
             </Upload>
           </Form.Item>
 
+
           <Row>
-            <Col style={{ paddingRight: ".5rem" }} span={12}>
+            <Col style={{ paddingRight: ".5rem" }} span={16}>
+              {" "}
+              <Form.Item
+                //   label="Name"
+                name="name"
+                rules={[
+                  { required: true, message: "Please input product name!" },
+                ]}
+              >
+                <Input placeholder="Enter product name" />
+              </Form.Item>
+            </Col>
+
+            <Col style={{ paddingLeft: ".5rem" }} span={8}>
               <Form.Item
                 name="category"
                 // label="Category"
@@ -135,18 +158,6 @@ function AddProduct() {
                     </Option>
                   ))}
                 </Select>
-              </Form.Item>
-            </Col>
-
-            <Col style={{ paddingLeft: ".5rem" }} span={12}>
-              <Form.Item
-                //   label="Name"
-                name="name"
-                rules={[
-                  { required: true, message: "Please input product name!" },
-                ]}
-              >
-                <Input placeholder="Enter product name" />
               </Form.Item>
             </Col>
           </Row>
@@ -195,6 +206,27 @@ function AddProduct() {
               </Form.Item>
             </Col>
           </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item
+                name="image"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => e.fileList}
+                rules={[{ required: true, message: "Image is required!" }]}
+                hasFeedback
+              >
+                <Upload
+                  name="image"
+                  accept="image/*"
+                  beforeUpload={() => false}
+                >
+                  <Button icon={<UploadOutlined />} className="w-100">
+                    Upload image
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </Col>
+          </Row>
           {errorMessage && (
             <Form.Item>
               <Alert
@@ -209,9 +241,10 @@ function AddProduct() {
 
           <Form.Item>
             <Button
-              style={{ marginLeft: "25.5rem" }}
+              style={{ width: 150 }}
               type="primary"
               htmlType="submit"
+              className="float-end"
             >
               Add
             </Button>
