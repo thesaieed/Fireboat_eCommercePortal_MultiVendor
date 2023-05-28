@@ -2,21 +2,23 @@ import { Route, Routes } from "react-router-dom";
 import LoadingScreen from "./components/layout/LoadingScreen";
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
+import Cart from "./components/pages/Cart";
 import Main from "./components/layout/Main";
 import Dashboard from "./components/pages/admin/Dashboard";
 import Profile from "./components/pages/admin/Profile";
 import Home from "./components/pages/user/Home";
 import AddProduct from "./components/pages/admin/products/AddProduct";
+import ShowProductDetails from "./components/pages/admin/products/ShowProductDetails";
 import AllCategories from "./components/pages/admin/categories/AllCategories";
-import Browse from "./components/pages/user/Browse";
 
-import ShowProduct from "./components/pages/admin/products/ShowProduct";
+import Browse from "./components/pages/user/Browse";
 
 import "antd/dist/antd.min.css";
 import "./assets/styles/main.css";
 import "./assets/styles/responsive.css";
 import { useEffect } from "react";
 import useAllContext from "./context/useAllContext";
+import { Footer, Header } from "antd/lib/layout/layout";
 
 function App() {
   const { validateUserToken, isLoading, userToken } = useAllContext();
@@ -32,8 +34,46 @@ function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route path="allproduct" element={<Home />} />
+        <Route
+          path="/404"
+          element={
+            <h1
+              style={{
+                fontFamily: "cursive",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
+                fontSize: "5rem",
+              }}
+            >
+              !Not Found
+            </h1>
+          }
+        />
+
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
+        <Route
+          path="/cart"
+          element={
+            <>
+              <Header />
+              <Cart />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/productdetails"
+          element={
+            <>
+              <Header />
+              <ShowProductDetails />
+              <Footer />
+            </>
+          }
+        />
         <Route path="/admin" element={<Main />}>
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
@@ -42,11 +82,14 @@ function App() {
             <Route index element={<AddProduct />} />
 
             <Route path="addproduct" element={<AddProduct />} />
+
             <Route path="*" element={<AddProduct />} />
+
+            {/* <Route path="productdetails" element={<ShowProductDetails/>}/> */}
+
           </Route>
           <Route path="categories" element={<AllCategories />} />
         </Route>
-        <Route path="/product" element={<ShowProduct />} />
         <Route path="/browse" element={<Browse />} />
         <Route path="*" element={<Home />} />
       </Routes>
