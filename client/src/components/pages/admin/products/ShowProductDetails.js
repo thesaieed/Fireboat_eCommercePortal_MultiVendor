@@ -30,7 +30,7 @@ function ShowProductDetails() {
         );
         setProductDetails(response.data);
       } catch (error) {
-        if (error.response.status === 404) {
+        if (error.response && error.response.status === 404) {
           navigate("/404");
         } else {
           console.error(error);
