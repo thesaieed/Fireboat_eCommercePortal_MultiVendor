@@ -24,8 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 *.jpg
 *.png
-*.png
-server/uploads/1684259635384-background-addProductForm.png
-server/uploads/1684222753805-Screenshot 2023-04-03 201125.png
-server/uploads/image-1684218671073-457225776.png
-*.png
+.vscode/
+
+
+
