@@ -286,9 +286,9 @@ app.get("/cart", async (req, res) => {
   try {
     const cartDetails1 = await pool.query(
       "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
-      [user_id]
+      [user_id] //basically checks db and returns dintinct product_ids(i.e different prods in cart of user) or user with corresponding details
     );
-    // console.log(cartDetails1.rows)
+    console.log(cartDetails1.rows);
     if (cartDetails1.rows.length === 0) {
       res.send("Could not fetch the cart details");
     } else {
@@ -296,7 +296,7 @@ app.get("/cart", async (req, res) => {
       // console.log(data1)
     }
 
-    const productIds = data1.map((item) => item.product_id);
+    const productIds = data1.map((item) => item.product_id); //get array of productIds
     // console.log(productIds)
     const query = {
       text: "SELECT name, price, image, category FROM products WHERE  id= ANY($1::int[])",
