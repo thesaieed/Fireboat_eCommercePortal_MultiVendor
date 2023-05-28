@@ -246,7 +246,6 @@ app.get("/admin/productdetails", async (req, res) => {
   }
 });
 
-
 //searchProducts
 app.post("/search", async (req, res) => {
   // console.log("body", req.body);
@@ -270,6 +269,8 @@ app.post("/search", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send([]);
+  }
+});
 
 //handle get request from showproductdetails
 
@@ -330,49 +331,48 @@ app.get("/cart", async (req, res) => {
       "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
       [user_id] //basically checks db and returns dintinct product_ids(i.e different prods in cart of user) or user with corresponding details
     );
-    console.log(cartDetails1.rows);
+    // console.log(cartDetails1.rows);
     if (cartDetails1.rows.length === 0) {
       res.send("Could not fetch the cart details");
     } else {
       data1 = cartDetails1.rows;
       // console.log(data1)
+      const productIds = data1.map((item) => item.product_id); //get array of productIds
+      // console.log(productIds)
+      const query = {
+        text: "SELECT name, price, image, category FROM products WHERE  id= ANY($1::int[])",
+        values: [productIds],
+      };
+      const cartDetails2 = await pool.query(query);
+
+      if (cartDetails2.rows.length === 0) {
+        res.send("Could not fetch the product details");
+      } else {
+        data2 = cartDetails2.rows;
+        // console.log(cartDetails2.rows)
+      }
+
+      //optional to be added if needed
+      const cartDetails3 = await pool.query("Select * from users where id=$1", [
+        user_id,
+      ]);
+
+      if (cartDetails3.rows.length === 0) {
+        res.send("Could not fetch the user details");
+      } else {
+        data3 = cartDetails3.rows;
+        // console.log(data3)
+      }
+
+      //Now Sending the required data Modify according to need
+      const combinedData = {
+        data1,
+        data2,
+        data3,
+      };
+      // console.log(combinedData)
+      res.json(combinedData);
     }
-
-    const productIds = data1.map((item) => item.product_id); //get array of productIds
-    // console.log(productIds)
-    const query = {
-      text: "SELECT name, price, image, category FROM products WHERE  id= ANY($1::int[])",
-      values: [productIds],
-    };
-    const cartDetails2 = await pool.query(query);
-
-    if (cartDetails2.rows.length === 0) {
-      res.send("Could not fetch the product details");
-    } else {
-      data2 = cartDetails2.rows;
-      // console.log(cartDetails2.rows)
-    }
-
-    //optional to be added if needed
-    const cartDetails3 = await pool.query("Select * from users where id=$1", [
-      user_id,
-    ]);
-
-    if (cartDetails3.rows.length === 0) {
-      res.send("Could not fetch the user details");
-    } else {
-      data3 = cartDetails3.rows;
-      // console.log(data3)
-    }
-
-    //Now Sending the required data Modify according to need
-    const combinedData = {
-      data1,
-      data2,
-      data3,
-    };
-    // console.log(combinedData)
-    res.json(combinedData);
   } catch (error) {
     console.error(error);
     res.status(500).send("internal Server error");
@@ -409,7 +409,6 @@ app.delete("/cart/:itemId", async (req, res) => {
   } catch (error) {
     console.error("Error deleting item from cart:", error);
     res.status(500).send("Internal Server Error");
-
   }
 });
 

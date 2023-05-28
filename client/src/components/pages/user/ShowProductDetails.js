@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import useAllContext from "../../../../context/useAllContext";
+import useAllContext from "../../../context/useAllContext";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button, Card, Col, Layout, message, Modal, Row } from "antd";
+import CommonNavbar from "../../layout/CommonNavbar";
+import Footer from "../../layout/Footer";
 
 function ShowProductDetails() {
   const [productDetails, setProductDetails] = useState("");
@@ -39,7 +41,7 @@ function ShowProductDetails() {
     };
 
     fetchProductDetails();
-  }, [navigate]);
+  }, [navigate, productId]);
 
   // Set image URL
   useEffect(() => {
@@ -86,15 +88,16 @@ function ShowProductDetails() {
   }
   if (productDetails) {
     return (
-      <Layout className="layout-spd">
+      <Layout className="layout-default">
+        <CommonNavbar />
         <Card className="show-productDetails-card">
           <Row className="row-spd">
-            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column">
+            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
               <div className="image-container">
-                <img src={imageUrl} alt="Product Image" onClick={showModal} />
+                <img src={imageUrl} alt="Product" onClick={showModal} />
               </div>
             </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column">
+            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
               <div className="spd">
                 {productDetails ? (
                   <div className="details-content">
@@ -114,7 +117,7 @@ function ShowProductDetails() {
                 )}
               </div>
             </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column">
+            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
               <div className="div-buttons-spd">
                 <div>
                   <Button
@@ -146,8 +149,9 @@ function ShowProductDetails() {
           </p>
         </Card>
         <Modal open={isModalVisible} onCancel={handleCancel} footer={null}>
-          <img src={imageUrl} alt="Product Image" />
+          <img src={imageUrl} alt="Product" />
         </Modal>
+        <Footer />
       </Layout>
     );
   }

@@ -108,24 +108,6 @@ function AddProduct() {
           className="row-col"
           // encType="multipart/form-data"
         >
-
-
-          <Form.Item
-            name="image"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
-            rules={[{
-              required: true,
-              message: "please upload image"
-            }
-            ]}
-          >
-            <Upload name="image" accept="image/*" beforeUpload={() => false}>
-              <Button icon={<UploadOutlined />}>Upload image</Button>
-            </Upload>
-          </Form.Item>
-
-
           <Row>
             <Col style={{ paddingRight: ".5rem" }} span={16}>
               {" "}

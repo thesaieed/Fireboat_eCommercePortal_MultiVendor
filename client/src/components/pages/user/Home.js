@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Row, Col, Typography, Carousel, Pagination, Layout } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import FeaturedProduct from "../admin/products/FeaturedProduct";
+import FeaturedProduct from "./FeaturedProduct";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import LoadingScreen from "../../layout/LoadingScreen";
