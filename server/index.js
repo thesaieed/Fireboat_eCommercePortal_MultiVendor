@@ -1,10 +1,14 @@
 const express = require("express");
 const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
-const multer = require("multer")
+const multer = require("multer");
+const path = require("path");
+const { log } = require("console");
+const { serialize } = require("v8");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 //configuring disk storage
 // const storage = multer.diskStorage({
@@ -19,16 +23,14 @@ app.use(express.json());
 // });
 
 //Alternate storage object with simple file name
-const storage = multer.diskStorage(
-  {
-    destination: function (req,file,cb){
-      return cb(null,"./uploads")
-    },
-    filename: function (req,file,cb){
-      return cb(null,`${Date.now()}-${file.originalname}`)
-    }
-  }
-)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    return cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    return cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
 
 const upload = multer({ storage: storage });
 
@@ -49,8 +51,8 @@ app.post("/login", async (req, res) => {
       if (password === foundUser.rows[0].password) {
         //checking if body password === db.password
 
-        const { id, name } = foundUser.rows[0];
-        data = { loginStatus: 200, user: { id, name } };
+        const { id, name, isadmin } = foundUser.rows[0];
+        data = { loginStatus: 200, user: { id, name, isadmin } };
       } else {
         // console.log("Invalid Credentials");
         data = { loginStatus: 401 }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
@@ -111,33 +113,28 @@ app.post("/addcategory", async (req, res) => {
 
 app.get("/admin/categories", async (req, res) => {
   try {
-    const categories = await pool.query(
-      'select name from categories'
-    )
+    const categories = await pool.query("select name from categories");
 
-    const data = {categories: categories.rows}
+    const data = { categories: categories.rows };
     // console.log(data)
-    res.send(data)
-    
+    res.send(data);
   } catch (error) {
     console.error(error);
   }
 });
 
-
-
 //Modified addProduct handle to handle image upload also
 
-app.post("/admin/addproduct",upload.single("image"),async (req, res) => {
-  const {category, name, description, price, stock_available } = req.body;
+app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
+  const { category, name, description, price, stock_available } = req.body;
   // console.log(req.body)
   // console.log(req.file)
-  const imagePath = req.file.path
-  
+  const imagePath = req.file.path;
+
   try {
     const newProduct = await pool.query(
       "insert into products(category,name,description,price,stock_available,image) values ($1,$2,$3,$4,$5,$6) returning *",
-      [category,name, description, price, stock_available,imagePath]
+      [category, name, description, price, stock_available, imagePath]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
@@ -148,14 +145,24 @@ app.post("/admin/addproduct",upload.single("image"),async (req, res) => {
   }
 });
 
+//get all products route
+app.get("/allproducts", async (req, res) => {
+  try {
+    const products = await pool.query(`select * from products`);
+    res.send(products.rows);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 app.post("/checkusersloggedintokens", async (req, res) => {
   const { userToken } = req.body;
-  console.log("token :", userToken);
+  // console.log("token :", userToken);
   try {
     const user = await pool.query(
       `select * from users where '${userToken}' = ANY (logged_in_tokens)`
     );
-    console.log(user);
+    // console.log(user);
     if (user.rows.length) {
       res.send(true);
     } else {
@@ -215,6 +222,32 @@ app.post("/userdetails", async (req, res) => {
     res.send({ id, name, email, isadmin, address, phone });
   } catch (err) {
     res.send({});
+  }
+});
+
+//searchProducts
+app.post("/search", async (req, res) => {
+  // console.log("body", req.body);
+  const { searchTerms } = req.body;
+  let queryTerm = "";
+  if (searchTerms?.length) {
+    searchTerms.map((term, index) => {
+      if (index === searchTerms.length - 1) {
+        queryTerm += `${term}`;
+      } else {
+        queryTerm += `${term}&`;
+      }
+    });
+  }
+
+  try {
+    const searchResult = await pool.query(
+      `SELECT * FROM products WHERE to_tsvector(name) @@ to_tsquery( '${queryTerm}')`
+    );
+    res.send(searchResult.rows);
+  } catch (err) {
+    console.error(err);
+    res.send([]);
   }
 });
 

@@ -55,6 +55,12 @@ function Provider({ children }) {
     }
   }, [userToken, fetchUserDetails, isValidToken]);
 
+  const logout = () => {
+    localStorage.removeItem("userToken");
+    setAppUser({});
+    setUserToken("");
+    removeSavedUserToken(userToken, appUser.id);
+  };
   const generateRandomString = (len) => {
     let result = "";
     const characters =
@@ -81,6 +87,7 @@ function Provider({ children }) {
     userToken,
     setUserToken,
     removeSavedUserToken,
+    logout,
   };
 
   return (
