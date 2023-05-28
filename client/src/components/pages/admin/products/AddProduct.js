@@ -105,6 +105,11 @@ function AddProduct() {
             name="image"
             valuePropName="fileList"
             getValueFromEvent={(e) => e.fileList}
+            rules={[{
+              required: true,
+              message: "please upload image"
+            }
+            ]}
           >
             <Upload name="image" accept="image/*" beforeUpload={() => false}>
               <Button icon={<UploadOutlined />}>Upload image</Button>
