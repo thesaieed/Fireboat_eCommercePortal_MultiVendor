@@ -221,7 +221,7 @@ app.get("/admin/productdetails", async (req, res) => {
       [productId]
     );
     if (productDetails.rows.length === 0) {
-      res.send("product not found");
+      res.sendStatus(404);
     } else {
       res.send(productDetails.rows[0]);
     }
