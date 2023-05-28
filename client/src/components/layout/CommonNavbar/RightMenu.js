@@ -1,0 +1,142 @@
+import React from "react";
+import { Menu, Button, Dropdown, Space } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { UserOutlined, LogoutOutlined, DownOutlined } from "@ant-design/icons";
+import useAllContext from "../../../context/useAllContext";
+
+const RightMenu = ({ mode, id }) => {
+  const { appUser, logout } = useAllContext();
+  const navigate = useNavigate();
+  const dashboardIcon = [
+    <svg
+      width="15"
+      height="15"
+      viewBox="5 2 15 15"
+      xmlns="http://www.w3.org/2000/svg"
+      key={0}
+    >
+      <path
+        d="M3 4C3 3.44772 3.44772 3 4 3H16C16.5523 3 17 3.44772 17 4V6C17 6.55228 16.5523 7 16 7H4C3.44772 7 3 6.55228 3 6V4Z"
+        fill="grey"
+      ></path>
+      <path
+        d="M3 10C3 9.44771 3.44772 9 4 9H10C10.5523 9 11 9.44771 11 10V16C11 16.5523 10.5523 17 10 17H4C3.44772 17 3 16.5523 3 16V10Z"
+        fill="grey"
+      ></path>
+      <path
+        d="M14 9C13.4477 9 13 9.44771 13 10V16C13 16.5523 13.4477 17 14 17H16C16.5523 17 17 16.5523 17 16V10C17 9.44771 16.5523 9 16 9H14Z"
+        fill="grey"
+      ></path>
+    </svg>,
+  ];
+  const items = [
+    appUser.isadmin
+      ? {
+          label: <Link to="/admin/dashboard">Dashboard</Link>,
+          key: "dashboard",
+          icon: dashboardIcon,
+        }
+      : null,
+    {
+      label: "Profile",
+      key: "1",
+      icon: <UserOutlined />,
+    },
+    {
+      label: (
+        <Button
+          type="danger"
+          block
+          onClick={() => {
+            logout();
+          }}
+        >
+          <LogoutOutlined /> Logout
+        </Button>
+      ),
+      key: "2",
+    },
+  ];
+
+  const menuProps = {
+    items,
+  };
+
+  return appUser.id ? (
+    <>
+      <Dropdown menu={menuProps} className="Dropdown">
+        <Space>
+          {<UserOutlined />}
+          <span className="navUsername">{appUser.name}</span>
+          <DownOutlined />
+        </Space>
+      </Dropdown>
+
+      <Menu mode={mode} className="navMenu ">
+        {appUser?.id ? (
+          <Menu.SubMenu
+            title={
+              <>
+                {<UserOutlined />}
+                <span className="navUsername">{appUser.name}</span>
+              </>
+            }
+          >
+            {appUser.isadmin ? (
+              <Menu.Item key="dashboard">
+                <Link to="/admin/dashboard">{dashboardIcon} Dashboard</Link>
+              </Menu.Item>
+            ) : null}
+            <Menu.Item key="profile">
+              <UserOutlined /> Profile
+            </Menu.Item>
+            <Menu.Item key="logout">
+              <Button
+                type="danger"
+                onClick={() => {
+                  logout();
+                }}
+              >
+                <LogoutOutlined /> Logout
+              </Button>
+            </Menu.Item>
+          </Menu.SubMenu>
+        ) : (
+          <Menu.Item key="login" className="navLoginMenu">
+            <Button
+              className="navLoginBtn"
+              type="primary"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Login
+            </Button>
+          </Menu.Item>
+        )}
+      </Menu>
+    </>
+  ) : (
+    <>
+      <Menu mode={mode} className="navMenu">
+        <Menu.Item key="1">
+          <Link to="/login">
+            <UserOutlined />
+            <span style={{ fontWeight: 800 }}> Login</span>
+          </Link>
+        </Menu.Item>
+      </Menu>
+      <Button type="link" className="Dropdown">
+        <Link to="/login">
+          <UserOutlined />
+          <span style={{ fontWeight: 800 }}> Login</span>
+        </Link>
+      </Button>
+    </>
+  );
+
+  //
+};
+
+export default RightMenu;

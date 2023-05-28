@@ -19,7 +19,6 @@ import {
   UserOutlined,
   IdcardOutlined,
   MobileOutlined,
-  // ShoppingCartOutlined,
   LockOutlined,
 } from "@ant-design/icons";
 
@@ -42,14 +41,19 @@ export default function SignUp() {
     setIsValidToken,
     setUserToken,
     isValidToken,
+    appUser,
   } = useAllContext();
 
   const navigate = useNavigate();
   useEffect(() => {
     if (isValidToken) {
-      navigate("/admin/dashboard");
+      if (appUser.isadmin) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     }
-  }, [isValidToken]);
+  }, [isValidToken, appUser.isadmin]);
 
   const onFinish = async (values) => {
     try {
@@ -74,7 +78,11 @@ export default function SignUp() {
           console.error(err);
         }
         form.resetFields();
-        navigate("/admin/dashboard");
+        if (response.data.user.isadmin === true) {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
       } else {
         setErrorMessage("Something went Wrong !");
       }

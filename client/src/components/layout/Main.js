@@ -17,7 +17,7 @@ import Sidenav from "./Sidenav";
 import Header from "./Header";
 import Footer from "./Footer";
 import useAllContext from "../../context/useAllContext";
-import { LoadingScreen } from "./LoadingScreen";
+import LoadingScreen from "./LoadingScreen";
 import { useNavigate } from "react-router-dom";
 
 const { Header: AntHeader, Content, Sider } = Layout;
