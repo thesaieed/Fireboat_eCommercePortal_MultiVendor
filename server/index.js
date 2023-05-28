@@ -1,11 +1,11 @@
 const express = require("express");
 const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
-const multer = require("multer")
+const multer = require("multer");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
-
+app.use("/uploads", express.static("uploads"));
 //configuring disk storage
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -19,16 +19,14 @@ app.use(express.json());
 // });
 
 //Alternate storage object with simple file name
-const storage = multer.diskStorage(
-  {
-    destination: function (req,file,cb){
-      return cb(null,"./uploads")
-    },
-    filename: function (req,file,cb){
-      return cb(null,`${Date.now()}-${file.originalname}`)
-    }
-  }
-)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    return cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    return cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
 
 const upload = multer({ storage: storage });
 
@@ -111,33 +109,28 @@ app.post("/addcategory", async (req, res) => {
 
 app.get("/admin/categories", async (req, res) => {
   try {
-    const categories = await pool.query(
-      'select name from categories'
-    )
+    const categories = await pool.query("select name from categories");
 
-    const data = {categories: categories.rows}
+    const data = { categories: categories.rows };
     // console.log(data)
-    res.send(data)
-    
+    res.send(data);
   } catch (error) {
     console.error(error);
   }
 });
 
-
-
 //Modified addProduct handle to handle image upload also
 
-app.post("/admin/addproduct",upload.single("image"),async (req, res) => {
-  const {category, name, description, price, stock_available } = req.body;
+app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
+  const { category, name, description, price, stock_available } = req.body;
   // console.log(req.body)
   // console.log(req.file)
-  const imagePath = req.file.path
-  
+  const imagePath = req.file.path;
+
   try {
     const newProduct = await pool.query(
       "insert into products(category,name,description,price,stock_available,image) values ($1,$2,$3,$4,$5,$6) returning *",
-      [category,name, description, price, stock_available,imagePath]
+      [category, name, description, price, stock_available, imagePath]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
@@ -150,12 +143,12 @@ app.post("/admin/addproduct",upload.single("image"),async (req, res) => {
 
 app.post("/checkusersloggedintokens", async (req, res) => {
   const { userToken } = req.body;
-  console.log("token :", userToken);
+  // console.log("token :", userToken);
   try {
     const user = await pool.query(
       `select * from users where '${userToken}' = ANY (logged_in_tokens)`
     );
-    console.log(user);
+    // console.log(user);
     if (user.rows.length) {
       res.send(true);
     } else {
@@ -215,6 +208,165 @@ app.post("/userdetails", async (req, res) => {
     res.send({ id, name, email, isadmin, address, phone });
   } catch (err) {
     res.send({});
+  }
+});
+
+//handle get request from showproductdetails
+app.get("/admin/productdetails", async (req, res) => {
+  const productId = req.query.id;
+  // console.log(productId)
+  try {
+    const productDetails = await pool.query(
+      "select * from products where id =$1",
+      [productId]
+    );
+    if (productDetails.rows.length === 0) {
+      res.send("product not found");
+    } else {
+      res.send(productDetails.rows[0]);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("internal Server error");
+  }
+});
+
+// //handle Addtocart post request
+// app.post("/addtocart",async(req,res) =>{
+//   try {
+//     const {user_id,product_id,quantity} = req.body
+//     const data = await pool.query("insert into cart(user_id,product_id,quantity) values($1,$2,$3) returning *",[user_id,product_id,quantity])
+//   //  console.log(req.body)
+//   // console.log("cart:",data.rows[0])
+//   res.send(data)
+//   } catch (error) {
+//     console.error(error)
+//     res.status(500).send("internal server error")
+//   }
+// })
+
+// Handle Addtocart post request
+app.post("/addtocart", async (req, res) => {
+  try {
+    const { user_id, product_id, quantity } = req.body;
+
+    // Check if the same user and product combination already exists in the cart
+    const existingCartItem = await pool.query(
+      "SELECT * FROM cart WHERE user_id = $1 AND product_id = $2",
+      [user_id, product_id]
+    );
+
+    if (existingCartItem.rows.length > 0) {
+      // If the item exists, update the quantity
+      const updatedCartItem = await pool.query(
+        "UPDATE cart SET quantity = $1 WHERE user_id = $2 AND product_id = $3 RETURNING *",
+        [quantity, user_id, product_id]
+      );
+
+      res.send(updatedCartItem.rows[0]);
+    } else {
+      // If the item doesn't exist, create a new entry
+      const newCartItem = await pool.query(
+        "INSERT INTO cart(user_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *",
+        [user_id, product_id, quantity]
+      );
+
+      res.send(newCartItem.rows[0]);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+});
+
+//handle get request from Cart
+app.get("/cart", async (req, res) => {
+  const user_id = req.query.id;
+  // console.log(user_id)
+  try {
+    const cartDetails1 = await pool.query(
+      "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
+      [user_id]
+    );
+    // console.log(cartDetails1.rows)
+    if (cartDetails1.rows.length === 0) {
+      res.send("Could not fetch the cart details");
+    } else {
+      data1 = cartDetails1.rows;
+      // console.log(data1)
+    }
+
+    const productIds = data1.map((item) => item.product_id);
+    // console.log(productIds)
+    const query = {
+      text: "SELECT name, price, image, category FROM products WHERE  id= ANY($1::int[])",
+      values: [productIds],
+    };
+    const cartDetails2 = await pool.query(query);
+
+    if (cartDetails2.rows.length === 0) {
+      res.send("Could not fetch the product details");
+    } else {
+      data2 = cartDetails2.rows;
+      // console.log(cartDetails2.rows)
+    }
+
+    //optional to be added if needed
+    const cartDetails3 = await pool.query("Select * from users where id=$1", [
+      user_id,
+    ]);
+
+    if (cartDetails3.rows.length === 0) {
+      res.send("Could not fetch the user details");
+    } else {
+      data3 = cartDetails3.rows;
+      // console.log(data3)
+    }
+
+    //Now Sending the required data Modify according to need
+    const combinedData = {
+      data1,
+      data2,
+      data3,
+    };
+    // console.log(combinedData)
+    res.json(combinedData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("internal Server error");
+  }
+});
+
+// Handle PUT request to update cart item quantity
+app.put("/cart/:id", async (req, res) => {
+  const itemId = req.params.id;
+  const { quantity } = req.body;
+  // console.log(itemId,quantity)
+  try {
+    // Update the quantity of the cart item in the database
+    const updateQuery = "UPDATE cart SET quantity = $1 WHERE id = $2";
+    await pool.query(updateQuery, [quantity, itemId]);
+
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+//Handle delete request from cart
+app.delete("/cart/:itemId", async (req, res) => {
+  const itemId = req.params.itemId;
+  // console.log(itemId)
+  try {
+    // Perform the database operation to delete the item from the cart
+    await pool.query("DELETE FROM cart WHERE id = $1", [itemId]);
+
+    // Send a success response
+    res.send("Item deleted from cart successfully");
+  } catch (error) {
+    console.error("Error deleting item from cart:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
