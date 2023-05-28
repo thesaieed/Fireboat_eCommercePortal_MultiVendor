@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import useAllContext from "../../../../context/useAllContext";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button, Card, Col, Layout, message, Modal, Row } from "antd";
 
 function ShowProductDetails() {
@@ -11,13 +11,14 @@ function ShowProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const appUser = useAllContext();
+  const navigate = useNavigate();
   // const productId = 29;
   // const { productId } = useParams();
   // console.log(productId);
   // const productId = props.match.params.id;
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
-  console.log(productId);
+  // console.log(productId);
 
   // Fetch product details
   useEffect(() => {
@@ -29,12 +30,16 @@ function ShowProductDetails() {
         );
         setProductDetails(response.data);
       } catch (error) {
-        console.error(error);
+        if (error.response.status === 404) {
+          navigate("/404");
+        } else {
+          console.error(error);
+        }
       }
     };
 
     fetchProductDetails();
-  }, []);
+  }, [navigate]);
 
   // Set image URL
   useEffect(() => {
@@ -76,7 +81,9 @@ function ShowProductDetails() {
     setIsModalVisible(false);
   };
   // console.log(productDetails);
-
+  if (productDetails === null) {
+    return <p>Loading</p>;
+  }
   if (productDetails) {
     return (
       <Layout className="layout-spd">

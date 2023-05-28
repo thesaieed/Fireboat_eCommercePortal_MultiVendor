@@ -31,6 +31,23 @@ function App() {
     <div className="App">
       <Routes>
         <Route index element={<Home />} />
+        <Route
+          path="/404"
+          element={
+            <h1
+              style={{
+                fontFamily: "cursive",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
+                fontSize: "5rem",
+              }}
+            >
+              !Not Found
+            </h1>
+          }
+        />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
         <Route
