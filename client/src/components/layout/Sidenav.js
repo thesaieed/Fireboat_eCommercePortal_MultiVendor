@@ -16,7 +16,7 @@ import logo from "../../assets/images/logo.png";
 import { PlusCircleOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import useAllContext from "../../context/useAllContext";
 
-function Sidenav({ setAppUser, color, setUserToken }) {
+function Sidenav({ color }) {
   const dashboard = [
     <svg
       width="20"
@@ -78,7 +78,7 @@ function Sidenav({ setAppUser, color, setUserToken }) {
     </svg>,
   ];
 
-  const { removeSavedUserToken, userToken, appUser } = useAllContext();
+  const { logout } = useAllContext();
 
   return (
     <>
@@ -184,10 +184,7 @@ function Sidenav({ setAppUser, color, setUserToken }) {
         <Menu.Item key="99">
           <NavLink
             onClick={() => {
-              localStorage.removeItem("userToken");
-              setAppUser({});
-              setUserToken("");
-              removeSavedUserToken(userToken, appUser.id);
+              logout();
             }}
           >
             <span className="icon">{signup}</span>

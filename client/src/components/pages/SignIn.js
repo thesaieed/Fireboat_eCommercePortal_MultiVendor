@@ -1,14 +1,3 @@
-/*!
-=========================================================
-* Muse Ant Design Dashboard - v1.0.0
-=========================================================
-* Product Page: https://www.creative-tim.com/product/muse-ant-design-dashboard
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/muse-ant-design-dashboard/blob/main/LICENSE.md)
-* Coded by Creative Tim
-=========================================================
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -45,6 +34,7 @@ function SignIn() {
 
   const {
     setAppUser,
+    appUser,
     generateRandomString,
     setIsValidToken,
     setUserToken,
@@ -53,9 +43,13 @@ function SignIn() {
 
   useEffect(() => {
     if (isValidToken) {
-      navigate("/admin/dashboard");
+      if (appUser.isadmin) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     }
-  }, [isValidToken]);
+  }, [isValidToken, appUser.isadmin]);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -82,7 +76,12 @@ function SignIn() {
         } catch (err) {
           console.error(err);
         }
-        navigate("/admin/dashboard");
+        if (res.data.user.isadmin === true) {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
+
         break;
       case 401:
         // console.log("Invalid Credentials");
@@ -107,33 +106,8 @@ function SignIn() {
 
   return (
     <>
-      <Layout className="layout-default layout-signin bg-none">
-        {/* <Header>
-          <div className="header-col header-brand">
-            <h5>AlSaleels</h5>
-          </div>
-          <div className="header-col header-nav">
-            <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
-              <Menu.Item key="1">
-                <Link to="/">
-                  <span> Home</span>
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="">
-                  <span>Our Products</span>
-                </Link>
-              </Menu.Item>
-            </Menu>
-          </div>
-          <div className="header-col header-btn">
-            <Button type="primary">
-              <ShoppingCartOutlined />
-              Cart
-            </Button>
-          </div>
-        </Header> */}
-        <Content className="signin">
+      <Layout className="layout-default layout-signin bg-none vh-100 d-flex ">
+        <Content className="signin d-flex ">
           <Row gutter={[24, 0]} justify="space-around">
             <Col
               className=""
@@ -154,7 +128,6 @@ function SignIn() {
                 className="row-col"
               >
                 <Form.Item
-                  className="username"
                   type="email"
                   // label="Email"
                   name="email"
@@ -242,13 +215,6 @@ function SignIn() {
           </Row>
         </Content>
         <Footer>
-          {/* <Menu mode="horizontal">
-            <Menu.Item key="13">About Us</Menu.Item>
-
-            <Menu.Item key="15">Products</Menu.Item>
-            <Menu.Item key="16">Blogs</Menu.Item>
-            <Menu.Item key="17">Pricing</Menu.Item>
-          </Menu> */}
           <Menu mode="horizontal" className="menu-nav-social">
             <Menu.Item key="19">
               <Link to="#">{<TwitterOutlined />}</Link>

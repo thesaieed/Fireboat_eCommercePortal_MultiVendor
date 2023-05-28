@@ -1,26 +1,231 @@
-/*!
-=========================================================
-* Muse Ant Design Dashboard - v1.0.0
-=========================================================
-* Product Page: https://www.creative-tim.com/product/muse-ant-design-dashboard
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/muse-ant-design-dashboard/blob/main/LICENSE.md)
-* Coded by Creative Tim
-=========================================================
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
+
+.ant-btn-primary {
+  background-color: #ff9a03;
+  color: #000;
+  border: transparent;
+}
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  color: #000;
+  border-color: #fcd217;
+  background: #fcd217;
+}
+/* Navbar */
+
+.navbar {
+  padding-bottom: 1px;
+  /* border-bottom: solid 1px #e8e8e8; */
+  background-color: white;
+  box-shadow: 0 3px 6px -2px rgba(0, 0, 0, 0.12),
+    0 6px 16px -11px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  /* margin-bottom: 20px; */
+  z-index: 99990;
+}
+
+.nav-header {
+  background-color: white;
+  border-bottom: 0;
+  padding: 0 10px 0 0px;
+}
+
+.logo {
+  margin-left: 55px;
+  margin-right: 5px;
+  width: 200px;
+  float: left;
+}
+
+.logo a {
+  display: inline-block;
+  font-size: 20px;
+  text-transform: capitalize;
+}
+
+.navbar-menu {
+  /* width: calc(100% - 200px); */
+  width: 100%;
+  float: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar-menu .ant-layout-header {
+  padding: 0 20px;
+}
+
+.navbar-menu .ant-menu-horizontal {
+  border-bottom: 0;
+}
+
+.navbar-menu .ant-menu-item {
+  padding-bottom: 0px;
+}
+
+.navbar-menu .leftMenu {
+  float: left;
+}
+
+.navbar-menu .rightMenu {
+  float: right;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+}
+.rightMenu .navSearch {
+  width: 15rem;
+  margin: 0 10px 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuButton {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 32px;
+  padding: 6px;
+  margin-top: 10px;
+  margin-left: 5px;
+  display: none;
+  background: none;
+  margin-right: 10px;
+}
+
+.ant-drawer-body {
+  padding: 0;
+}
+
+.ant-drawer-body .ant-menu-horizontal > .ant-menu-item,
+.ant-drawer-body .ant-menu-horizontal > .ant-menu-submenu {
+  display: inline-block;
+  width: 100%;
+}
+
+.ant-drawer-body .ant-menu-horizontal {
+  border-bottom: none;
+}
+
+.ant-drawer-body .ant-menu-horizontal > .ant-menu-item:hover {
+  border-bottom-color: transparent;
+}
+
+.navUsername {
+  display: inline-block;
+  margin-left: -1px;
+}
+.Dropdown {
+  background: transparent !important;
+}
+.DropdownBtn {
+  border: none;
+  background: #fafafa !important;
+}
+.navMenu {
+  display: none;
+}
+.navLoginMenu {
+  margin-top: 5px;
+  /* background-color: #000 !important; */
+  height: 100% !important;
+}
+.navLoginBtn {
+  background-color: #000 !important;
+}
+
+#searchBtn {
+  display: none;
+}
+#searchBtn svg {
+  width: 17px;
+  height: 17px;
+}
+/* Home Sidebar Css */
+.filterMenuButton {
+  display: none;
+}
+@media (max-width: 1000px) {
+  .navSearch {
+    display: none !important;
+  }
+  #searchBtn {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .Dropdown {
+    display: none !important;
+  }
+  .ant-menu-overflow-item-rest {
+    display: none !important;
+  }
+
+  .navbar-menu {
+    justify-content: end;
+  }
+  .menuButton {
+    display: block;
+    margin-right: 10px;
+  }
+
+  .leftMenu,
+  .rightMenu {
+    display: none;
+  }
+
+  .logo a {
+    margin-left: -10px;
+  }
+
+  .ant-drawer-title > .brand-font {
+    margin-bottom: 0;
+  }
+
+  .username {
+    display: inline-block;
+  }
+  .navMenu {
+    display: block;
+  }
+
+  /* Home Sidebar Css */
+  .homeSidebar {
+    display: none;
+  }
+  .filterMenuButton {
+    display: block;
+    margin-right: 5px;
+    margin-left: 15px;
+    border: none;
+    color: #000;
+    background-color: #ff9c0a;
+  }
+  .filterMenuButton:active {
+    background-color: #dd8604;
+  }
+}
+
+/* Navbar End */
+
 body {
   padding: 0 0 30px 0;
   background-color: #fafafa;
   letter-spacing: -0.3px;
-  color: rgba(0, 0, 0, 0.65);
+  color: rgba(0, 0, 0, 0.6);
   font-size: 14px;
   line-height: 1.6;
   font-weight: 400;
-  font-family: open sans, Helvetica, Arial, sans-serif;
+  font-family: Nunito, Helvetica, Arial, sans-serif;
 }
 .ant-layout.ant-layout-has-sider {
   flex-direction: row;
+}
+.layout-default {
+  margin: 0px;
 }
 .layout-dashboard {
   background: transparent;
@@ -40,6 +245,11 @@ body {
   -moz-border-radius: 0 !important;
   -ms-border-radius: 0 !important;
   -o-border-radius: 0 !important;
+}
+.nav-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (min-width: 992px) {
@@ -205,7 +415,7 @@ body {
   .ant-menu-submenu
   .active
   .icon {
-  background-color: #1890ff;
+  /* background-color: #1890ff; */
   background-color: #ff9c0a;
 }
 
@@ -1163,6 +1373,9 @@ span.blue {
 .justify-content-around {
   justify-content: space-around !important;
 }
+.justify-content-evenly {
+  justify-content: space-evenly !important;
+}
 .vh-100 {
   height: 100vh !important;
 }
@@ -1853,7 +2066,7 @@ body {
 
 .header-col.header-brand h5 {
   margin: 0px;
-  color: #fff;
+  color: #fff !important;
   font-size: 14px;
   font-weight: 600;
 }
@@ -1863,6 +2076,11 @@ body {
 .header-col.header-nav {
   color: #fff;
   font-weight: 600;
+}
+.header-col.header-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header-col.header-nav ul li {
@@ -1876,8 +2094,12 @@ body {
 .header-col.header-btn button {
   height: 34px;
   padding: 0 16px;
+  border-color: transparent;
   border-radius: 34px;
   line-height: 33px;
+  background-color: #f29309;
+  color: #000;
+  margin: auto 5px;
 }
 .sign-up-header .content {
   padding-top: 00px;
@@ -2076,8 +2298,10 @@ body {
 /* signin start csss */
 .layout-default.layout-signin header.ant-layout-header {
   display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  background-color: #fff;
+  background-color: #efefef;
   color: #141414;
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
   flex-direction: row;
@@ -2102,7 +2326,7 @@ body {
   vertical-align: middle;
 }
 .layout-default .ant-layout-header .header-nav a {
-  color: #141414;
+  color: #fff;
   padding: 6px 12px;
   font-weight: 400;
 }
@@ -2168,7 +2392,7 @@ body {
   flex-direction: column;
   justify-content: center;
   background: #ffffff;
-  box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+  box-shadow: 0 20px 27px rgb(0 0 0 / 3%);
   padding: 30px !important;
 }
 .signupFooter {
@@ -2177,7 +2401,7 @@ body {
 }
 
 .layout-default .ant-layout-content {
-  padding-top: 40px;
+  padding-top: 0px;
 }
 .font-regular {
   font-weight: 400;
@@ -3124,25 +3348,131 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
 
 /* css added */
 
-.cardAddProduct{
-    width: 100%;
-    max-width: 500px;
-    margin: auto;
-    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
-    border-radius: 12px;
-    margin-top: 20px;
-    margin-bottom: auto;
-  
+.cardAddProduct {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+  border-radius: 12px;
+  margin-top: 20px;
+  margin-bottom: auto;
 }
 
-.ant-select:not(.ant-select-customize-input) .ant-select-selector{
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
   background-color: unset;
   border: unset;
 }
 
-.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant0select-customize-input) .ant-select-selector{
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(
+    .ant0select-customize-input
+  )
+  .ant-select-selector {
   border-color: unset;
   box-shadow: unset;
+}
+
+
+div.ant-upload {
+  width: 100%;
+}
+.w-100 {
+  width: 100%;
+}
+.float-end {
+  float: right;
+}
+
+.featuredProductsRow {
+  color: #ffffff;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.featuredproductsColumn {
+  padding: 20px;
+  display: flex;
+  height: 100%;
+  width: 40%;
+  flex-direction: column;
+  justify-content: center;
+}
+.featuredproductsTitle {
+  font-family: "Trade Winds", cursive;
+  font-size: 1rem !important;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-weight: bolder;
+  letter-spacing: 6px;
+  color: #ffffff !important;
+
+  /* text-shadow: 2px 2px 5px whitesmoke; */
+}
+.featuredproductsDescription {
+  color: #ffffff !important;
+}
+.featuredImg {
+  align-self: center;
+  width: 34.5rem;
+  height: 100%;
+}
+
+@media (max-width: 767px) {
+  .featuredproductsDescription {
+    display: none;
+  }
+}
+
+/* Home Products */
+.productContainer {
+  background-color: white;
+  border: 1px solid rgba(242, 147, 9, 0.2);
+  padding: 10px;
+  width: 22rem;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+.productContainer:hover {
+  border-color: #f29309;
+}
+.productDetails {
+  background-color: #ffffff;
+}
+.productImg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 21rem;
+  height: 23rem;
+  overflow: hidden;
+}
+
+/* Home Sidebar */
+.homeSidebarDiv {
+  /* height: 70vh; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sidebarHeading {
+  color: #000;
+  font-weight: 600;
+  font-size: large;
+}
+.sidebarSubHeading {
+  margin-left: 1rem;
+  color: grey;
+  font-size: medium;
+  font-weight: 500;
+}
+.sidebarPriceDiv {
+  padding: 0 7px;
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .cardShowDetails{
@@ -3618,3 +3948,4 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
   }
 }
 }
+
