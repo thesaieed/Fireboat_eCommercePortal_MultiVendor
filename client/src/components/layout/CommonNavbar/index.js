@@ -94,10 +94,12 @@ const CommonNavbar = ({ handleSearch }) => {
       </div>
 
       <div className="header-col header-btn">
-        <Button type="primary">
-          <ShoppingCartOutlined />
-          Cart
-        </Button>
+        <Link to="/cart">
+          <Button type="primary">
+            <ShoppingCartOutlined />
+            Cart
+          </Button>
+        </Link>
       </div>
     </Layout.Header>
   );
