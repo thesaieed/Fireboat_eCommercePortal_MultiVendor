@@ -25,6 +25,7 @@ yarn-error.log*
 *.jpg
 *.png
 .vscode/
+uploads/
 
 
 
