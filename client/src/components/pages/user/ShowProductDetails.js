@@ -62,7 +62,24 @@ function ShowProductDetails() {
     }
   };
 
+  // const handleAddToCart = async () => {
+  //   try {
+  //     await axios.post("http://localhost:5000/addtocart", {
+  //       user_id: appUser.appUser.id,
+  //       product_id: productId,
+  //       quantity: quantity,
+  //     });
+  //     message.success("Added to cart");
+  //   } catch (error) {
+  //     console.error("Error adding product to cart:", error);
+  //   }
+  // };
   const handleAddToCart = async () => {
+    if (!appUser.appUser || !appUser.appUser.id) {
+      message.info("Please login to add products to the cart.");
+      return;
+    }
+
     try {
       await axios.post("http://localhost:5000/addtocart", {
         user_id: appUser.appUser.id,
