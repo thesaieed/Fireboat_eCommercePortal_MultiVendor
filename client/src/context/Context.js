@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { createContext, useEffect, useState, useCallback } from "react";
+
 const Context = createContext();
 
 function Provider({ children }) {
   const [appUser, setAppUser] = useState({});
   const [isValidToken, setIsValidToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
 
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
@@ -49,12 +51,6 @@ function Provider({ children }) {
     }
   }, [userToken]);
 
-  useEffect(() => {
-    if (isValidToken) {
-      fetchUserDetails();
-    }
-  }, [userToken, fetchUserDetails, isValidToken]);
-
   const logout = () => {
     localStorage.removeItem("userToken");
     setAppUser({});
@@ -74,6 +70,25 @@ function Provider({ children }) {
     return result;
   };
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/admin/categories"
+      );
+      // console.log("Categories Responce : ", response.data.categories);
+      setCategories(response.data.categories);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isValidToken) {
+      fetchUserDetails();
+    }
+    fetchCategories();
+  }, [userToken, fetchUserDetails, isValidToken, fetchCategories]);
+
   const valuesToShare = {
     appUser,
     setAppUser,
@@ -88,6 +103,8 @@ function Provider({ children }) {
     setUserToken,
     removeSavedUserToken,
     logout,
+    fetchCategories,
+    categories,
   };
 
   return (
