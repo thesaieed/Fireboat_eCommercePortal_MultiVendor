@@ -15,6 +15,31 @@ const CommonNavbar = ({ handleSearch }) => {
   const showDrawer = () => {
     setVisible(!visible);
   };
+  const searchMenuItem = [
+    {
+      label: "",
+      icon: <SearchOutlined />,
+      key: "searchButton",
+      children: [
+        {
+          label: (
+            <Input
+              autoFocus
+              placeholder="Search Products..."
+              value={searchTerm}
+              prefix={<SearchOutlined />}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+              onPressEnter={handleSearch}
+            />
+          ),
+          key: "searchInput",
+          style: { height: 60 },
+        },
+      ],
+    },
+  ];
 
   // If you do not want to auto-close the mobile drawer when a path is selected
   // Delete or comment out the code block below
@@ -49,25 +74,12 @@ const CommonNavbar = ({ handleSearch }) => {
             id="searchBtn"
             multiple
             key="search"
-          >
-            <Menu.SubMenu title={<>{<SearchOutlined />}</>}>
-              <Menu.Item style={{ height: 60 }} key="searchItem">
-                <Input
-                  autoFocus
-                  placeholder="Search Products..."
-                  value={searchTerm}
-                  prefix={<SearchOutlined />}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                  }}
-                  onPressEnter={handleSearch}
-                />
-              </Menu.Item>
-            </Menu.SubMenu>
-          </Menu>
+            items={searchMenuItem}
+          />
 
           <div className="navSearch">
             <Input
+              key="search"
               placeholder="Search Products..."
               value={searchTerm}
               prefix={<SearchOutlined />}

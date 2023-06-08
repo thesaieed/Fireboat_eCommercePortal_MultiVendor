@@ -8,27 +8,19 @@ import {
   Radio,
   Space,
 } from "antd";
-import { useState } from "react";
 
-function BrowseSidebar() {
-  const options = [
-    {
-      value: "Pencil",
-    },
-    {
-      value: "Charts",
-    },
-    {
-      value: "Canvas",
-    },
-    {
-      value: "Ink",
-    },
-  ];
-  const [sortValue, setSortValue] = useState(1);
-  const onSortChange = (e) => {
-    setSortValue(e.target.value);
-  };
+function BrowseSidebar({
+  sortValue,
+  onSortChange,
+  categories,
+  onCategoryChange,
+  priceRange,
+  setPriceRange,
+}) {
+  const categoryOptions = [];
+  for (let category of categories) {
+    categoryOptions.push({ value: category });
+  }
   const tagRender = (props) => {
     const { label, closable, onClose } = props;
     const onPreventMouseDown = (event) => {
@@ -50,6 +42,40 @@ function BrowseSidebar() {
     );
   };
 
+  const handleCategoryChange = (selectedcategories) => {
+    onCategoryChange(selectedcategories);
+  };
+  const handlePriceSliderChange = (e) => {
+    console.log(e);
+    setPriceRange({ minPrice: e[0], maxPrice: e[1] });
+  };
+
+  const categoryMenuItems = [
+    {
+      label: (
+        <Select
+          placeholder="Select Categories"
+          mode="multiple"
+          showArrow
+          tagRender={tagRender}
+          // defaultValue={[]}
+          onChange={handleCategoryChange}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          options={categoryOptions}
+        />
+      ),
+      key: "browseCategory",
+      style: {
+        width: "100%",
+        border: "1px solid lightgrey",
+        height: "max-content",
+      },
+    },
+  ];
+
   return (
     <div className="homeSidebarDiv">
       <div className="sidebarHeading text-center">
@@ -63,9 +89,10 @@ function BrowseSidebar() {
         <div>
           <Radio.Group value={sortValue} onChange={onSortChange}>
             <Space direction="vertical">
-              <Radio value={1}>Price -- Low to High</Radio>
-              <Radio value={2}>Price -- High to Low</Radio>
-              <Radio value={3}>Newest First</Radio>
+              <Radio value={0}>Relevance</Radio>
+              <Radio value={1}>Newest First</Radio>
+              <Radio value={2}>Price -- Low to High</Radio>
+              <Radio value={3}>Price -- High to Low</Radio>
             </Space>
           </Radio.Group>
         </div>
@@ -73,29 +100,14 @@ function BrowseSidebar() {
       <div>
         <hr />
       </div>
-      <div className="sidebarSubHeading">
+      <div className="sidebarSubHeading ">
         <span>Category</span>
-        <Menu theme="light" mode="inline">
-          <Menu.Item
-            key="1"
-            style={{
-              width: "100%",
-              border: "1px solid lightgrey",
-            }}
-          >
-            <Select
-              placeholder="Select Categories"
-              mode="multiple"
-              showArrow
-              tagRender={tagRender}
-              // defaultValue={[]}
-              style={{
-                width: "100%",
-              }}
-              options={options}
-            />
-          </Menu.Item>
-        </Menu>
+        <Menu
+          theme="light"
+          mode="inline"
+          items={categoryMenuItems}
+          className="categoryMenu"
+        />
       </div>
 
       <div>
@@ -107,12 +119,27 @@ function BrowseSidebar() {
           range={{
             draggableTrack: true,
           }}
-          defaultValue={[20, 50]}
+          min={priceRange.minPrice}
+          max={priceRange.maxPrice}
+          onChange={handlePriceSliderChange}
+          value={[priceRange.minPrice, priceRange.maxPrice]}
         />
         <div className="sidebarPriceDiv">
-          <InputNumber placeholder="min" min={1} max={10} defaultValue={2} />
+          <InputNumber
+            placeholder="min"
+            value={priceRange.minPrice}
+            onChange={(e) => {
+              setPriceRange({ ...priceRange, minPrice: e });
+            }}
+          />
           <span>to</span>
-          <InputNumber placeholder="max" min={1} max={10} defaultValue={10} />
+          <InputNumber
+            placeholder="max"
+            value={priceRange.maxPrice}
+            onChange={(e) => {
+              setPriceRange({ ...priceRange, maxPrice: e });
+            }}
+          />
         </div>
       </div>
       <div>

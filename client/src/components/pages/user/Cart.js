@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAllContext from "../../../context/useAllContext";
 import { Button, Card, Popconfirm, Modal, Layout } from "antd";
@@ -9,6 +10,12 @@ import { Content } from "antd/lib/layout/layout";
 function Cart() {
   const appUser = useAllContext();
   const [productData, setProductData] = useState([]);
+
+  const navigate = useNavigate();
+  const handleSearch = (e) => {
+    navigate(`/browse/?search=${e.target.value}`);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       // console.log(appUser.appUser.id)
@@ -21,7 +28,7 @@ function Cart() {
 
         const data1 = response.data.data1;
         const data2 = response.data.data2;
-        const data3 = response.data.data3;
+        // const data3 = response.data.data3;
         // console.log(data1)
         // console.log(data2)
         // console.log(data3)
@@ -126,7 +133,7 @@ function Cart() {
 
   return (
     <Layout className="layout-default">
-      <CommonNavbar />
+      <CommonNavbar handleSearch={handleSearch} />
       <Content className="cart-content">
         <Card>
           <div className="cart-header">

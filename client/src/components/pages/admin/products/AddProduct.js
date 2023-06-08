@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useCallback } from "react";
+import { React, useState, useEffect } from "react";
 import {
   Alert,
   Button,
@@ -13,38 +13,24 @@ import {
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import useAllContext from "../../../context/useAllContext";
+import useAllContext from "../../../../context/useAllContext";
 import { UploadOutlined } from "@ant-design/icons";
 import cardImage from "../../../../assets/images/addproductCardImg.png";
 
 function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
   const [form] = Form.useForm();
-  // const { setAppUser } = useAllContext();
+  const { categories, fetchCategories } = useAllContext();
   const navigate = useNavigate();
-  //.
-  const [categories, setCategories] = useState([]);
+
   //get request to get the categories available stored in db
   const { Option } = Select;
-
-  const fetchCategories = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/categories"
-      );
-      console.log(response.data);
-      setCategories(response.data.categories);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
   const onFinish = async (values) => {
-    // console.log("Success", values);
     try {
       const formData = new FormData();
       formData.append("category", values.category);
@@ -83,7 +69,6 @@ function AddProduct() {
   return (
     <>
       <Card
-        //class name card-signup header-solid h-full ant-card pt-0  mb-2
         className=" cardAddProduct header-solid ant-card"
         title={
           <h5
@@ -108,6 +93,22 @@ function AddProduct() {
           className="row-col"
           // encType="multipart/form-data"
         >
+          <Form.Item
+            name="image"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+            rules={[
+              {
+                required: true,
+                message: "please upload image",
+              },
+            ]}
+          >
+            <Upload name="image" accept="image/*" beforeUpload={() => false}>
+              <Button icon={<UploadOutlined />}>Upload image</Button>
+            </Upload>
+          </Form.Item>
+
           <Row>
             <Col style={{ paddingRight: ".5rem" }} span={16}>
               {" "}
