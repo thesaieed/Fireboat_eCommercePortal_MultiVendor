@@ -3,26 +3,10 @@ const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
 const multer = require("multer");
 
-const path = require("path");
-const { log } = require("console");
-const { serialize } = require("v8");
-
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
-
-//configuring disk storage
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./uploads");
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-//     const fileExtension = file.originalname.split(".").pop();
-//     cb(null, file.fieldname + "-" + uniqueSuffix + "." + fileExtension);
-//   },
-// });
 
 //Alternate storage object with simple file name
 const storage = multer.diskStorage({
@@ -116,12 +100,12 @@ app.post("/addcategory", async (req, res) => {
 app.get("/admin/categories", async (req, res) => {
   try {
     const categories = await pool.query("select name from categories");
-
     const data = { categories: categories.rows };
     // console.log(data)
     res.send(data);
   } catch (error) {
     console.error(error);
+    res.send([]);
   }
 });
 
@@ -271,8 +255,6 @@ app.post("/search", async (req, res) => {
     res.send([]);
   }
 });
-
-//handle get request from showproductdetails
 
 // //handle Addtocart post request
 // app.post("/addtocart",async(req,res) =>{

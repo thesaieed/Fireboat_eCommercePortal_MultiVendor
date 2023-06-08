@@ -80,6 +80,117 @@ function Sidenav({ color }) {
 
   const { logout } = useAllContext();
 
+  const sidenavItems = [
+    {
+      label: (
+        <NavLink to="/admin/dashboard">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            {dashboard}
+          </span>
+          <span className="label">Dashboard</span>
+        </NavLink>
+      ),
+      key: "adminDashboard",
+    },
+    {
+      label: <span className="label menu-item-header">Products</span>,
+      key: "productHeading",
+    },
+    {
+      label: (
+        <NavLink to="/admin/products/allproducts">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <UnorderedListOutlined />
+          </span>
+          <span className="label">All Products</span>
+        </NavLink>
+      ),
+      key: "allProducts",
+    },
+    {
+      label: (
+        <NavLink to="/admin/products/addproduct">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <PlusCircleOutlined />
+          </span>
+          <span className="label">Add Product</span>
+        </NavLink>
+      ),
+      key: "addProducts",
+    },
+    {
+      label: <span className="label menu-item-header">Categories</span>,
+      key: "categoriesHeading",
+    },
+    {
+      label: (
+        <NavLink to="/admin/categories">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <UnorderedListOutlined />
+          </span>
+          <span className="label">All Categories</span>
+        </NavLink>
+      ),
+      key: "allcategories",
+    },
+    {
+      label: <span className="label menu-item-header">Accounts</span>,
+      key: "accountHeading",
+    },
+    {
+      label: (
+        <NavLink to="/admin/profile">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            {profile}
+          </span>
+          <span className="label">Profile</span>
+        </NavLink>
+      ),
+      key: "profile",
+    },
+  ];
+
+  const logoutItem = [
+    {
+      label: (
+        <NavLink
+          onClick={() => {
+            logout();
+          }}
+        >
+          <span className="icon">{signup}</span>
+          <span className="label text-danger">Logout</span>
+        </NavLink>
+      ),
+      key: "logout",
+    },
+  ];
+
   return (
     <>
       <div className="brand">
@@ -87,111 +198,8 @@ function Sidenav({ color }) {
         <span>Dashboard</span>
       </div>
       <hr />
-      <Menu theme="light" mode="inline">
-        <Menu.Item key="1">
-          <NavLink to="/admin/dashboard">
-            <span
-              className="icon"
-              style={{
-                background: color,
-              }}
-            >
-              {dashboard}
-            </span>
-            <span className="label">Dashboard</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item className="menu-item-header" key="2">
-          Products
-        </Menu.Item>
-        <Menu.Item key="3">
-          <NavLink to="/admin/products/allproducts">
-            <span
-              className="icon"
-              style={{
-                background: color,
-              }}
-            >
-              <UnorderedListOutlined />
-            </span>
-            <span className="label">All Products</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key="4">
-          <NavLink to="/admin/products/addproduct">
-            <span
-              className="icon"
-              style={{
-                background: color,
-              }}
-            >
-              <PlusCircleOutlined />
-            </span>
-            <span className="label">Add Product</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item className="menu-item-header" key="5">
-          Categories
-        </Menu.Item>
-        <Menu.Item key="6">
-          <NavLink to="/admin/categories">
-            <span
-              className="icon"
-              style={{
-                background: color,
-              }}
-            >
-              {/* {profile} */}
-
-              <UnorderedListOutlined />
-            </span>
-            <span className="label">All Categories</span>
-          </NavLink>
-        </Menu.Item>
-
-        <Menu.Item className="menu-item-header" key="7">
-          Account Pages
-        </Menu.Item>
-        <Menu.Item key="8">
-          <NavLink to="/admin/profile">
-            <span
-              className="icon"
-              style={{
-                background: color,
-              }}
-            >
-              {profile}
-            </span>
-            <span className="label">Profile</span>
-          </NavLink>
-        </Menu.Item>
-
-        {/* <Menu.Item key="9">
-          <NavLink to="/admin/addProduct">
-            <span
-              className="icon"
-              style={{
-                // background: color,
-              }}
-            >
-              {addProduct}
-            </span>
-            <span className="label">Add Product</span>
-          </NavLink>
-        </Menu.Item> */}
-      </Menu>
-      <Menu className="SidebarlogoutMenu">
-        <Menu.Item key="99">
-          <NavLink
-            onClick={() => {
-              logout();
-            }}
-          >
-            <span className="icon">{signup}</span>
-            <span className="label text-danger">Logout</span>
-          </NavLink>
-        </Menu.Item>
-      </Menu>
+      <Menu theme="light" mode="inline" items={sidenavItems} />
+      <Menu className="SidebarlogoutMenu" items={logoutItem} />
       {/* <div className="aside-footer">
         <div
           className="footer-box"
