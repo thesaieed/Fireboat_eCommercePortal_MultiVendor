@@ -1,27 +1,34 @@
-import React from "react";
 import { Menu } from "antd";
 import { Link } from "react-router-dom";
 
 const LeftMenu = ({ mode }) => {
-  return (
-    <Menu mode={mode}>
-      <Menu.Item key="1">
+  const items = [
+    {
+      label: (
         <Link to="/">
-          <span> Home</span>
+          <span> Home </span>
         </Link>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Link to="">
+      ),
+      key: "Home",
+    },
+    {
+      label: (
+        <Link to="/products">
           <span>Our Products</span>
         </Link>
-      </Menu.Item>
-      <Menu.Item key="3">
-        <Link to="">
+      ),
+      key: "products",
+    },
+    {
+      label: (
+        <Link to="/aboutus">
           <span>About Us</span>
         </Link>
-      </Menu.Item>
-    </Menu>
-  );
+      ),
+      key: "aboutus",
+    },
+  ];
+  return <Menu mode={mode} items={items} />;
 };
 
 export default LeftMenu;
