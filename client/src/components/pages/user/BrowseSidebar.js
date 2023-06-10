@@ -4,9 +4,10 @@ import {
   Select,
   Tag,
   InputNumber,
-  Checkbox,
+  // Checkbox,
   Radio,
   Space,
+  Button,
 } from "antd";
 
 function BrowseSidebar({
@@ -16,6 +17,9 @@ function BrowseSidebar({
   onCategoryChange,
   priceRange,
   setPriceRange,
+  sliderRange,
+  selectedCategories,
+  clearAllFilters,
 }) {
   const categoryOptions = [];
   for (let category of categories) {
@@ -45,8 +49,8 @@ function BrowseSidebar({
   const handleCategoryChange = (selectedcategories) => {
     onCategoryChange(selectedcategories);
   };
+
   const handlePriceSliderChange = (e) => {
-    console.log(e);
     setPriceRange({ minPrice: e[0], maxPrice: e[1] });
   };
 
@@ -58,7 +62,8 @@ function BrowseSidebar({
           mode="multiple"
           showArrow
           tagRender={tagRender}
-          // defaultValue={[]}
+          defaultValue={[]}
+          value={selectedCategories}
           onChange={handleCategoryChange}
           style={{
             width: "100%",
@@ -119,10 +124,11 @@ function BrowseSidebar({
           range={{
             draggableTrack: true,
           }}
-          min={priceRange.minPrice}
-          max={priceRange.maxPrice}
+          min={sliderRange.min}
+          max={sliderRange.max}
           onChange={handlePriceSliderChange}
           value={[priceRange.minPrice, priceRange.maxPrice]}
+          // step={Math.floor((priceRange.maxPrice - priceRange.minPrice) / 100)}
         />
         <div className="sidebarPriceDiv">
           <InputNumber
@@ -145,7 +151,13 @@ function BrowseSidebar({
       <div>
         <hr />
       </div>
-      <div className="sidebarSubHeading">
+      <div>
+        <Button type="link" onClick={clearAllFilters}>
+          Clear all Filters
+        </Button>
+      </div>
+
+      {/* <div className="sidebarSubHeading">
         <div>Discount</div>
         <div>
           <Checkbox>10% or more</Checkbox>
@@ -169,7 +181,7 @@ function BrowseSidebar({
         <div>
           <Checkbox>Include out of Stock items</Checkbox>
         </div>
-      </div>
+      </div> */}
 
       {/* <div className="aside-footer">
         <div
