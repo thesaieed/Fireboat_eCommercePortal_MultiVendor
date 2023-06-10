@@ -25,6 +25,10 @@ const Browse = () => {
     minPrice: 0,
     maxPrice: 10000,
   });
+  const [sliderRange, setSliderRange] = useState({
+    min: 0,
+    max: 10000,
+  });
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const onSortChange = (e) => {
@@ -33,6 +37,11 @@ const Browse = () => {
 
   const onCategoryChange = (selectedOptions) => {
     setSelectedCategories(selectedOptions);
+  };
+  const clearAllFilters = () => {
+    setSelectedCategories([]);
+    setSortValue(0);
+    priceRangeSet(browseProducts);
   };
 
   const [searchTerms] = useState(
@@ -55,6 +64,10 @@ const Browse = () => {
     setPriceRange({
       minPrice: Math.min(...prices),
       maxPrice: Math.max(...prices),
+    });
+    setSliderRange({
+      min: Math.min(...prices),
+      max: Math.max(...prices),
     });
   };
 
@@ -80,53 +93,55 @@ const Browse = () => {
     setLoading(false);
   };
 
-  const sortProducts = () => {
-    //sort by Relevance
+  const applyFilters = () => {
+    var filteredArray = [];
+
+    //Filter by category First
+    if (selectedCategories.length) {
+      filteredArray = browseProducts.filter(function (product) {
+        return selectedCategories.includes(product.category);
+      });
+    } else {
+      filteredArray = browseProducts;
+    }
+
+    //filter the new array by Price Range
+    filteredArray = filteredArray.filter(
+      (product) =>
+        product.price >= priceRange.minPrice &&
+        product.price <= priceRange.maxPrice
+    );
+
+    //Sort the new filteredByPrice Array
     if (sortValue === 0) {
-      setShownProducts(
-        [...shownProducts].sort(function (x, y) {
-          return new Date(x.created_at) > new Date(y.created_at) ? 1 : -1;
-        })
-      );
+      filteredArray = [...filteredArray].sort(function (x, y) {
+        return new Date(x.created_at) > new Date(y.created_at) ? 1 : -1;
+      });
     }
 
     //sort by Newest
     if (sortValue === 1) {
-      setShownProducts(
-        [...shownProducts].sort(function (x, y) {
-          return new Date(x.created_at) < new Date(y.created_at) ? 1 : -1;
-        })
-      );
+      filteredArray = [...filteredArray].sort(function (x, y) {
+        return new Date(x.created_at) < new Date(y.created_at) ? 1 : -1;
+      });
     }
 
     //sort by Low Price First
     if (sortValue === 2) {
-      setShownProducts(
-        [...shownProducts].sort(function (x, y) {
-          return x.price > y.price ? 1 : -1;
-        })
-      );
+      filteredArray = [...filteredArray].sort(function (x, y) {
+        return x.price > y.price ? 1 : -1;
+      });
     }
 
     //sort by High Price First
     if (sortValue === 3) {
-      setShownProducts(
-        [...shownProducts].sort(function (x, y) {
-          return x.price < y.price ? 1 : -1;
-        })
-      );
-    }
-  };
-
-  const sortByCategory = () => {
-    if (selectedCategories.length) {
-      const filteredArray = browseProducts.filter(function (product) {
-        return selectedCategories.includes(product.category);
+      filteredArray = [...filteredArray].sort(function (x, y) {
+        return x.price < y.price ? 1 : -1;
       });
-      setShownProducts(filteredArray);
-    } else {
-      setShownProducts(browseProducts);
     }
+
+    // Finally set The shown products
+    setShownProducts(filteredArray);
   };
 
   const showProducts = () => {
@@ -171,12 +186,8 @@ const Browse = () => {
   }, [searchTerms]);
 
   useEffect(() => {
-    sortProducts();
-  }, [sortValue]);
-
-  useEffect(() => {
-    sortByCategory();
-  }, [selectedCategories]);
+    applyFilters();
+  }, [sortValue, selectedCategories, priceRange]);
 
   const showDrawer = () => {
     setVisible(!visible);
@@ -205,6 +216,9 @@ const Browse = () => {
               onCategoryChange={onCategoryChange}
               priceRange={priceRange}
               setPriceRange={setPriceRange}
+              sliderRange={sliderRange}
+              selectedCategories={selectedCategories}
+              clearAllFilters={clearAllFilters}
             />
           </Sider>
 
@@ -223,6 +237,7 @@ const Browse = () => {
               onCategoryChange={onCategoryChange}
               priceRange={priceRange}
               setPriceRange={setPriceRange}
+              sliderRange={sliderRange}
             />
           </Drawer>
           <Content style={{ padding: 16, overflow: "auto" }}>
@@ -257,7 +272,7 @@ const Browse = () => {
                   <Pagination
                     defaultCurrent={1}
                     current={currentPage}
-                    total={browseProducts.length}
+                    total={shownProducts.length}
                     pageSize={8}
                     onChange={onPageChange}
                     responsive

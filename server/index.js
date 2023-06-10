@@ -232,27 +232,37 @@ app.get("/admin/productdetails", async (req, res) => {
 
 //searchProducts
 app.post("/search", async (req, res) => {
-  // console.log("body", req.body);
   const { searchTerms } = req.body;
   let queryTerm = "";
-  if (searchTerms?.length) {
-    searchTerms.map((term, index) => {
-      if (index === searchTerms.length - 1) {
-        queryTerm += `${term}`;
-      } else {
-        queryTerm += `${term}&`;
-      }
-    });
-  }
+  //send all Products if searchTerm = allProducts.. else search the database
+  if ("allProducts".includes(searchTerms)) {
+    try {
+      const searchResult = await pool.query(`SELECT * FROM products`);
+      res.send(searchResult.rows);
+    } catch (err) {
+      console.error(err);
+      res.send([]);
+    }
+  } else {
+    if (searchTerms?.length) {
+      searchTerms.map((term, index) => {
+        if (index === searchTerms.length - 1) {
+          queryTerm += `${term}`;
+        } else {
+          queryTerm += `${term}&`;
+        }
+      });
+    }
 
-  try {
-    const searchResult = await pool.query(
-      `SELECT * FROM products WHERE to_tsvector(name) @@ to_tsquery( '${queryTerm}')`
-    );
-    res.send(searchResult.rows);
-  } catch (err) {
-    console.error(err);
-    res.send([]);
+    try {
+      const searchResult = await pool.query(
+        `SELECT * FROM products WHERE to_tsvector(name) @@ to_tsquery( '${queryTerm}')`
+      );
+      res.send(searchResult.rows);
+    } catch (err) {
+      console.error(err);
+      res.send([]);
+    }
   }
 });
 
