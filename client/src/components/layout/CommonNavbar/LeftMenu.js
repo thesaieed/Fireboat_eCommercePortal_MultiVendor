@@ -13,11 +13,11 @@ const LeftMenu = ({ mode }) => {
     },
     {
       label: (
-        <Link to="/products">
+        <Link to="/browse/?search=allProducts">
           <span>Our Products</span>
         </Link>
       ),
-      key: "products",
+      key: "allproducts",
     },
     {
       label: (
