@@ -134,7 +134,7 @@ function Sidenav({ color }) {
           Categories
         </Menu.Item>
         <Menu.Item key="6">
-          <NavLink to="/admin/categories">
+          <NavLink to="/admin/categories/addcategory">
             <span
               className="icon"
               style={{
@@ -145,7 +145,7 @@ function Sidenav({ color }) {
 
               <UnorderedListOutlined />
             </span>
-            <span className="label">All Categories</span>
+            <span className="label">Add Category</span>
           </NavLink>
         </Menu.Item>
 

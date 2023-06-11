@@ -17,6 +17,7 @@ import Main from "./components/layout/Main";
 import Dashboard from "./components/pages/admin/Dashboard";
 import Profile from "./components/pages/admin/Profile";
 import AddProduct from "./components/pages/admin/products/AddProduct";
+import AllProducts from "./components/pages/admin/products/AllProducts";
 import AllCategories from "./components/pages/admin/categories/AllCategories";
 //Admin Components Ends
 
@@ -25,6 +26,8 @@ import Home from "./components/pages/user/Home";
 import ShowProductDetails from "./components/pages/user/ShowProductDetails";
 import Cart from "./components/pages/user/Cart";
 import Browse from "./components/pages/user/Browse";
+import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
+
 //User Components End
 
 function App() {
@@ -55,11 +58,14 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="products">
             <Route index element={<AddProduct />} />
-            <Route path="addproduct" element={<AddProduct />} />
+            <Route path="allproducts" element={<AllProducts />} />
             <Route path="*" element={<AddProduct />} />
             {/* <Route path="productdetails" element={<ShowProductDetails/>}/> */}
           </Route>
-          <Route path="categories" element={<AllCategories />} />
+          <Route path="categories">
+          <Route path="updatecategories" element={<Updatecategories/>} />
+            <Route path="addcategory" element={<AllCategories />} />
+          </Route>
         </Route>
         {/* Admin Routes end */}
 
