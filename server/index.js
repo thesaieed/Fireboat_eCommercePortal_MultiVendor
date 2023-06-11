@@ -2,6 +2,7 @@ const express = require("express");
 const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
 const multer = require("multer");
+const fs = require("fs");
 
 const path = require("path");
 const { log } = require("console");
@@ -115,7 +116,7 @@ app.post("/addcategory", async (req, res) => {
 
 app.get("/admin/categories", async (req, res) => {
   try {
-    const categories = await pool.query("select name from categories");
+    const categories = await pool.query("select * from categories");
 
     const data = { categories: categories.rows };
     // console.log(data)
@@ -135,13 +136,13 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
 
   try {
     const newProduct = await pool.query(
-      "insert into products(category,name,description,price,stock_available,image) values ($1,$2,$3,$4,$5,$6) returning *",
+      "insert into products(category_id,name,description,price,stock_available,image) values ($1,$2,$3,$4,$5,$6) returning *",
       [category, name, description, price, stock_available, imagePath]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
 
-    res.send(data); //send data.. it will be under res.data in client
+    res.send(data); 
   } catch (error) {
     console.error(error);
   }
@@ -408,6 +409,134 @@ app.delete("/cart/:itemId", async (req, res) => {
     res.send("Item deleted from cart successfully");
   } catch (error) {
     console.error("Error deleting item from cart:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+//Handle get Request from AllProducts
+app.get("/viewproducts", async (req, res) => {
+  try {
+    const getProducts = await pool.query("select * from products");
+    // console.log(getProducts.rows);
+    res.send(getProducts.rows);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//Handle delete request from ViewAllProducts
+app.delete("/viewproducts/:itemId", async (req, res) => {
+  const itemId = req.params.itemId;
+  try {
+    await pool.query("DELETE FROM products WHERE id = $1", [itemId]);
+    res
+      .status(200)
+      .json({ message: "Item deleted from products successfully" });
+  } catch (error) {
+    console.error("Error deleting item from products:", error);
+    res.status(500).json({ error: "Failed to delete item from products" });
+  }
+});
+
+//Route to delete image of product from server
+app.delete("/deleteImage/:imagePath", (req, res) => {
+  const imagePath = req.params.imagePath;
+  fs.unlink(`${imagePath}`, (err) => {
+    if (err) {
+      console.error("Error deleting image:", err);
+      res.status(500).json({ error: "Failed to delete image" });
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+app.put(
+  "/admin/updateproduct/:productId",
+  upload.single("image"),
+  async (req, res) => {
+    const { productId } = req.params;
+    const { category, name, description, price, stock_available } = req.body;
+    const imagePath = req.file ? req.file.path : null; // Check if image file is present
+    // console.log(productId, category, price, stock_available, name, description);
+    // console.log(req.body)
+
+    try {
+      let query;
+      let queryValues;
+      if (imagePath) {
+        // Update the image field along with other details
+        query =
+          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5, image = $6 WHERE id = $7";
+        queryValues = [
+          category,
+          name,
+          description,
+          price,
+          stock_available,
+          imagePath,
+          productId,
+        ];
+      } else {
+        // Keep the existing image value in the database
+        query =
+          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5 WHERE id = $6";
+        queryValues = [
+          category,
+          name,
+          description,
+          price,
+          stock_available,
+          productId,
+        ];
+      }
+      const updatedProduct = await pool.query(query, queryValues);
+
+      res.sendStatus(200); // Send status code 200 to indicate successful update
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500); // Send status code 500 for internal server error
+    }
+  }
+);
+
+//Handle get Request from UpdateCategories
+app.get("/updatecategories", async (req, res) => {
+  try {
+    const getCategories = await pool.query("select * from categories");
+    // console.log(getCategories.rows);
+    res.send(getCategories.rows);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.delete("/updatecategories/:itemId", async (req, res) => {
+  const itemId = req.params.itemId;
+  try {
+    await pool.query("DELETE FROM categories WHERE id = $1", [itemId]);
+    res
+      .status(200)
+      .json({ message: "category type deleted from categories successfully" });
+  } catch (error) {
+    console.error("Error deleting category type from categories:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to delete category type from categories" });
+  }
+});
+
+//update category name
+app.put("/updatecategories/:id", async (req, res) => {
+  const itemId = req.params.id;
+  const { categoryType } = req.body;
+  try {
+    // Update the Category name in categories table
+    const updateQuery = "UPDATE categories SET name = $1 WHERE id = $2";
+    await pool.query(updateQuery, [categoryType, itemId]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error(error);
     res.status(500).send("Internal Server Error");
   }
 });

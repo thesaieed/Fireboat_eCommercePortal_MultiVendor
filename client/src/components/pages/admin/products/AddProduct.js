@@ -32,7 +32,7 @@ function AddProduct() {
       const response = await axios.get(
         "http://localhost:5000/admin/categories"
       );
-      console.log(response.data);
+      // console.log(response.data);
       setCategories(response.data.categories);
     } catch (error) {
       console.error(error);
@@ -135,7 +135,7 @@ function AddProduct() {
               >
                 <Select className="ant-input " placeholder="Select a category">
                   {categories.map((category) => (
-                    <Option key={category.name} value={category.name}>
+                    <Option key={category.id} value={category.id}>
                       {category.name}
                     </Option>
                   ))}
