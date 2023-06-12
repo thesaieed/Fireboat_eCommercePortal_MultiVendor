@@ -3448,11 +3448,11 @@ div.ant-upload {
 
 /* Home Sidebar */
 .homeSidebarDiv {
-  /* height: 70vh; */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
 }
+
 .sidebarHeading {
   color: #000;
   font-weight: 600;

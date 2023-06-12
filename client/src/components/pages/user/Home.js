@@ -6,15 +6,17 @@ import FeaturedProduct from "./FeaturedProduct";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import LoadingScreen from "../../layout/LoadingScreen";
+
 const Home = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const navigate = useNavigate();
+
   const { Paragraph, Title } = Typography;
   const { Content } = Layout;
-
   const baseImgUrl = "http://localhost:5000/";
-  const navigate = useNavigate();
 
   const getAllProducts = async () => {
     try {

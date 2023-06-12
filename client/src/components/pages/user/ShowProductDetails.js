@@ -21,7 +21,9 @@ function ShowProductDetails() {
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
   // console.log(productId);
-
+  const handleSearch = (e) => {
+    navigate(`/browse/?search=${e.target.value}`);
+  };
   // Fetch product details
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -106,7 +108,7 @@ function ShowProductDetails() {
   if (productDetails) {
     return (
       <Layout className="layout-default">
-        <CommonNavbar />
+        <CommonNavbar handleSearch={handleSearch} />
         <Card className="show-productDetails-card">
           <Row className="row-spd">
             <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">

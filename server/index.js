@@ -4,26 +4,10 @@ const cors = require("cors"); //used for handing trasmission json data from serv
 const multer = require("multer");
 const fs = require("fs");
 
-const path = require("path");
-const { log } = require("console");
-const { serialize } = require("v8");
-
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
-
-//configuring disk storage
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./uploads");
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-//     const fileExtension = file.originalname.split(".").pop();
-//     cb(null, file.fieldname + "-" + uniqueSuffix + "." + fileExtension);
-//   },
-// });
 
 //Alternate storage object with simple file name
 const storage = multer.diskStorage({
@@ -116,13 +100,16 @@ app.post("/addcategory", async (req, res) => {
 
 app.get("/admin/categories", async (req, res) => {
   try {
+
     const categories = await pool.query("select * from categories");
+
 
     const data = { categories: categories.rows };
     // console.log(data)
     res.send(data);
   } catch (error) {
     console.error(error);
+    res.send([]);
   }
 });
 
@@ -249,31 +236,39 @@ app.get("/admin/productdetails", async (req, res) => {
 
 //searchProducts
 app.post("/search", async (req, res) => {
-  // console.log("body", req.body);
   const { searchTerms } = req.body;
   let queryTerm = "";
-  if (searchTerms?.length) {
-    searchTerms.map((term, index) => {
-      if (index === searchTerms.length - 1) {
-        queryTerm += `${term}`;
-      } else {
-        queryTerm += `${term}&`;
-      }
-    });
-  }
+  //send all Products if searchTerm = allProducts.. else search the database
+  if ("allProducts".includes(searchTerms)) {
+    try {
+      const searchResult = await pool.query(`SELECT * FROM products`);
+      res.send(searchResult.rows);
+    } catch (err) {
+      console.error(err);
+      res.send([]);
+    }
+  } else {
+    if (searchTerms?.length) {
+      searchTerms.map((term, index) => {
+        if (index === searchTerms.length - 1) {
+          queryTerm += `${term}`;
+        } else {
+          queryTerm += `${term}&`;
+        }
+      });
+    }
 
-  try {
-    const searchResult = await pool.query(
-      `SELECT * FROM products WHERE to_tsvector(name) @@ to_tsquery( '${queryTerm}')`
-    );
-    res.send(searchResult.rows);
-  } catch (err) {
-    console.error(err);
-    res.send([]);
+    try {
+      const searchResult = await pool.query(
+        `SELECT * FROM products WHERE to_tsvector(name) @@ to_tsquery( '${queryTerm}')`
+      );
+      res.send(searchResult.rows);
+    } catch (err) {
+      console.error(err);
+      res.send([]);
+    }
   }
 });
-
-//handle get request from showproductdetails
 
 // //handle Addtocart post request
 // app.post("/addtocart",async(req,res) =>{
