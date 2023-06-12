@@ -26,7 +26,6 @@ function AddProduct() {
   //get request to get the categories available stored in db
   const { Option } = Select;
 
-
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -78,7 +77,7 @@ function AddProduct() {
               fontSize: "1.3rem",
             }}
           >
-            Enter Product Details
+            Add Product
           </h5>
         }
         bordered="false"
@@ -94,25 +93,8 @@ function AddProduct() {
           className="row-col"
           // encType="multipart/form-data"
         >
-          <Form.Item
-            name="image"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
-            rules={[
-              {
-                required: true,
-                message: "please upload image",
-              },
-            ]}
-          >
-            <Upload name="image" accept="image/*" beforeUpload={() => false}>
-              <Button icon={<UploadOutlined />}>Upload image</Button>
-            </Upload>
-          </Form.Item>
-
           <Row>
             <Col style={{ paddingRight: ".5rem" }} span={16}>
-              {" "}
               <Form.Item
                 //   label="Name"
                 name="name"
@@ -146,15 +128,6 @@ function AddProduct() {
             </Col>
           </Row>
 
-          <Form.Item
-            //   label="Description"
-            name="description"
-            rules={[
-              { required: true, message: "Please input product description!" },
-            ]}
-          >
-            <Input.TextArea placeholder="Enter product description" />
-          </Form.Item>
           <Row>
             <Col style={{ paddingRight: ".5rem" }} span={12}>
               <Form.Item
@@ -190,6 +163,15 @@ function AddProduct() {
               </Form.Item>
             </Col>
           </Row>
+          <Form.Item
+            //   label="Description"
+            name="description"
+            rules={[
+              { required: true, message: "Please input product description!" },
+            ]}
+          >
+            <Input.TextArea placeholder="Enter product description" />
+          </Form.Item>
           <Row>
             <Col span={24}>
               <Form.Item

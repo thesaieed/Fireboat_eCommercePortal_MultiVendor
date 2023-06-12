@@ -16,8 +16,13 @@ import {
   Tooltip,
   Card,
 } from "antd";
-import { UploadOutlined, SearchOutlined } from "@ant-design/icons";
-// import { Header } from "antd/lib/layout/layout";
+import {
+  UploadOutlined,
+  SearchOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+
 function AllProducts() {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
@@ -39,7 +44,6 @@ function AllProducts() {
       );
       // console.log(response.data);
       setCategories(response.data.categories);
-      
     } catch (error) {
       console.error(error);
     }
@@ -171,21 +175,6 @@ function AllProducts() {
     //   cell: (row, rowIndex) => rowIndex + 1,
     // },
     {
-      name: "Product Name",
-      width: "200px",
-      cell: (row) => (
-        <div
-          style={{
-            maxHeight: "100px",
-            overflowY: "auto",
-            lineHeight: "1.5",
-          }}
-        >
-          {row.name}
-        </div>
-      ),
-    },
-    {
       name: "Image",
       width: "100px",
       selector: (row) => (
@@ -204,6 +193,22 @@ function AllProducts() {
         </div>
       ),
     },
+    {
+      name: "Product Name",
+      width: "200px",
+      cell: (row) => (
+        <div
+          style={{
+            maxHeight: "100px",
+            overflowY: "auto",
+            lineHeight: "1.5",
+          }}
+        >
+          {row.name}
+        </div>
+      ),
+    },
+
     {
       name: "Category",
       selector: (row) => row.category,
@@ -235,14 +240,15 @@ function AllProducts() {
       ),
     },
     {
-      name: "Update",
-      width: "100px",
+      name: "Actions",
+      width: "200px",
       cell: (row) => (
-        <div>
+        <>
           <Button
-            style={{ width: "100%", margin: "3px 0px" }}
+            style={{ width: "43%", color: "black" }}
             type="primary"
             onClick={() => openModal(row)}
+            icon={<EditOutlined />}
           >
             Edit
           </Button>
@@ -254,13 +260,14 @@ function AllProducts() {
             cancelText="No"
           >
             <Button
-              style={{ width: "100%", marginBottom: "3px" }}
+              style={{ width: "51%", marginLeft: 10 }}
               type="danger"
+              icon={<DeleteOutlined />}
             >
               Delete
             </Button>
           </Popconfirm>
-        </div>
+        </>
       ),
     },
   ];
@@ -269,7 +276,7 @@ function AllProducts() {
     headCells: {
       style: {
         fontWeight: "bold",
-        color: "orange",
+        color: "#ff9c0a",
         fontSize: "1rem",
       },
     },
