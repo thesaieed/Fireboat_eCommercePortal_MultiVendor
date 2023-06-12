@@ -31,7 +31,7 @@ function AllProducts() {
   const [selectedRowData, setSelectedRowData] = useState({});
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
-
+  const [refreshPage,setRefreshPage] = useState(false)
   const fetchCategories = useCallback(async () => {
     try {
       const response = await axios.get(
@@ -60,7 +60,7 @@ function AllProducts() {
   };
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [refreshPage]);
 
   useEffect(() => {
     const result = products.filter((product) => {
@@ -70,11 +70,11 @@ function AllProducts() {
   }, [search, products]);
 
   const openModal = (rowData) => {
-    // console.log(rowData.id);
+    // console.log(rowData);
     setSelectedRowId(rowData.id);
     const initialValues = {
       name: rowData.name,
-      category: rowData.category,
+      category: rowData.category_id,
       description: rowData.description,
       price: rowData.price,
       stock_available: rowData.stock_available,
@@ -112,10 +112,14 @@ function AllProducts() {
       );
 
       if (response.status === 200) {
+        setRefreshPage(true)
         //add required navigation
         // setErrorMessage("Details updated successfullY");
         message.success("Details Updated Successfully");
         closeModal();
+        if(refreshPage){
+          setRefreshPage(false)
+        }
       } else {
         setErrorMessage("Something went Wrong");
       }

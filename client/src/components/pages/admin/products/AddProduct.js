@@ -9,10 +9,11 @@ import {
   Upload,
   Row,
   Col,
+  message,
 } from "antd";
 
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import useAllContext from "../../../../context/useAllContext";
 import { UploadOutlined } from "@ant-design/icons";
 import cardImage from "../../../../assets/images/addproductCardImg.png";
@@ -21,7 +22,7 @@ function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
   const [form] = Form.useForm();
   const { categories, fetchCategories } = useAllContext();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   //get request to get the categories available stored in db
   const { Option } = Select;
@@ -53,7 +54,9 @@ function AddProduct() {
 
       if (response.status === 200) {
         //add required navigation
-        navigate("/admin/dashboard");
+        // navigate("/admin/dashboard");
+        message.success("Product added Successfully")
+        form.resetFields();
       } else {
         setErrorMessage("Something went Wrong");
       }
@@ -94,7 +97,7 @@ function AddProduct() {
           className="row-col"
           // encType="multipart/form-data"
         >
-          <Form.Item
+          {/* <Form.Item
             name="image"
             valuePropName="fileList"
             getValueFromEvent={(e) => e.fileList}
@@ -108,7 +111,7 @@ function AddProduct() {
             <Upload name="image" accept="image/*" beforeUpload={() => false}>
               <Button icon={<UploadOutlined />}>Upload image</Button>
             </Upload>
-          </Form.Item>
+          </Form.Item> */}
 
           <Row>
             <Col style={{ paddingRight: ".5rem" }} span={16}>
