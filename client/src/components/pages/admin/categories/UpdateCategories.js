@@ -11,7 +11,11 @@ import {
   Alert,
   Card,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 
 function Updatecategories() {
   const [categories, setCategories] = useState([]);
@@ -27,7 +31,7 @@ function Updatecategories() {
         "http://localhost:5000/updatecategories"
       );
       setCategories(response.data);
-      console.log(response.data)
+      console.log(response.data);
       setFilteredCategories(response.data);
     } catch (error) {
       console.log(error);
@@ -103,32 +107,34 @@ function Updatecategories() {
       selector: (row) => row.name,
     },
     {
-      name: "Update",
-      width: "100px",
+      name: "Actions",
+      width: "200px",
       cell: (row) => (
-        <div>
+        <>
           <Button
-            style={{ width: "100%", margin: "3px 0px" }}
+            style={{ width: "43%", color: "black" }}
             type="primary"
             onClick={() => openModal(row)}
+            icon={<EditOutlined />}
           >
             Edit
           </Button>
 
           <Popconfirm
-            title="Are you sure you want to delete this Product?"
+            title="Are you sure you want to delete this Category?"
             onConfirm={() => deleteItemFromCategories(row.id)}
             okText="Yes"
             cancelText="No"
           >
             <Button
-              style={{ width: "100%", marginBottom: "3px" }}
+              style={{ width: "51%", marginLeft: 10 }}
               type="danger"
+              icon={<DeleteOutlined />}
             >
               Delete
             </Button>
           </Popconfirm>
-        </div>
+        </>
       ),
     },
   ];
@@ -143,8 +149,8 @@ function Updatecategories() {
   };
 
   return (
-    <>
-      <Card style={{ padding: "20px 100px", marginTop:'20px' }}>
+    <div className="d-flex justify-content-center">
+      <Card style={{ padding: "20px 100px", marginTop: "20px", width: "50%" }}>
         <DataTable
           columns={columns}
           data={filteredCategories}
@@ -156,7 +162,7 @@ function Updatecategories() {
           //   fixedHeaderScrollHeight="500px"
           title={
             <h2 style={{ color: "orange", fontWeight: "bold" }}>
-              Category Types
+              All Categories
             </h2>
           }
           subHeader
@@ -165,7 +171,7 @@ function Updatecategories() {
               prefix={<SearchOutlined />}
               type="text"
               placeholder="Search here"
-              style={{ width: "25%" }}
+              style={{ width: "40%" }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -179,10 +185,6 @@ function Updatecategories() {
           onCancel={closeModal}
           footer={null}
         >
-          <h1 style={{ textAlign: "center", color: "orange" }}>
-            Edit Category Type Details here!
-          </h1>
-
           <Form
             form={form}
             name="basic"
@@ -193,10 +195,10 @@ function Updatecategories() {
             className="row-col"
           >
             <Form.Item
-              label="Category Type"
+              label="Category Name"
               name="categoryType"
               rules={[
-                { required: true, message: "Please Enter Category Type" },
+                { required: true, message: "Please Enter Category Name" },
               ]}
             >
               <Input placeholder="Enter Category Type" />
@@ -214,7 +216,7 @@ function Updatecategories() {
             )}
             <Form.Item>
               <Popconfirm
-                title="Are you sure you want to update this category type?"
+                title="Are you sure you want to update this category?"
                 onConfirm={() => onFinish(form.getFieldsValue())}
                 okText="Yes"
                 cancelText="No"
@@ -232,7 +234,7 @@ function Updatecategories() {
           </Form>
         </Modal>
       </Card>
-    </>
+    </div>
   );
 }
 
