@@ -62,7 +62,7 @@ function Dashboard() {
                 </Link>
               </Tooltip>,
               <Tooltip title="View all Products" color={"orange"}>
-                <Link to="/admin/products">
+                <Link to="/admin/products/allproducts">
                   <UnorderedListOutlined key="viewproducts" />
                 </Link>
               </Tooltip>,

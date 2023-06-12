@@ -198,8 +198,11 @@ function Sidenav({ color }) {
         <span>Dashboard</span>
       </div>
       <hr />
+
+
       <Menu theme="light" mode="inline" items={sidenavItems} />
       <Menu className="SidebarlogoutMenu" items={logoutItem} />
+
       {/* <div className="aside-footer">
         <div
           className="footer-box"

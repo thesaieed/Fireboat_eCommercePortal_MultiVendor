@@ -26,6 +26,7 @@ function AddProduct() {
   //get request to get the categories available stored in db
   const { Option } = Select;
 
+
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -136,7 +137,7 @@ function AddProduct() {
               >
                 <Select className="ant-input " placeholder="Select a category">
                   {categories.map((category) => (
-                    <Option key={category.name} value={category.name}>
+                    <Option key={category.id} value={category.id}>
                       {category.name}
                     </Option>
                   ))}
