@@ -63,8 +63,9 @@ function App() {
             {/* <Route path="productdetails" element={<ShowProductDetails/>}/> */}
           </Route>
           <Route path="categories">
-          <Route path="updatecategories" element={<Updatecategories/>} />
-            <Route path="addcategory" element={<AllCategories />} />
+            <Route index element={<><AllCategories /> <Updatecategories /></>}/>
+            {/* <Route path="updatecategories" element={<Updatecategories />} />
+            <Route path="addcategory" element={<AllCategories />} /> */}
           </Route>
         </Route>
         {/* Admin Routes end */}
