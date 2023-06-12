@@ -21,13 +21,14 @@ function Updatecategories() {
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [search, setSearch] = useState("");
+  const [refreshPage,setRefreshPage] = useState(false)
   const getCategories = async () => {
     try {
       const response = await axios.get(
         "http://localhost:5000/updatecategories"
       );
       setCategories(response.data);
-      console.log(response.data)
+      // console.log(response.data)
       setFilteredCategories(response.data);
     } catch (error) {
       console.log(error);
@@ -35,7 +36,7 @@ function Updatecategories() {
   };
   useEffect(() => {
     getCategories();
-  }, []);
+  }, [refreshPage]);
 
   useEffect(() => {
     const result = categories.filter((category) => {
@@ -84,8 +85,13 @@ function Updatecategories() {
         values
       );
       if (response.status === 200) {
+        setRefreshPage(true)
         closeModal();
         message.success("Category Type updated successfully");
+        if(refreshPage){
+          setRefreshPage(false)
+        }
+       
       }
     } catch (error) {
       console.error("Error updating category type", error);
