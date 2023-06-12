@@ -144,7 +144,7 @@ function Updatecategories() {
 
   return (
     <>
-      <Card style={{ padding: "20px 100px" }}>
+      <Card style={{ padding: "20px 100px", marginTop:'20px' }}>
         <DataTable
           columns={columns}
           data={filteredCategories}
