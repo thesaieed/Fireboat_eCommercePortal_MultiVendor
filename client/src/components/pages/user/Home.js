@@ -61,7 +61,7 @@ const Home = () => {
             <Content>
               <Row
                 gutter={[24, 0]}
-                className="d-flex align-items-center justify-content-evenly  p-15 "
+                className="d-flex align-items-center justify-content-center  p-15 "
               >
                 {allProducts.map((product, index) => {
                   if (
@@ -69,33 +69,33 @@ const Home = () => {
                     index < currentPage * 8
                   ) {
                     return (
-                      <Col className=" mb-24 d-flex" key={index}>
-                        <Link to={`/product/?id=${product.id}`}>
-                          <div className="productContainer">
-                            <div className="productImg">
-                              <img src={baseImgUrl + product.image} alt="img" />
-                            </div>
-                            <div className="productDetails">
+                      <Col className="productCard mb-24 d-flex" key={index}>
+                        <div className="productContainer rounded-border ">
+                          <div className="productImg">
+                            <img src={baseImgUrl + product.image} alt="img" />
+                          </div>
+                          <div className="productDetails rounded-border-bottom">
+                            <Link to={`/product/?id=${product.id}`}>
                               <Title strong level={5}>
-                                {product.name.length > 25
-                                  ? product.name.substr(0, 25) + " ..."
+                                {product.name.length > 75
+                                  ? product.name.substr(0, 75) + " ..."
                                   : product.name}
                               </Title>
-                              <Paragraph>{product.category}</Paragraph>
-                              <Paragraph
-                                ellipsis={{
-                                  rows: 3,
-                                  expandable: false,
-                                }}
-                              >
-                                {product.description}
-                              </Paragraph>
-                              <Paragraph strong>
-                                &#8377; {product.price}
-                              </Paragraph>
-                            </div>
+                            </Link>
+                            <Paragraph>{product.category}</Paragraph>
+                            <Paragraph
+                              ellipsis={{
+                                rows: 3,
+                                expandable: false,
+                              }}
+                            >
+                              {product.description}
+                            </Paragraph>
+                            <Paragraph className="productPrice">
+                              &#8377; {product.price}
+                            </Paragraph>
                           </div>
-                        </Link>
+                        </div>
                       </Col>
                     );
                   } else {

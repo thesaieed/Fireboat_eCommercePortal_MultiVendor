@@ -2,17 +2,26 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import useAllContext from "../../../context/useAllContext";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Button, Card, Col, Layout, message, Modal, Row } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Layout,
+  message,
+  Modal,
+  Row,
+  Typography,
+} from "antd";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 
 function ShowProductDetails() {
   const [productDetails, setProductDetails] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [showFullDescription, setShowFullDescription] = useState(false);
+  // const [showFullDescription, setShowFullDescription] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const appUser = useAllContext();
+  const { appUser } = useAllContext();
   const navigate = useNavigate();
   // const productId = 29;
   // const { productId } = useParams();
@@ -20,7 +29,7 @@ function ShowProductDetails() {
   // const productId = props.match.params.id;
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
-  // console.log(productId);
+  const { Title, Paragraph } = Typography; // console.log(productId);
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
@@ -77,14 +86,14 @@ function ShowProductDetails() {
   //   }
   // };
   const handleAddToCart = async () => {
-    if (!appUser.appUser || !appUser.appUser.id) {
+    if (!appUser || !appUser.id) {
       message.info("Please login to add products to the cart.");
       return;
     }
 
     try {
       await axios.post("http://localhost:5000/addtocart", {
-        user_id: appUser.appUser.id,
+        user_id: appUser.id,
         product_id: productId,
         quantity: quantity,
       });
@@ -112,16 +121,16 @@ function ShowProductDetails() {
         <Card className="show-productDetails-card">
           <Row className="row-spd">
             <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
-              <div className="image-container">
-                <img src={imageUrl} alt="Product" onClick={showModal} />
-              </div>
+              {/* <div className="image-container"> */}
+              <img src={imageUrl} alt="Product" onClick={showModal} />
+              {/* </div> */}
             </Col>
             <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
               <div className="spd">
                 {productDetails ? (
                   <div className="details-content">
                     <h1>Product: {productDetails.name}</h1>
-                    <p>Price: {productDetails.price}</p>
+                    <p>Price: &#8377; {productDetails.price}</p>
                     <p>Category: {productDetails.category}</p>
 
                     <div className="quantity-controls-spd">
@@ -137,7 +146,7 @@ function ShowProductDetails() {
               </div>
             </Col>
             <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
-              <div className="div-buttons-spd">
+              <div className="div-buttons-spd w-100 text-center">
                 <div>
                   <Button
                     className="add-to-cart-button"
@@ -152,20 +161,30 @@ function ShowProductDetails() {
               </div>
             </Col>
           </Row>
-          <p className="description-spd">
+
+          <Title level={5} className="mt-25">
+            {" "}
             Description:{" "}
-            {showFullDescription
+          </Title>
+          <Paragraph
+            ellipsis={{
+              rows: 2,
+              expandable: true,
+            }}
+          >
+            {productDetails.description}
+          </Paragraph>
+          {/* {showFullDescription
               ? productDetails.description
-              : productDetails.description.slice(0, 100) + "..."}
-            {productDetails.description.length > 100 && (
+              : productDetails.description.slice(0, 150) + "..."}
+            {productDetails.description.length > 150 && (
               <span
                 className="description-toggle"
                 onClick={() => setShowFullDescription(!showFullDescription)}
               >
                 {showFullDescription ? " See less" : " Read more"}
               </span>
-            )}
-          </p>
+            )} */}
         </Card>
         <Modal open={isModalVisible} onCancel={handleCancel} footer={null}>
           <img src={imageUrl} alt="Product" />
