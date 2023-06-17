@@ -199,7 +199,7 @@ function Cart() {
             <h1>
               Subtotal for{" "}
               <span className="spanItems">{calculateTotalItems()}</span> items{" "}
-              <span className="spanCost">${calculateSubtotal()}</span>
+              <span className="spanCost">&#8377;{calculateSubtotal()}</span>
             </h1>
             <Button className="proceed-button">Proceed To Buy</Button>
           </div>
