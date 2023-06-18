@@ -60,7 +60,10 @@ app.post("/signup", async (req, res) => {
   const { fullname, email, password, phone } = req.body;
   try {
     const newUser = await pool.query(
-      `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
+      // `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
+      "INSERT INTO users(name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING *",
+[fullname, email, password, phone]
+
     );
     // console.log("newUSer", newUser);
 
