@@ -1,7 +1,17 @@
-import { Layout, Button, Drawer, Row, Col, Typography, Pagination } from "antd";
+import {
+  Layout,
+  Button,
+  Drawer,
+  Row,
+  Col,
+  Typography,
+  Pagination,
+  message,
+} from "antd";
 import CommonNavbar from "../../layout/CommonNavbar";
 import LoadingScreen from "../../layout/LoadingScreen";
 import { useState, useEffect } from "react";
+import useAllContext from "../../../context/useAllContext";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 
 import axios from "axios";
@@ -18,6 +28,7 @@ const Browse = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const navigate = useNavigate();
+  const { appUser } = useAllContext();
 
   //Filter States and functions
   const [sortValue, setSortValue] = useState(0);
@@ -144,35 +155,66 @@ const Browse = () => {
     setShownProducts(filteredArray);
   };
 
+  const handleAddToCart = async (product_id) => {
+    if (!appUser || !appUser.id) {
+      message.info("Please login to add products to the cart.");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:5000/addtocart", {
+        user_id: appUser.id,
+        product_id,
+        quantity: 1,
+      });
+      message.success("Added to cart");
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+    }
+  };
+
   const showProducts = () => {
     return shownProducts.map((product, index) => {
       if (index >= (currentPage - 1) * 8 && index < currentPage * 8) {
         return (
-          <Col className=" mb-24 d-flex" key={index}>
-            <Link to={`/product/?id=${product.id}`}>
-              <div className="productContainer">
-                <div className="productImg">
-                  <img src={baseImgUrl + product.image} alt="img" />
-                </div>
-                <div className="productDetails">
+          <Col className="productCard mb-24 d-flex" key={index}>
+            <div className="productContainer rounded-border ">
+              <div className="productImg">
+                <img src={baseImgUrl + product.image} alt="img" />
+              </div>
+              <div className="productDetails rounded-border-bottom">
+                <Link to={`/product/?id=${product.id}`}>
                   <Title strong level={5}>
-                    {product.name.length > 25
-                      ? product.name.substr(0, 25) + " ..."
+                    {product.name.length > 80
+                      ? product.name.substr(0, 80) + " ..."
                       : product.name}
                   </Title>
-                  <Paragraph>{product.category}</Paragraph>
-                  <Paragraph
-                    ellipsis={{
-                      rows: 3,
-                      expandable: false,
+                </Link>
+                <Paragraph>{product.category}</Paragraph>
+                <Paragraph
+                  ellipsis={{
+                    rows: 2,
+                    expandable: false,
+                  }}
+                >
+                  {product.description}
+                </Paragraph>
+                <Paragraph className="productPrice">
+                  &#8377; {product.price}
+                </Paragraph>
+                <div className="d-flex productActionButtons">
+                  {/* <Button type="primary">Buy Now</Button> */}
+                  <Button
+                    onClick={() => {
+                      handleAddToCart(product.id);
                     }}
+                    type="primary"
                   >
-                    {product.description}
-                  </Paragraph>
-                  <Paragraph strong>&#8377; {product.price}</Paragraph>
+                    Add to Cart
+                  </Button>
                 </div>
               </div>
-            </Link>
+            </div>
           </Col>
         );
       } else {
@@ -259,10 +301,7 @@ const Browse = () => {
                 </Title>
               </Col>
             </Row>
-            <Row
-              gutter={[24, 0]}
-              className="d-flex align-items-center justify-content-evenly  p-15 "
-            >
+            <Row gutter={[24, 0]}>
               {noProductMessage && <Title>No Products found !</Title>}
               {showProducts()}
             </Row>

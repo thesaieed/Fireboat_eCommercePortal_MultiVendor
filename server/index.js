@@ -71,7 +71,9 @@ app.post("/signup", async (req, res) => {
     console.error(error);
     if (error.code == 23505) {  //error code trying to insert duplicate value
       console.log("User already exists");
-      res.status(409).json({ message: "user already exists, please signIn" });
+      res
+        .status(409)
+        .json({ message: "user already exists, please use SignIn" });
     } else {
       res.status(409).json({ message: "Something went wrong at Server !" });
     }
@@ -100,9 +102,7 @@ app.post("/addcategory", async (req, res) => {
 
 app.get("/admin/categories", async (req, res) => {
   try {
-
     const categories = await pool.query("select * from categories");
-
 
     const data = { categories: categories.rows };
     // console.log(data)
@@ -129,7 +129,7 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
 
-    res.send(data); 
+    res.send(data);
   } catch (error) {
     console.error(error);
   }
