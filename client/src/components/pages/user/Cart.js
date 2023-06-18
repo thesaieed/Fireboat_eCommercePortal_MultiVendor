@@ -26,8 +26,8 @@ function Cart() {
           },
         });
 
-        const data1 = response.data.data1;
-        const data2 = response.data.data2;
+        const data1 = response.data.data1; //id, product_id,quantity from cart table
+        const data2 = response.data.data2; //name, price image,category from products table
         // const data3 = response.data.data3;
         // console.log(data1)
         // console.log(data2)
@@ -199,7 +199,7 @@ function Cart() {
             <h1>
               Subtotal for{" "}
               <span className="spanItems">{calculateTotalItems()}</span> items{" "}
-              <span className="spanCost">${calculateSubtotal()}</span>
+              <span className="spanCost">&#8377;{calculateSubtotal()}</span>
             </h1>
             <Button className="proceed-button">Proceed To Buy</Button>
           </div>

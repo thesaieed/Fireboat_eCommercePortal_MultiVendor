@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import {
@@ -22,6 +22,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
+import useAllContext from "../../../../context/useAllContext";
 
 function AllProducts() {
   const [search, setSearch] = useState("");
@@ -32,22 +33,24 @@ function AllProducts() {
   const [errorMessage, setErrorMessage] = useState("");
   const { Option } = Select;
   const [form] = Form.useForm();
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
+  const { categories, fetchCategories } = useAllContext();
   const [selectedRowData, setSelectedRowData] = useState({});
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
-  const [refreshPage,setRefreshPage] = useState(false)
-  const fetchCategories = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/categories"
-      );
-      // console.log(response.data);
-      setCategories(response.data.categories);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const [refreshPage, setRefreshPage] = useState(false);
+
+  // const fetchCategories = useCallback(async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:5000/admin/categories"
+  //     );
+  //     // console.log(response.data);
+  //     setCategories(response.data.categories);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }, []);
 
   useEffect(() => {
     fetchCategories();
@@ -116,13 +119,13 @@ function AllProducts() {
       );
 
       if (response.status === 200) {
-        setRefreshPage(true)
+        setRefreshPage(true);
         //add required navigation
         // setErrorMessage("Details updated successfullY");
         message.success("Details Updated Successfully");
         closeModal();
-        if(refreshPage){
-          setRefreshPage(false)
+        if (refreshPage) {
+          setRefreshPage(false);
         }
       } else {
         setErrorMessage("Something went Wrong");

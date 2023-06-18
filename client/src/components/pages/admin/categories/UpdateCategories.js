@@ -156,7 +156,7 @@ function Updatecategories() {
 
   return (
     <div className="d-flex justify-content-center">
-      <Card style={{ padding: "20px 100px", marginTop: "20px", width: "50%" }}>
+      <Card style={{ padding: "20px 100px", marginTop: "20px", width: "80%" }}>
         <DataTable
           columns={columns}
           data={filteredCategories}
