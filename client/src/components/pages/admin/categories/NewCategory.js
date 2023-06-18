@@ -43,6 +43,7 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
     <Modal
       title="Add Category"
       centered
+      footer={null}
       open={modalOpen}
       onCancel={() => {
         setModalOpen(false);
