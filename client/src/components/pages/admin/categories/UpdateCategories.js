@@ -16,9 +16,10 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
+import useAllContext from "../../../../context/useAllContext";
 
 function Updatecategories() {
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -26,21 +27,23 @@ function Updatecategories() {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [search, setSearch] = useState("");
   const [refreshPage,setRefreshPage] = useState(false)
-  const getCategories = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/updatecategories"
-      );
-      setCategories(response.data);
-      // console.log(response.data)
-      setFilteredCategories(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const {categories,fetchCategories} = useAllContext();
+  // const getCategories = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:5000/updatecategories"
+  //     );
+  //     setCategories(response.data);
+  //     // console.log(response.data)
+  //     setFilteredCategories(response.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   useEffect(() => {
-    getCategories();
-  }, [refreshPage]);
+    fetchCategories();
+  }, [refreshPage,fetchCategories]);
 
   useEffect(() => {
     const result = categories.filter((category) => {
@@ -58,7 +61,7 @@ function Updatecategories() {
       );
 
       if (response.status === 200) {
-        setCategories((prevData) =>
+        fetchCategories((prevData) =>
           prevData.filter((item) => item.id !== itemId)
         );
         message.success("Category Type deleted successfully");
