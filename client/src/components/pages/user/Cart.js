@@ -32,12 +32,17 @@ function Cart() {
         // console.log(data1)
         // console.log(data2)
         // console.log(data3)
-        const mergedData = data2.map((item, index) => ({
-          ...item,
-          id: data1[index]?.id,
-          quantity: data1[index]?.quantity || 1,
-        }));
+        const mergedData = data2.map((item) => {
+          const matchingData1Item = data1.find((data1Item) => data1Item.product_id === item.id);
+        
+          return {
+            ...item,
+            id: matchingData1Item?.id || item.id,
+            quantity: matchingData1Item?.quantity || 1,
+          };
+        });        
         setProductData(mergedData);
+        // console.log(productData)
       } catch (error) {
         console.error("Error fetching cart data:", error);
       }

@@ -342,7 +342,7 @@ app.get("/cart", async (req, res) => {
       const productIds = data1.map((item) => item.product_id); //get array of productIds
       // console.log(productIds)
       const query = {
-        text: "SELECT name, price, image, category FROM products WHERE  id= ANY($1::int[])",
+        text: "SELECT id, name, price, image, category FROM products WHERE  id= ANY($1::int[])",
         values: [productIds],
       };
       const cartDetails2 = await pool.query(query);
