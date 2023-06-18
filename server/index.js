@@ -56,7 +56,7 @@ app.post("/login", async (req, res) => {
 
 //Signup up route handling
 app.post("/signup", async (req, res) => {
-  console.log("req.body : ", req.body);
+  // console.log("req.body : ", req.body);
   const { fullname, email, password, phone } = req.body;
   try {
     const newUser = await pool.query(
@@ -69,7 +69,7 @@ app.post("/signup", async (req, res) => {
     res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
     console.error(error);
-    if (error.code == 23505) {
+    if (error.code == 23505) {  //error code trying to insert duplicate value
       console.log("User already exists");
       res.status(409).json({ message: "user already exists, please signIn" });
     } else {
@@ -215,6 +215,7 @@ app.post("/userdetails", async (req, res) => {
   }
 });
 
+//route to handle get product details for a specific product
 app.get("/admin/productdetails", async (req, res) => {
   const productId = req.query.id;
   // console.log(productId)
@@ -324,9 +325,11 @@ app.get("/cart", async (req, res) => {
   // console.log(user_id)
   try {
     const cartDetails1 = await pool.query(
-      "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
-      [user_id] //basically checks db and returns dintinct product_ids(i.e different prods in cart of user) or user with corresponding details
-    );
+      // "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
+      // [user_id] //basically checks db and returns dintinct product_ids(i.e different prods in cart of user) or user with corresponding details
+   
+      "select id, product_id, quantity from cart where user_id=$1",[user_id] //simplified logic with updation
+      );
     // console.log(cartDetails1.rows);
     if (cartDetails1.rows.length === 0) {
       res.send("Could not fetch the cart details");

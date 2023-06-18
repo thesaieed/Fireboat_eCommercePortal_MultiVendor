@@ -97,7 +97,7 @@ function AddProduct() {
           // encType="multipart/form-data"
         >
           <Row>
-            <Col style={{ paddingRight: ".5rem" }} span={16}>
+            <Col style={{ paddingRight: ".5rem" }} span={12}>
               <Form.Item
                 //   label="Name"
                 name="name"
@@ -109,7 +109,7 @@ function AddProduct() {
               </Form.Item>
             </Col>
 
-            <Col style={{ paddingLeft: ".5rem" }} span={8}>
+            <Col style={{ paddingLeft: ".5rem" }} span={12}>
               <Form.Item
                 name="category"
                 // label="Category"

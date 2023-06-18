@@ -53,7 +53,7 @@ export default function SignUp() {
         navigate("/");
       }
     }
-  }, [isValidToken, appUser.isadmin]);
+  }, [isValidToken, appUser.isadmin,navigate]);
 
   const onFinish = async (values) => {
     try {
@@ -90,7 +90,7 @@ export default function SignUp() {
       // console.error("Error : ", error);
       if (error.response?.status === 409) {
         form.resetFields();
-        setErrorMessage("Email already registered !");
+        setErrorMessage("Email already registered, please sign in !");
       } else {
         setErrorMessage("Soomething went wrong!");
       }
@@ -98,7 +98,7 @@ export default function SignUp() {
   };
 
   const onFinishFailed = (errorInfo) => {
-    setErrorMessage("Something went Wrong !");
+    setErrorMessage("Details not submitted, check form details and try again !");
     // console.log("Failed:", errorInfo);
   };
   return (
