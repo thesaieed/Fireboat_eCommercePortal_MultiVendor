@@ -10,9 +10,9 @@
   * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import { Layout, Drawer, Affix } from "antd";
+import { Layout, Drawer, Affix, message } from "antd";
 import Sidenav from "./Sidenav";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -29,6 +29,7 @@ function Main() {
   const [sidenavType, setSidenavType] = useState("transparent");
   const [fixed, setFixed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdminCheck, setIsAdminCheck] = useState(false);
 
   const openDrawer = () => setVisible(!visible);
   const handleSidenavType = (type) => setSidenavType(type);
@@ -45,6 +46,8 @@ function Main() {
   } = useAllContext();
   const navigate = useNavigate();
 
+  const isFirstRender = useRef(true);
+
   let { pathname } = useLocation();
   pathname = pathname.replace("/", "");
   // console.log("main isValid TOken : ", isValidToken);
@@ -55,10 +58,27 @@ function Main() {
     } else {
       // console.log("isLoading :", isLoading);
       fetchUserDetails();
-      setIsLoading(false);
+      isFirstRender.current = false;
+
       // console.log("isLoading :", isLoading);
     }
   }, [userToken, isValidToken, fetchUserDetails, isLoading]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (!appUser.id) {
+      setIsLoading(true);
+    } else if (!appUser.isadmin) {
+      navigate("/");
+      message.error("Permission denied!");
+    } else if (appUser.isadmin) {
+      setIsLoading(false);
+    }
+  }, [appUser]);
 
   return isLoading ? (
     <LoadingScreen />

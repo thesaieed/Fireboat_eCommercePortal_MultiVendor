@@ -92,13 +92,12 @@ function Updatecategories() {
         values
       );
       if (response.status === 200) {
-        setRefreshPage(true)
+        setRefreshPage(true);
         closeModal();
         message.success("Category Type updated successfully");
-        if(refreshPage){
-          setRefreshPage(false)
+        if (refreshPage) {
+          setRefreshPage(false);
         }
-       
       }
     } catch (error) {
       console.error("Error updating category type", error);
@@ -159,7 +158,7 @@ function Updatecategories() {
 
   return (
     <div className="d-flex justify-content-center">
-      <Card style={{ padding: "20px 100px", marginTop: "20px", width: "80%" }}>
+      <Card className="categoryCard">
         <DataTable
           columns={columns}
           data={filteredCategories}

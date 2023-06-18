@@ -63,7 +63,14 @@ function App() {
             {/* <Route path="productdetails" element={<ShowProductDetails/>}/> */}
           </Route>
           <Route path="categories">
-            <Route index element={<><AllCategories /> <Updatecategories /></>}/>
+            <Route
+              index
+              element={
+                <>
+                  <AllCategories /> <Updatecategories />
+                </>
+              }
+            />
             {/* <Route path="updatecategories" element={<Updatecategories />} />
             <Route path="addcategory" element={<AllCategories />} /> */}
           </Route>
