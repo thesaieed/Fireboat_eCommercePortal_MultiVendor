@@ -3,10 +3,12 @@ import { Button, Card, Form, Input, Alert, Modal } from "antd";
 import { IdcardOutlined } from "@ant-design/icons";
 import { React, useState } from "react";
 import axios from "axios";
+import useAllContext from "../../../../context/useAllContext";
 const NewCategory = ({ modalOpen, setModalOpen }) => {
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const {fetchCategories} = useAllContext();
   const onFinish = async (values) => {
     if (values.name) {
       try {
@@ -18,6 +20,7 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
         if (response.data.id) {
           setSuccessMessage(`Category ${values.name} Created Successfully !`);
           form.resetFields();
+          fetchCategories();
         } else {
           setErrorMessage("Something went Wrong !");
         }
