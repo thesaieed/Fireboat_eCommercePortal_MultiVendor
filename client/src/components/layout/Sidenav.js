@@ -100,6 +100,7 @@ function Sidenav({ color }) {
     {
       label: <span className="label menu-item-header">Products</span>,
       key: "productHeading",
+      type: "group",
     },
     {
       label: (
@@ -136,6 +137,7 @@ function Sidenav({ color }) {
     {
       label: <span className="label menu-item-header">Categories</span>,
       key: "categoriesHeading",
+      type: "group",
     },
     {
       label: (
@@ -156,6 +158,7 @@ function Sidenav({ color }) {
     {
       label: <span className="label menu-item-header">Accounts</span>,
       key: "accountHeading",
+      type: "group",
     },
     {
       label: (
@@ -182,6 +185,7 @@ function Sidenav({ color }) {
           onClick={() => {
             logout();
           }}
+          className="logout"
         >
           <span className="icon">{signup}</span>
           <span className="label text-danger">Logout</span>
@@ -195,13 +199,17 @@ function Sidenav({ color }) {
     <>
       <div className="brand">
         <img src={logo} alt="" />
-        <span>Dashboard</span>
+        <span>AlSaleels</span>
       </div>
       <hr />
 
-
-      <Menu theme="light" mode="inline" items={sidenavItems} />
-      <Menu className="SidebarlogoutMenu" items={logoutItem} />
+      <Menu
+        theme="light"
+        mode="inline"
+        items={sidenavItems}
+        defaultSelectedKeys="adminDashboard"
+      />
+      <Menu mode="inline" className="SidebarlogoutMenu" items={logoutItem} />
 
       {/* <div className="aside-footer">
         <div

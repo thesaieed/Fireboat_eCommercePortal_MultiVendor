@@ -47,7 +47,8 @@ const RightMenu = ({ mode }) => {
     {
       label: (
         <Button
-          type="danger"
+          type="primary"
+          danger
           block
           onClick={() => {
             logout();
@@ -57,6 +58,7 @@ const RightMenu = ({ mode }) => {
         </Button>
       ),
       key: "Logout",
+      style: { padding: 0 },
     },
   ];
   const loginMenuItem = [
@@ -98,10 +100,12 @@ const RightMenu = ({ mode }) => {
             {
               label: (
                 <Button
-                  type="danger"
+                  type="primary"
+                  danger
                   onClick={() => {
                     logout();
                   }}
+                  style={{ marginLeft: -5, width: "100%" }}
                 >
                   <LogoutOutlined /> Logout
                 </Button>

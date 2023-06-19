@@ -62,7 +62,7 @@ function BrowseSidebar({
           mode="multiple"
           showArrow
           tagRender={tagRender}
-          defaultValue={[]}
+          // defaultValue={[]}
           value={selectedCategories}
           onChange={handleCategoryChange}
           style={{
@@ -74,9 +74,10 @@ function BrowseSidebar({
       ),
       key: "browseCategory",
       style: {
-        width: "100%",
+        width: "95%",
         border: "1px solid lightgrey",
         height: "max-content",
+        background: "none",
       },
     },
   ];
