@@ -1,0 +1,73 @@
+{
+  "token": {
+    "colorWarning": "#00cdaf",
+    "borderRadius": 4,
+    "wireframe": false,
+    "sizeStep": 4,
+    "sizeUnit": 4,
+    "colorTextBase": "#000",
+    "colorPrimaryHover": "#f59d3f",
+    "colorPrimaryBgHover": "#f88f20",
+    "colorPrimaryBorder": "#ff8400",
+    "colorPrimaryBg": "#ff8400",
+    "colorPrimary": "#ff8400",
+    "colorPrimaryText": "#ff8400"
+  },
+  "components": {
+    "Button": {
+      "colorBgContainer": "#ffffff",
+      "colorText": "rgba(0, 0, 0, 0.88)",
+      "colorTextLightSolid": "#000",
+      "colorPrimaryHover": "#ffb752"
+    },
+    "Divider": {
+      "colorSplit": "#fcd195"
+    },
+    "Breadcrumb": {
+      "linkColor": "rgba(0, 0, 0, 0.45)",
+      "linkHoverColor": "rgba(0, 0, 0, 0.88)",
+      "colorBgTextHover": "#fcd195"
+    },
+    "Dropdown": {
+      "controlItemBgHover": "#ffb752"
+    },
+    "Menu": {
+      "colorPrimary": "#000",
+      "colorFillContent": "rgba(0, 0, 0, 0.06)",
+      "colorBgTextHover": "#ffb752",
+      "colorBgElevated": "#ffffff",
+      "colorBgContainer": "#ffffff"
+    },
+    "Pagination": {
+      "colorBgTextHover": "#ffb752"
+    },
+    "Rate": {
+      "starColor": "#ffb752"
+    },
+    "Select": {
+      "controlItemBgHover": "rgba(0, 0, 0, 0.04)"
+    },
+    "Upload": {
+      "colorPrimaryHover": "#f59d3f",
+      "colorFillAlter": "rgba(0, 0, 0, 0.02)"
+    },
+    "Carousel": {
+      "colorBgContainer": "#f88f20"
+    },
+    "Collapse": {
+      "colorFillAlter": "#fffbf5"
+    },
+    "Descriptions": {
+      "colorTextSecondary": "rgba(0, 0, 0, 0.65)",
+      "labelBg": "#fffbf5"
+    },
+    "Segmented": {
+      "itemSelectedBg": "#F88F20",
+      "itemHoverBg": "rgba(0, 0, 0, 0.06)"
+    },
+    "Tooltip": {
+      "colorBgDefault": "#fad198",
+      "colorTextLightSolid": "#000"
+    }
+  }
+}
