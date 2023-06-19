@@ -252,7 +252,7 @@ function AllProducts() {
       cell: (row) => (
         <>
           <Button
-            style={{ width: "43%", color: "black" }}
+            style={{ width: "43%" }}
             type="primary"
             onClick={() => openModal(row)}
             icon={<EditOutlined />}
@@ -265,10 +265,23 @@ function AllProducts() {
             onConfirm={() => deleteItemFromProducts(row.id, row.image)}
             okText="Yes"
             cancelText="No"
+            okButtonProps={{
+              style: {
+                height: 40,
+                width: 40,
+                background: "#f53131",
+                color: "white",
+              },
+            }}
+            cancelButtonProps={{
+              style: { height: 40, width: 40 },
+              type: "default",
+            }}
           >
             <Button
               style={{ width: "51%", marginLeft: 10 }}
-              type="danger"
+              danger
+              type="primary"
               icon={<DeleteOutlined />}
             >
               Delete
@@ -484,21 +497,33 @@ function AllProducts() {
             )}
 
             <Form.Item>
-              <Popconfirm
+              {/* <Popconfirm
                 title="Are you sure you want to update this product?"
                 onConfirm={() => onFinish(form.getFieldsValue())}
                 okText="Yes"
                 cancelText="No"
+                okButtonProps={{
+                  style: {
+                    height: 40,
+                    width: 45,
+                    // background: "#f53131",
+                    // color: "white",
+                  },
+                }}
+                cancelButtonProps={{
+                  style: { height: 40, width: 40 },
+                  type: "default",
+                }}
+              > */}
+              <Button
+                style={{ width: 150 }}
+                type="primary"
+                htmlType="submit"
+                className="float-end"
               >
-                <Button
-                  style={{ width: 150 }}
-                  type="primary"
-                  htmlType="submit"
-                  className="float-end"
-                >
-                  Update
-                </Button>
-              </Popconfirm>
+                Update
+              </Button>
+              {/* </Popconfirm> */}
             </Form.Item>
           </Form>
         </Modal>

@@ -119,7 +119,7 @@ function ShowProductDetails() {
       <Layout className="layout-default">
         <CommonNavbar handleSearch={handleSearch} />
         <Card className="show-productDetails-card">
-          <Row className="row-spd">
+          <Row className="row-spd" justify="space-around" align="top">
             <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
               {/* <div className="image-container"> */}
               <img src={imageUrl} alt="Product" onClick={showModal} />
@@ -145,19 +145,26 @@ function ShowProductDetails() {
                 )}
               </div>
             </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
+            <Col
+              xs={24}
+              sm={24}
+              md={8}
+              lg={8}
+              xl={8}
+              className="column-spd actionButtons-spd"
+            >
               <div className="div-buttons-spd w-100 text-center">
-                <div>
-                  <Button
-                    className="add-to-cart-button"
-                    onClick={handleAddToCart}
-                  >
-                    Add to Cart
-                  </Button>
-                </div>
-                <div>
-                  <Button className="buy-now-button">Buy Now</Button>
-                </div>
+                <Button
+                  className="add-to-cart-button"
+                  type="primary"
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </Button>
+
+                <Button type="primary" className="buy-now-button">
+                  Buy Now
+                </Button>
               </div>
             </Col>
           </Row>

@@ -26,8 +26,8 @@ function Updatecategories() {
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [search, setSearch] = useState("");
-  const [refreshPage,setRefreshPage] = useState(false)
-  const {categories,fetchCategories} = useAllContext();
+  const [refreshPage, setRefreshPage] = useState(false);
+  const { categories, fetchCategories } = useAllContext();
   // const getCategories = async () => {
   //   try {
   //     const response = await axios.get(
@@ -43,7 +43,7 @@ function Updatecategories() {
 
   useEffect(() => {
     fetchCategories();
-  }, [refreshPage,fetchCategories]);
+  }, [refreshPage, fetchCategories]);
 
   useEffect(() => {
     const result = categories.filter((category) => {
@@ -133,10 +133,23 @@ function Updatecategories() {
             onConfirm={() => deleteItemFromCategories(row.id)}
             okText="Yes"
             cancelText="No"
+            okButtonProps={{
+              style: {
+                height: 40,
+                width: 40,
+                background: "#f53131",
+                color: "white",
+              },
+            }}
+            cancelButtonProps={{
+              style: { height: 40, width: 40 },
+              type: "default",
+            }}
           >
             <Button
               style={{ width: "51%", marginLeft: 10 }}
-              type="danger"
+              type="primary"
+              danger
               icon={<DeleteOutlined />}
             >
               Delete
@@ -223,21 +236,21 @@ function Updatecategories() {
               </Form.Item>
             )}
             <Form.Item>
-              <Popconfirm
+              {/* <Popconfirm
                 title="Are you sure you want to update this category?"
                 onConfirm={() => onFinish(form.getFieldsValue())}
                 okText="Yes"
                 cancelText="No"
+              > */}
+              <Button
+                style={{ width: 150 }}
+                type="primary"
+                htmlType="submit"
+                className="float-end"
               >
-                <Button
-                  style={{ width: 150 }}
-                  type="primary"
-                  htmlType="submit"
-                  className="float-end"
-                >
-                  Update
-                </Button>
-              </Popconfirm>
+                Update
+              </Button>
+              {/* </Popconfirm> */}
             </Form.Item>
           </Form>
         </Modal>

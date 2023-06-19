@@ -33,14 +33,16 @@ function Cart() {
         // console.log(data2)
         // console.log(data3)
         const mergedData = data2.map((item) => {
-          const matchingData1Item = data1.find((data1Item) => data1Item.product_id === item.id);
-        
+          const matchingData1Item = data1.find(
+            (data1Item) => data1Item.product_id === item.id
+          );
+
           return {
             ...item,
             id: matchingData1Item?.id || item.id,
             quantity: matchingData1Item?.quantity || 1,
           };
-        });        
+        });
         setProductData(mergedData);
         // console.log(productData)
       } catch (error) {
@@ -140,7 +142,7 @@ function Cart() {
     <Layout className="layout-default">
       <CommonNavbar handleSearch={handleSearch} />
       <Content className="cart-content">
-        <Card>
+        <Card style={{ height: "100%" }} className="show-productDetails-card">
           <div className="cart-header">
             <h1>
               <ShoppingCartOutlined
@@ -192,6 +194,18 @@ function Cart() {
                   onConfirm={() => deleteItemFromCart(item.id)}
                   okText="Yes"
                   cancelText="No"
+                  okButtonProps={{
+                    style: {
+                      height: 40,
+                      width: 40,
+                      background: "#f53131",
+                      color: "white",
+                    },
+                  }}
+                  cancelButtonProps={{
+                    style: { height: 40, width: 40 },
+                    type: "default",
+                  }}
                 >
                   <Button className="DelFromCartButton" type="link">
                     Delete from Cart
@@ -206,7 +220,7 @@ function Cart() {
               <span className="spanItems">{calculateTotalItems()}</span> items{" "}
               <span className="spanCost">&#8377;{calculateSubtotal()}</span>
             </h1>
-            <Button className="proceed-button">Proceed To Buy</Button>
+            <Button type="primary">Proceed To Buy</Button>
           </div>
         </Card>
       </Content>
