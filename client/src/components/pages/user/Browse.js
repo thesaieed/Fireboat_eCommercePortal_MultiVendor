@@ -280,6 +280,8 @@ const Browse = () => {
               priceRange={priceRange}
               setPriceRange={setPriceRange}
               sliderRange={sliderRange}
+              selectedCategories={selectedCategories}
+              clearAllFilters={clearAllFilters}
             />
           </Drawer>
           <Content style={{ padding: 16, overflow: "auto" }}>
@@ -297,13 +299,17 @@ const Browse = () => {
             <Row justify="left" style={{ marginTop: 7, marginLeft: 25 }}>
               <Col>
                 <Title level={3}>
-                  Search Results for "{searchTerms.join(" ")}"
+                  Search Results for{" "}
+                  <span style={{ color: "#ff8400" }}>
+                    {" "}
+                    "{searchTerms.join(" ")}"{" "}
+                  </span>
                 </Title>
               </Col>
             </Row>
-            <Row gutter={[24, 0]}>
+            <Row gutter={[24, 0]} className="justify-content-evenly">
               {noProductMessage && <Title>No Products found !</Title>}
-              {showProducts()}
+              {!noProductMessage && showProducts()}
             </Row>
             {browseProducts.length > 8 && (
               <Row justify="center">

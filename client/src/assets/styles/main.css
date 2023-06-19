@@ -1,14 +1,3 @@
-.ant-btn-primary {
-  background-color: #ff9a03;
-  color: #000;
-  border: transparent;
-}
-.ant-btn-primary:hover,
-.ant-btn-primary:focus {
-  color: #000;
-  border-color: #fcd217;
-  background: #fcd217;
-}
 /* Navbar */
 
 .navbar {
@@ -182,6 +171,7 @@
 
   .ant-drawer-title > .brand-font {
     margin-bottom: 0;
+    color: #000 !important;
   }
 
   .username {
@@ -385,7 +375,7 @@ body {
   white-space: nowrap;
 }
 
-.layout-dashboard
+/* .layout-dashboard
   .ant-layout-sider.sider-primary.ant-layout-sider-primary
   .ant-menu-item.ant-menu-item-selected
   .active
@@ -395,8 +385,10 @@ body {
   .ant-menu-item
   .active
   .icon {
-  /* background-color: #1890ff; */
-  background-color: #ff9c0a;
+  background-color: #1890ff; 
+   background-color: none !important; 
+   fill: #000 !important; 
+  background-color: #ff9c0a; 
 }
 .layout-dashboard
   .ant-layout-sider.sider-primary
@@ -414,9 +406,9 @@ body {
   .ant-menu-submenu
   .active
   .icon {
-  /* background-color: #1890ff; */
-  background-color: #ff9c0a;
-}
+   background-color: #1890ff; 
+   background-color: #ff9c0a; 
+} */
 
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item .icon,
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .icon {
@@ -565,6 +557,27 @@ body {
 .layout-dashboard .ant-layout-sider.sider-primary .footer-box button {
   margin: 0;
 }
+
+.layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item .icon,
+.layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .icon {
+  background-color: #ff8400 !important;
+}
+.layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item svg path,
+.layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu svg path {
+  fill: #fff !important;
+}
+.layout-dashboard
+  .ant-layout-sider.sider-primary
+  .ant-menu-item.ant-menu-item-selected
+  .active,
+.layout-dashboard
+  .ant-layout-sider.sider-primary
+  .ant-menu-submenu.ant-menu-item-selected
+  .active,
+.layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .active {
+  border: 1px solid #ff8400;
+}
+
 .ant-btn-sm,
 .ant-radio-group-small .ant-radio-button-wrapper {
   height: 34px;
@@ -2858,6 +2871,18 @@ section.ant-layout.layout-content .ant-layout-content.content-ant {
 .text-danger {
   color: #f5222d;
 }
+.logout:hover .text-danger {
+  color: #ffffff;
+  font-weight: normal;
+}
+.logout:hover {
+  background-color: #ff4d4f !important;
+  border-radius: 5px !important;
+  -webkit-border-radius: 5px !important;
+  -moz-border-radius: 5px !important;
+  -ms-border-radius: 5px !important;
+  -o-border-radius: 5px !important;
+}
 .text-success {
   color: #52c41a;
 }
@@ -2897,12 +2922,6 @@ section.ant-layout.layout-content .ant-layout-content.content-ant {
   background-size: cover;
   background-position: 50%;
 }
-
-section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
-  span.ant-page-header-heading-title {
-  /* color: #e8e7e7; */
-}
-
 section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
   span.ant-breadcrumb-separator {
   color: #000000;
@@ -3296,6 +3315,10 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
   height: 15px;
 }
 
+/* sideNav Icon css */
+
+/* sideNav Icon css ENDS */
+
 .layout-dashboard .ant-affix .ant-layout-header {
   background: #fff;
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
@@ -3482,7 +3505,7 @@ div.ant-upload {
   -o-border-radius: 0 0 6px 6px !important;
 }
 .productCard:hover h5 {
-  color: #a96500;
+  color: #ff8400;
   text-decoration: underline;
 }
 .productImg {
@@ -3500,6 +3523,9 @@ div.ant-upload {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+}
+.homeSidebar {
+  margin-top: 30px;
 }
 
 .sidebarHeading {
@@ -3560,6 +3586,7 @@ div.ant-upload {
 .cart-content {
   width: 80%;
   margin: auto;
+  /* height: 87vh !important; */
 }
 
 .cart-header {
@@ -3650,6 +3677,7 @@ div.ant-upload {
 .DelFromCartButton {
   padding-left: 0px;
   color: rgb(0, 85, 255);
+  color: red;
   font-size: 14px;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -3658,12 +3686,13 @@ div.ant-upload {
 }
 
 .DelFromCartButton:hover {
-  color: red;
+  color: rgb(235, 66, 66) !important;
 }
 
 .cart-summary {
   padding: 20px;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
 }
 
 .cart-summary h1 {
@@ -3681,7 +3710,7 @@ div.ant-upload {
 }
 .spanCost {
   font-weight: bold;
-  color: red;
+  color: #ff8400;
 }
 
 .proceed-button {
@@ -3820,14 +3849,11 @@ div.ant-upload {
   margin-top: 50px;
 }
 
-.row-spd {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
 .column-spd {
   padding: 50px;
+}
+.actionButtons-spd {
+  align-self: center;
 }
 
 .image-container {
@@ -3903,16 +3929,14 @@ div.ant-upload {
   color: #1890ff;
 }
 .add-to-cart-button {
-  background-color: #f7b98c;
-  color: #fff;
   width: 80%;
   margin-bottom: 1rem;
   margin-top: 2rem;
 }
 
 .buy-now-button {
-  background-color: orange;
-  color: #fff;
+  background-color: rgb(252, 197, 95);
+  color: #000;
   width: 80%;
 }
 

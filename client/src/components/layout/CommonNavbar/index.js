@@ -8,6 +8,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { useLocation, Link } from "react-router-dom";
+import logo from "../../../assets/images/logo.png";
 
 const CommonNavbar = ({ handleSearch }) => {
   const [visible, setVisible] = useState(false);
@@ -35,7 +36,7 @@ const CommonNavbar = ({ handleSearch }) => {
             />
           ),
           key: "searchInput",
-          style: { height: 60 },
+          style: { height: 60, background: "none" },
         },
       ],
     },
@@ -56,8 +57,16 @@ const CommonNavbar = ({ handleSearch }) => {
         <MenuOutlined />
       </Button>
 
-      <div className="logo">
-        <Link to="/">
+      <div className="logo ">
+        <Link
+          to="/"
+          className="d-flex justify-content-start align-items-center"
+        >
+          <img
+            src={logo}
+            alt="logo"
+            style={{ marginBottom: 19, marginLeft: -10, marginRight: 3 }}
+          />
           <h3 className="brand-font">AlSaleels</h3>
         </Link>
       </div>

@@ -28,7 +28,8 @@ const LeftMenu = ({ mode }) => {
       key: "aboutus",
     },
   ];
-  return <Menu mode={mode} items={items} />;
+
+  return <Menu mode={mode} items={items} disabledOverflow={true} />;
 };
 
 export default LeftMenu;
