@@ -375,7 +375,7 @@ body {
   white-space: nowrap;
 }
 
-.layout-dashboard
+/* .layout-dashboard
   .ant-layout-sider.sider-primary.ant-layout-sider-primary
   .ant-menu-item.ant-menu-item-selected
   .active
@@ -385,10 +385,10 @@ body {
   .ant-menu-item
   .active
   .icon {
-  /* background-color: #1890ff; */
-  /* background-color: none !important; */
-  /* fill: #000 !important; */
-  /* background-color: #ff9c0a; */
+  background-color: #1890ff; 
+   background-color: none !important; 
+   fill: #000 !important; 
+  background-color: #ff9c0a; 
 }
 .layout-dashboard
   .ant-layout-sider.sider-primary
@@ -406,9 +406,9 @@ body {
   .ant-menu-submenu
   .active
   .icon {
-  /* background-color: #1890ff; */
-  /* background-color: #ff9c0a; */
-}
+   background-color: #1890ff; 
+   background-color: #ff9c0a; 
+} */
 
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item .icon,
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .icon {
@@ -2922,12 +2922,6 @@ section.ant-layout.layout-content .ant-layout-content.content-ant {
   background-size: cover;
   background-position: 50%;
 }
-
-section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
-  span.ant-page-header-heading-title {
-  /* color: #e8e7e7; */
-}
-
 section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
   span.ant-breadcrumb-separator {
   color: #000000;
