@@ -12,6 +12,7 @@ import {
   Row,
   Typography,
 } from "antd";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 
@@ -29,7 +30,7 @@ function ShowProductDetails() {
   // const productId = props.match.params.id;
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
-  const { Title, Paragraph } = Typography; // console.log(productId);
+  const { Title } = Typography; // console.log(productId);
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
@@ -114,6 +115,7 @@ function ShowProductDetails() {
   if (productDetails === null) {
     return <p>Loading</p>;
   }
+
   if (productDetails) {
     return (
       <Layout className="layout-default">
@@ -130,15 +132,9 @@ function ShowProductDetails() {
                 {productDetails ? (
                   <div className="details-content">
                     <h1>Product: {productDetails.name}</h1>
-                    <p>Price: &#8377; {productDetails.price}</p>
+                    <span>Price:</span>
+                    <strong> &#8377; {productDetails.price}</strong>
                     <p>Category: {productDetails.category}</p>
-
-                    <div className="quantity-controls-spd">
-                      <p>Quantity: </p>
-                      <button onClick={decrementQuantity}>-</button>
-                      <span>{quantity}</span>
-                      <button onClick={incrementQuantity}>+</button>
-                    </div>
                   </div>
                 ) : (
                   <p>Loading...</p>
@@ -154,6 +150,18 @@ function ShowProductDetails() {
               className="column-spd actionButtons-spd"
             >
               <div className="div-buttons-spd w-100 text-center">
+                <div className="quantity-controls-spd d-flex justify-content-start ml-5 ">
+                  <p style={{ marginRight: 10 }}>Quantity </p>
+                  <Button type="default" onClick={decrementQuantity}>
+                    <MinusOutlined />
+                  </Button>
+                  <span style={{ marginLeft: 10, marginRight: 10 }}>
+                    {quantity}
+                  </span>
+                  <Button type="default" onClick={incrementQuantity}>
+                    <PlusOutlined />
+                  </Button>
+                </div>
                 <Button
                   className="add-to-cart-button"
                   type="primary"
@@ -168,19 +176,20 @@ function ShowProductDetails() {
               </div>
             </Col>
           </Row>
-
-          <Title level={5} className="mt-25">
-            {" "}
-            Description:{" "}
-          </Title>
-          <Paragraph
-            ellipsis={{
-              rows: 2,
-              expandable: true,
-            }}
-          >
-            {productDetails.description}
-          </Paragraph>
+          <Row className="row-spd" style={{ marginTop: 10 }}>
+            <Col
+              className="column-spd"
+              style={{ paddingTop: 0 }}
+              // style={{ background: "#f5f5f5", padding: 10 }}
+            >
+              <Title level={3}>Description </Title>
+              <hr />
+              <div
+                dangerouslySetInnerHTML={{ __html: productDetails.description }}
+              ></div>
+              {/* <Collapse items={items} defaultActiveKey={["1"]} /> */}
+            </Col>
+          </Row>
           {/* {showFullDescription
               ? productDetails.description
               : productDetails.description.slice(0, 150) + "..."}

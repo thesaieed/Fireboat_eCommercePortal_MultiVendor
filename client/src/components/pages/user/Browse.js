@@ -7,6 +7,7 @@ import {
   Typography,
   Pagination,
   message,
+  Card,
 } from "antd";
 import CommonNavbar from "../../layout/CommonNavbar";
 import LoadingScreen from "../../layout/LoadingScreen";
@@ -175,10 +176,72 @@ const Browse = () => {
 
   const showProducts = () => {
     return shownProducts.map((product, index) => {
-      if (index >= (currentPage - 1) * 8 && index < currentPage * 8) {
+      if (index >= (currentPage - 1) * 9 && index < currentPage * 9) {
         return (
-          <Col className="productCard mb-24 d-flex" key={index}>
-            <div className="productContainer rounded-border ">
+          <Col
+            className="gutter-row productShow"
+            xs={23}
+            sm={23}
+            md={11}
+            lg={11}
+            xl={7}
+            // className="productCard mb-24 d-flex"
+            key={index}
+          >
+            <Card
+              className="productContainer"
+              hoverable
+              // style={{
+              //   width: 240,
+              // }}
+              cover={
+                <img
+                  // width="100%"
+                  className="productImg"
+                  height={300}
+                  alt="example"
+                  src={baseImgUrl + product.image}
+                />
+              }
+            >
+              <Row
+                style={{ height: 55 }}
+                className="d-flex flex-column justify-content-center align-items-start"
+              >
+                <Link to={`/product/?id=${product.id}`} className="two-lines">
+                  <Title strong level={5}>
+                    {product.name}
+                  </Title>
+                </Link>
+              </Row>
+              <Row>
+                <Paragraph>{product.category}</Paragraph>
+              </Row>
+              <Row>
+                <Paragraph className="productPrice">
+                  &#8377; {product.price}
+                </Paragraph>
+              </Row>
+              <Row
+                style={{ height: 41 }}
+                className="two-lines"
+                dangerouslySetInnerHTML={{
+                  __html: product.description,
+                }}
+              />
+
+              <Row className="d-flex mt-20">
+                <Button
+                  onClick={() => {
+                    handleAddToCart(product.id);
+                  }}
+                  type="primary"
+                >
+                  Add to Cart
+                </Button>
+              </Row>
+            </Card>
+            {/* <div className="productContainer rounded-border ">
               <div className="productImg">
                 <img src={baseImgUrl + product.image} alt="img" />
               </div>
@@ -191,19 +254,17 @@ const Browse = () => {
                   </Title>
                 </Link>
                 <Paragraph>{product.category}</Paragraph>
-                <Paragraph
-                  ellipsis={{
-                    rows: 2,
-                    expandable: false,
-                  }}
-                >
-                  {product.description}
-                </Paragraph>
+
                 <Paragraph className="productPrice">
                   &#8377; {product.price}
                 </Paragraph>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: product.description.slice(0, 150) + "...",
+                  }}
+                />
+
                 <div className="d-flex productActionButtons">
-                  {/* <Button type="primary">Buy Now</Button> */}
                   <Button
                     onClick={() => {
                       handleAddToCart(product.id);
@@ -214,7 +275,7 @@ const Browse = () => {
                   </Button>
                 </div>
               </div>
-            </div>
+            </div> */}
           </Col>
         );
       } else {
@@ -307,18 +368,27 @@ const Browse = () => {
                 </Title>
               </Col>
             </Row>
-            <Row gutter={[24, 0]} className="justify-content-evenly">
+            <Row
+              justify={"space-evenly"}
+              // gutter={{
+              //   xs: 8,
+              //   sm: 16,
+              //   md: 24,
+              //   lg: 32,
+              // }}
+              // className="justify-content-evenly"
+            >
               {noProductMessage && <Title>No Products found !</Title>}
               {!noProductMessage && showProducts()}
             </Row>
-            {browseProducts.length > 8 && (
+            {browseProducts.length > 9 && (
               <Row justify="center">
                 <Col>
                   <Pagination
                     defaultCurrent={1}
                     current={currentPage}
                     total={shownProducts.length}
-                    pageSize={8}
+                    pageSize={9}
                     onChange={onPageChange}
                     responsive
                   />
