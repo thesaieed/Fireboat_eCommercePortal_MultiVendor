@@ -62,8 +62,7 @@ app.post("/signup", async (req, res) => {
     const newUser = await pool.query(
       // `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
       "INSERT INTO users(name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING *",
-[fullname, email, password, phone]
-
+      [fullname, email, password, phone]
     );
     // console.log("newUSer", newUser);
 
@@ -72,7 +71,8 @@ app.post("/signup", async (req, res) => {
     res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
     console.error(error);
-    if (error.code == 23505) {  //error code trying to insert duplicate value
+    if (error.code == 23505) {
+      //error code trying to insert duplicate value
       console.log("User already exists");
       res
         .status(409)
@@ -122,6 +122,7 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
   const { category, name, description, price, stock_available } = req.body;
   // console.log(req.body)
   // console.log(req.file)
+  // console.log("description: ", description);
   const imagePath = req.file.path;
 
   try {
@@ -330,9 +331,10 @@ app.get("/cart", async (req, res) => {
     const cartDetails1 = await pool.query(
       // "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
       // [user_id] //basically checks db and returns dintinct product_ids(i.e different prods in cart of user) or user with corresponding details
-   
-      "select id, product_id, quantity from cart where user_id=$1",[user_id] //simplified logic with updation
-      );
+
+      "select id, product_id, quantity from cart where user_id=$1",
+      [user_id] //simplified logic with updation
+    );
     // console.log(cartDetails1.rows);
     if (cartDetails1.rows.length === 0) {
       res.send("Could not fetch the cart details");

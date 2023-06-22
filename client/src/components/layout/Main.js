@@ -29,7 +29,6 @@ function Main() {
   const [sidenavType, setSidenavType] = useState("transparent");
   const [fixed, setFixed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdminCheck, setIsAdminCheck] = useState(false);
 
   const openDrawer = () => setVisible(!visible);
   const handleSidenavType = (type) => setSidenavType(type);

@@ -1379,8 +1379,11 @@ span.blue {
 .align-items-center {
   align-items: center !important;
 }
-.align-items-start {
+.align-items-end {
   align-items: end !important;
+}
+.align-items-start {
+  align-items: start !important;
 }
 .justify-content-start {
   justify-content: start !important;
@@ -2190,6 +2193,11 @@ body {
 .mt-25,
 .my-25 {
   margin-top: 25px;
+}
+.m-20,
+.mt-20,
+.my-2 {
+  margin-top: 20px;
 }
 .text-center {
   text-align: center;
@@ -3380,7 +3388,7 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
 
 .cardAddProduct {
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   margin: auto;
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
   border-radius: 12px;
@@ -3454,29 +3462,57 @@ div.ant-upload {
 
 /* Home Products */
 .productContainer {
-  background-color: white;
-  border: 1px solid rgba(242, 147, 9, 0.2);
-  padding: 0;
-  margin: 0;
-  /* width: 22rem; */
-  width: 40rem;
+  /* border: 1px solid rgba(242, 147, 9, 0.2); */
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  height: 500px !important;
 }
-.productContainer:hover {
-  border-color: #f29309;
+.overflow-hidden {
+  overflow: hidden;
+}
+.two-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+.three-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+.productShow .ant-card-body {
+  background-color: #fffcf9;
+}
+.bg-light {
+  background-color: #fafafa;
+}
+.productContainer:hover h5 {
+  color: #f29309;
+}
+.productImg {
+  object-fit: scale-down;
+  overflow: hidden;
 }
 .productDetails {
   padding: 10px;
-  height: 260px !important;
+  /* height: 260px !important; */
+  min-height: 280px !important;
+  max-height: 280px !important;
   background-color: #f8f8f8;
 }
 .productActionButtons {
   margin-bottom: 0 !important;
+  float: right;
 }
 .productActionButtons button {
   margin-right: 0.2rem;
+  margin-top: auto !important;
 }
 .productPrice {
   font-size: larger;
@@ -3507,15 +3543,6 @@ div.ant-upload {
 .productCard:hover h5 {
   color: #ff8400;
   text-decoration: underline;
-}
-.productImg {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-  width: 21rem;
-  height: 23rem;
-  overflow: hidden;
 }
 
 /* Home Sidebar */
@@ -3870,6 +3897,11 @@ div.ant-upload {
 .spd {
   padding: 10px;
 }
+#descrip {
+  /* background-color: #f5f5f5; */
+  padding: 10px;
+  margin: auto;
+}
 
 .details-content h1 {
   font-size: 24px;
@@ -3894,12 +3926,14 @@ div.ant-upload {
 }
 
 .quantity-controls-spd button {
+  /* background-color: #52c41a; */
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: none;
+  justify-content: space-evenly;
+  /* text-align: center; */
+  width: 34px;
+  height: 34px;
+  /* border: none;
   background-color: #f0f0f0;
   border-color: unset;
   border-radius: 4px;
@@ -3908,16 +3942,19 @@ div.ant-upload {
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-right: 5px;
+  margin-left: 5px; */
+}
+.quantity-controls-spd button svg {
   margin-left: 5px;
 }
 
-.quantity-controls-spd button:hover {
+/* .quantity-controls-spd button:hover {
   background-color: #ccc;
 }
 
 .quantity-controls-spd button:active {
   background-color: #999;
-}
+} */
 
 .description-spd {
   margin-top: 10px;
@@ -3931,7 +3968,6 @@ div.ant-upload {
 .add-to-cart-button {
   width: 80%;
   margin-bottom: 1rem;
-  margin-top: 2rem;
 }
 
 .buy-now-button {
@@ -3963,6 +3999,12 @@ div.ant-upload {
 .categoryCard {
   padding: 1.5rem;
 }
+.div-buttons-spd {
+  /* background-color: #000; */
+  display: flex;
+  flex-direction: column;
+  justify-content: baseline;
+}
 
 @media (max-width: 960px) {
   .add-to-cart-button,
@@ -3983,9 +4025,7 @@ div.ant-upload {
   .buy-now-button {
     width: 80%;
   }
-  .add-to-cart-button {
-    margin-top: 4rem;
-  }
+
   .column-spd {
     padding: 20px 2px;
   }
@@ -4000,7 +4040,7 @@ div.ant-upload {
 @media (max-width: 767px) {
   .add-to-cart-button,
   .buy-now-button {
-    width: 50%;
+    width: 100%;
   }
   .description-spd {
     padding: 10px;
@@ -4024,13 +4064,17 @@ div.ant-upload {
     }
   }
   @media (max-width: 400px) {
-    .quantity-controls-spd button {
-      width: 20px;
+    /* .quantity-controls-spd button {
+      width: 100%;
       height: 20px;
       font-size: 14px;
       margin-right: 3px;
-    }
+    } */
   }
+}
+
+.ql-editor {
+  min-height: 200px !important;
 }
 
 /* Css for data tables */

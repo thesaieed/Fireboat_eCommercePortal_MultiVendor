@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Row, Col, Typography, Carousel, Pagination, Layout } from "antd";
+import { Row, Col, Typography, Carousel, Pagination, Layout, Card } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import FeaturedProduct from "./FeaturedProduct";
 import CommonNavbar from "../../layout/CommonNavbar";
@@ -65,37 +65,65 @@ const Home = () => {
               >
                 {allProducts.map((product, index) => {
                   if (
-                    index >= (currentPage - 1) * 8 &&
-                    index < currentPage * 8
+                    index >= (currentPage - 1) * 9 &&
+                    index < currentPage * 9
                   ) {
                     return (
-                      <Col className="productCard mb-24 d-flex" key={index}>
-                        <div className="productContainer rounded-border ">
-                          <div className="productImg">
-                            <img src={baseImgUrl + product.image} alt="img" />
-                          </div>
-                          <div className="productDetails rounded-border-bottom">
-                            <Link to={`/product/?id=${product.id}`}>
+                      <Col
+                        className="gutter-row productShow"
+                        xs={23}
+                        sm={23}
+                        md={11}
+                        lg={11}
+                        xl={7}
+                        // className="productCard mb-24 d-flex"
+                        key={index}
+                      >
+                        <Card
+                          className="productContainer"
+                          hoverable
+                          // style={{
+                          //   width: 240,
+                          // }}
+                          cover={
+                            <img
+                              // width="100%"
+                              className="productImg"
+                              height={300}
+                              alt="example"
+                              src={baseImgUrl + product.image}
+                            />
+                          }
+                        >
+                          <Row
+                            style={{ height: 55 }}
+                            className="d-flex flex-column justify-content-center align-items-start"
+                          >
+                            <Link
+                              to={`/product/?id=${product.id}`}
+                              className="two-lines"
+                            >
                               <Title strong level={5}>
-                                {product.name.length > 75
-                                  ? product.name.substr(0, 75) + " ..."
-                                  : product.name}
+                                {product.name}
                               </Title>
                             </Link>
+                          </Row>
+                          <Row>
                             <Paragraph>{product.category}</Paragraph>
-                            <Paragraph
-                              ellipsis={{
-                                rows: 3,
-                                expandable: false,
-                              }}
-                            >
-                              {product.description}
-                            </Paragraph>
+                          </Row>
+                          <Row>
                             <Paragraph className="productPrice">
                               &#8377; {product.price}
                             </Paragraph>
-                          </div>
-                        </div>
+                          </Row>
+                          <Row
+                            style={{ height: 41 }}
+                            className="two-lines"
+                            dangerouslySetInnerHTML={{
+                              __html: product.description,
+                            }}
+                          />
+                        </Card>
                       </Col>
                     );
                   } else {
@@ -109,7 +137,7 @@ const Home = () => {
                     defaultCurrent={1}
                     current={currentPage}
                     total={allProducts.length}
-                    pageSize={8}
+                    pageSize={9}
                     onChange={onPageChange}
                     responsive
                   />
