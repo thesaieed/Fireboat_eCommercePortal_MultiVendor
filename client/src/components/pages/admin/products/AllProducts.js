@@ -21,8 +21,10 @@ import {
   SearchOutlined,
   EditOutlined,
   DeleteOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import useAllContext from "../../../../context/useAllContext";
+import TextEditor from "./TextEditor";
 
 function AllProducts() {
   const [search, setSearch] = useState("");
@@ -30,27 +32,17 @@ function AllProducts() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [descModalVisible, setDescModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { Option } = Select;
   const [form] = Form.useForm();
-  // const [categories, setCategories] = useState([]);
+  const [modalDescription, setModalDescription] = useState([]);
+  const [textDesc, setTextDesc] = useState("");
   const { categories, fetchCategories } = useAllContext();
   const [selectedRowData, setSelectedRowData] = useState({});
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [refreshPage, setRefreshPage] = useState(false);
-
-  // const fetchCategories = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "http://localhost:5000/admin/categories"
-  //     );
-  //     // console.log(response.data);
-  //     setCategories(response.data.categories);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }, []);
 
   useEffect(() => {
     fetchCategories();
@@ -77,18 +69,28 @@ function AllProducts() {
   }, [search, products]);
 
   const openModal = (rowData) => {
-    // console.log(rowData);
+    console.log(rowData);
+    setTextDesc(rowData.description);
     setSelectedRowId(rowData.id);
     const initialValues = {
       name: rowData.name,
       category: rowData.category_id,
-      description: rowData.description,
+      description: textDesc,
       price: rowData.price,
       stock_available: rowData.stock_available,
     };
+
     setSelectedRowData(initialValues);
     setModalVisible(true);
     form.setFieldsValue(initialValues);
+  };
+
+  const openDescModal = (rowData) => {
+    rowData.description
+      ? setModalDescription(rowData.description)
+      : setModalDescription([]);
+
+    setDescModalVisible(true);
   };
 
   useEffect(() => {
@@ -104,7 +106,7 @@ function AllProducts() {
       const formData = new FormData();
       formData.append("category", values.category);
       formData.append("name", values.name);
-      formData.append("description", values.description);
+      formData.append("description", textDesc);
       formData.append("price", values.price);
       formData.append("stock_available", values.stock_available);
       formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
@@ -177,41 +179,58 @@ function AllProducts() {
   };
 
   const columns = [
-    // {
-    //   name: "SNo.",
-    //   cell: (row, rowIndex) => rowIndex + 1,
-    // },
     {
       name: "Image",
-      width: "100px",
+      width: "10%",
+
       selector: (row) => (
-        <div>
-          <img
-            width={50}
-            height={50}
-            src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
-            alt=""
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              setSelectedImage(row.image);
-              setImageModalVisible(true);
-            }}
-          ></img>
-        </div>
+        <img
+          // width={50}
+          // height={50}
+          src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
+          alt=""
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            setSelectedImage(row.image);
+            setImageModalVisible(true);
+          }}
+        ></img>
       ),
     },
     {
       name: "Product Name",
-      width: "200px",
+      width: "55%",
       cell: (row) => (
         <div
           style={{
-            maxHeight: "100px",
-            overflowY: "auto",
+            maxHeight: "100%",
+            minWidth: "100%",
+            overflow: "hidden",
             lineHeight: "1.5",
           }}
         >
-          {row.name}
+          <strong style={{ marginTop: 10 }} className="two-lines">
+            {row.name}
+          </strong>
+          <p className="mt-0">Description : </p>
+          <p
+            className="three-lines m-0"
+            dangerouslySetInnerHTML={{ __html: row.description }}
+          ></p>
+          <p style={{ width: "100%" }} className="d-flex">
+            <Button
+              // style={{ width: "43%" }}
+              type="link"
+              onClick={() => {
+                setTextDesc(row.description);
+                openDescModal(row);
+              }}
+              onClose={() => setModalDescription("")}
+              icon={<EyeOutlined />}
+            >
+              view more
+            </Button>
+          </p>
         </div>
       ),
     },
@@ -219,42 +238,57 @@ function AllProducts() {
     {
       name: "Category",
       selector: (row) => row.category,
-      width: "100px",
+      width: "8%",
     },
     {
       name: "Price",
       selector: (row) => row.price,
-      width: "100px",
+      width: "6%",
     },
     {
       name: "Stock",
       selector: (row) => row.stock_available,
-      width: "100px",
+      width: "6%",
     },
 
-    {
-      name: "Description",
-      cell: (row) => (
-        <div
-          style={{
-            maxHeight: "100px",
-            overflowY: "auto",
-            lineHeight: "1.5",
-          }}
-        >
-          {row.description}
-        </div>
-      ),
-    },
+    // {
+    //   name: "Description",
+    //   width: "150px",
+    //   cell: (row) => (
+    //     // <div
+    //     //   style={{
+    //     //     maxHeight: "100%",
+    //     //     overflowY: "hidden",
+    //     //     lineHeight: "1.5",
+    //     //   }}
+    //     // >
+    //     //   {row.description}
+    //     // </div>
+    //     <Button
+    //       // style={{ width: "43%" }}
+    //       type="link"
+    //       onClick={() => {
+    //         setTextDesc(row.description);
+    //         openDescModal(row);
+    //       }}
+    //       onClose={() => setModalDescription("")}
+    //       icon={<EyeOutlined />}
+    //     >
+    //       View
+    //     </Button>
+    //   ),
+    // },
     {
       name: "Actions",
       width: "200px",
       cell: (row) => (
         <>
           <Button
-            style={{ width: "43%" }}
+            style={{ width: "43%", background: "#4b7ee5", color: "#fff" }}
             type="primary"
-            onClick={() => openModal(row)}
+            onClick={() => {
+              openModal(row);
+            }}
             icon={<EditOutlined />}
           >
             Edit
@@ -279,7 +313,12 @@ function AllProducts() {
             }}
           >
             <Button
-              style={{ width: "51%", marginLeft: 10 }}
+              style={{
+                width: "51%",
+                marginLeft: 10,
+                background: "#9e2426",
+                color: "#fff",
+              }}
               danger
               type="primary"
               icon={<DeleteOutlined />}
@@ -296,8 +335,20 @@ function AllProducts() {
     headCells: {
       style: {
         fontWeight: "bold",
-        color: "#ff9c0a",
+        color: "#41444a",
         fontSize: "1rem",
+      },
+    },
+    rows: {
+      style: {
+        height: "210px",
+        width: "100%",
+      },
+    },
+    cells: {
+      style: {
+        height: "100%",
+        width: "100%",
       },
     },
   };
@@ -314,7 +365,7 @@ function AllProducts() {
           // selectableRowsHighlight
           highlightOnHover
           title={
-            <h2 style={{ color: "orange", fontWeight: "bold" }}>
+            <h2 style={{ color: "#ff8400", fontWeight: "bold" }}>
               All Products
             </h2>
           }
@@ -327,14 +378,29 @@ function AllProducts() {
             <Input
               prefix={<SearchOutlined />}
               type="text"
-              placeholder="Search here"
-              style={{ width: "25%" }}
+              placeholder="Search Products "
+              style={{ width: "20em", marginBottom: 10 }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           }
           subHeaderAlign="right"
         />
+        <Modal
+          title="Description Preview"
+          open={descModalVisible}
+          centered
+          onCancel={() => setDescModalVisible(false)}
+          footer={null}
+        >
+          {modalDescription.length > 0 ? (
+            <div dangerouslySetInnerHTML={{ __html: modalDescription }}></div>
+          ) : (
+            " No Description Available"
+          )}
+          {/* {modalDescription} */}
+        </Modal>
+
         <Modal
           title="Image Preview"
           open={imageModalVisible}
@@ -349,13 +415,13 @@ function AllProducts() {
         </Modal>
 
         <Modal
-          title="Edit Product"
+          // title="Edit Product"
           open={modalVisible}
           onCancel={closeModal}
           footer={null}
         >
           <h1 style={{ textAlign: "center", color: "orange" }}>
-            Edit Product Details here!
+            Edit Product !
           </h1>
 
           <Form
@@ -369,7 +435,6 @@ function AllProducts() {
           >
             <Row>
               <Col style={{ paddingRight: ".5rem" }} span={16}>
-                {" "}
                 <Form.Item
                   label="Product Name"
                   name="name"
@@ -406,18 +471,6 @@ function AllProducts() {
               </Col>
             </Row>
 
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input product description!",
-                },
-              ]}
-            >
-              <Input.TextArea placeholder="Enter product description" />
-            </Form.Item>
             <Row>
               <Col style={{ paddingRight: ".5rem" }} span={12}>
                 <Form.Item
@@ -482,6 +535,64 @@ function AllProducts() {
                     </Upload>
                   </Tooltip>
                 </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              Description
+              <Col
+                style={{
+                  padding: ".5rem",
+                  marginBottom: 15,
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.15)",
+                  borderRadius: 7,
+                }}
+                span={24}
+              >
+                <Form.Item name="description">
+                  <TextEditor textDesc={textDesc} setTextDesc={setTextDesc} />
+                </Form.Item>
+                {/* <Form.List name="description">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div
+                          key={key}
+                          className="d-flex justify-content-evenly align-items-baseline"
+                        >
+                          <Form.Item
+                            {...restField}
+                            style={{ width: "100%" }}
+                            name={[name]}
+                            // name={[""]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing Description List Item",
+                              },
+                            ]}
+                          >
+                            <Input
+                              style={{ width: "98%" }}
+                              placeholder="Description List Item"
+                            />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </div>
+                      ))}
+                      <Form.Item key="descr">
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          Add Description Item
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List> */}
               </Col>
             </Row>
             {errorMessage && (
