@@ -17,12 +17,15 @@ import axios from "axios";
 import useAllContext from "../../../../context/useAllContext";
 import { UploadOutlined } from "@ant-design/icons";
 import cardImage from "../../../../assets/images/addproductCardImg.png";
+import TextEditor from "./TextEditor";
 
 function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
+  const [prodImgPreview, setProdImgPreview] = useState(cardImage);
   const [form] = Form.useForm();
   const { categories, fetchCategories } = useAllContext();
   // const navigate = useNavigate();
+  const [textDesc, setTextDesc] = useState("");
 
   //get request to get the categories available stored in db
   const { Option } = Select;
@@ -32,15 +35,17 @@ function AddProduct() {
   }, [fetchCategories]);
 
   const onFinish = async (values) => {
+    console.log("values: ", values);
     try {
       const formData = new FormData();
       formData.append("category", values.category);
       formData.append("name", values.name);
-      formData.append("description", values.description);
+      formData.append("description", textDesc);
       formData.append("price", values.price);
       formData.append("stock_available", values.stock_available);
       formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
 
+      console.log("formData : ", formData);
       const response = await axios.post(
         "http://localhost:5000/admin/addproduct",
         formData,
@@ -54,8 +59,9 @@ function AddProduct() {
       if (response.status === 200) {
         //add required navigation
         // navigate("/admin/dashboard");
-        message.success("Product added Successfully")
+        message.success("Product added Successfully");
         form.resetFields();
+        setProdImgPreview(cardImage);
       } else {
         setErrorMessage("Something went Wrong");
       }
@@ -66,7 +72,7 @@ function AddProduct() {
   };
   const onFinishFailed = (errorInfo) => {
     setErrorMessage("Something went wrong");
-    console.log("Failed", errorInfo);
+    // console.log("Failed", errorInfo);
   };
 
   return (
@@ -84,7 +90,25 @@ function AddProduct() {
           </h5>
         }
         bordered="false"
-        cover={<img alt="example" src={cardImage} />}
+        cover={
+          <Upload
+            // className="d-flex flex-column justify-content-center align-items-center"
+            name="image"
+            showUploadList={false}
+            accept="image/*"
+            beforeUpload={(event) => {
+              setProdImgPreview(URL.createObjectURL(event));
+              return false;
+            }}
+          >
+            <img
+              style={{ width: "100%", margin: "auto", padding: 5 }}
+              id="prod_img_preview"
+              alt="example"
+              src={prodImgPreview}
+            />
+          </Upload>
+        }
       >
         <Form
           form={form}
@@ -105,10 +129,9 @@ function AddProduct() {
                   { required: true, message: "Please input product name!" },
                 ]}
               >
-                <Input placeholder="Enter product name" />
+                <Input placeholder="Product Name" />
               </Form.Item>
             </Col>
-
             <Col style={{ paddingLeft: ".5rem" }} span={12}>
               <Form.Item
                 name="category"
@@ -120,7 +143,7 @@ function AddProduct() {
                   },
                 ]}
               >
-                <Select className="ant-input " placeholder="Select a category">
+                <Select className="ant-input " placeholder="Category">
                   {categories.map((category) => (
                     <Option key={category.id} value={category.id}>
                       {category.name}
@@ -140,11 +163,7 @@ function AddProduct() {
                   { required: true, message: "Please input product price!" },
                 ]}
               >
-                <Input
-                  placeholder="Enter product price"
-                  type="number"
-                  min="0"
-                />
+                <Input placeholder="Product Price" type="number" min="0" />
               </Form.Item>
             </Col>
             <Col style={{ paddingLeft: ".5rem" }} span={12}>
@@ -158,23 +177,10 @@ function AddProduct() {
                   },
                 ]}
               >
-                <Input
-                  placeholder="Enter stock available"
-                  type="number"
-                  min="0"
-                />
+                <Input placeholder="Stock Available" type="number" min="0" />
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item
-            //   label="Description"
-            name="description"
-            rules={[
-              { required: true, message: "Please input product description!" },
-            ]}
-          >
-            <Input.TextArea placeholder="Enter product description" />
-          </Form.Item>
           <Row>
             <Col span={24}>
               <Form.Item
@@ -187,15 +193,86 @@ function AddProduct() {
                 <Upload
                   name="image"
                   accept="image/*"
-                  beforeUpload={() => false}
+                  beforeUpload={(event) => {
+                    setProdImgPreview(URL.createObjectURL(event));
+                    return false;
+                  }}
                 >
                   <Button icon={<UploadOutlined />} className="w-100">
-                    Upload image
+                    Product Image
                   </Button>
                 </Upload>
               </Form.Item>
             </Col>
           </Row>
+          <Row>
+            <Col
+              style={{
+                padding: ".5rem",
+                // marginBottom: 15,
+                // border: "1px solid rgba(0, 0, 0, 0.1)",
+                boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.15)",
+                borderRadius: 7,
+              }}
+              span={24}
+            >
+              <Form.Item name="description">
+                <TextEditor textDesc={textDesc} setTextDesc={setTextDesc} />
+              </Form.Item>
+
+              {/* <Form.List name="description">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <div
+                        key={key}
+                        className="d-flex justify-content-evenly align-items-baseline"
+                      >
+                        <Form.Item
+                          {...restField}
+                          style={{ width: "100%" }}
+                          name={[name]}
+                          // name={[""]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Missing Description List Item",
+                            },
+                          ]}
+                        >
+                          <Input
+                            style={{ width: "98%" }}
+                            placeholder="Description List Item"
+                          />
+                        </Form.Item>
+                        <MinusCircleOutlined onClick={() => remove(name)} />
+                      </div>
+                    ))}
+                    <Form.Item key="descr">
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Description Item
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List> */}
+            </Col>
+          </Row>
+          {/* <Form.Item
+            //   label="Description"
+            name="description"
+            rules={[
+              { required: true, message: "Please input product description!" },
+            ]}
+          >
+            <Input.TextArea placeholder="Enter product description" />
+          </Form.Item> */}
+
           {errorMessage && (
             <Form.Item>
               <Alert
@@ -208,14 +285,14 @@ function AddProduct() {
             </Form.Item>
           )}
 
-          <Form.Item>
+          <Form.Item style={{ marginTop: 17 }}>
             <Button
               style={{ width: 150 }}
               type="primary"
               htmlType="submit"
               className="float-end"
             >
-              Add
+              Add Product
             </Button>
           </Form.Item>
         </Form>
