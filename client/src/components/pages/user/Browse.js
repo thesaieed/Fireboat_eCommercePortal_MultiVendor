@@ -27,9 +27,10 @@ const Browse = () => {
   const [noProductMessage, setNoProductMessage] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [cartButtonLoading, setCartButtonLoading] = useState([]);
 
   const navigate = useNavigate();
-  const { appUser } = useAllContext();
+  const { appUser, updateNumberOfCartItems } = useAllContext();
 
   //Filter States and functions
   const [sortValue, setSortValue] = useState(0);
@@ -157,6 +158,11 @@ const Browse = () => {
   };
 
   const handleAddToCart = async (product_id) => {
+    setCartButtonLoading((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[product_id] = true;
+      return newLoadings;
+    });
     if (!appUser || !appUser.id) {
       message.info("Please login to add products to the cart.");
       return;
@@ -169,9 +175,15 @@ const Browse = () => {
         quantity: 1,
       });
       message.success("Added to cart");
+      updateNumberOfCartItems();
     } catch (error) {
       console.error("Error adding product to cart:", error);
     }
+    setCartButtonLoading((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[product_id] = false;
+      return newLoadings;
+    });
   };
 
   const showProducts = () => {
@@ -236,6 +248,7 @@ const Browse = () => {
                     handleAddToCart(product.id);
                   }}
                   type="primary"
+                  loading={cartButtonLoading[product.id]}
                 >
                   Add to Cart
                 </Button>

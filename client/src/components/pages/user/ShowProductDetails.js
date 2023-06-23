@@ -22,8 +22,9 @@ function ShowProductDetails() {
   // const [showFullDescription, setShowFullDescription] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { appUser } = useAllContext();
+  const { appUser, updateNumberOfCartItems } = useAllContext();
   const navigate = useNavigate();
+  const [buttonLoading, setButtonLoading] = useState(false);
   // const productId = 29;
   // const { productId } = useParams();
   // console.log(productId);
@@ -87,6 +88,7 @@ function ShowProductDetails() {
   //   }
   // };
   const handleAddToCart = async () => {
+    setButtonLoading(true);
     if (!appUser || !appUser.id) {
       message.info("Please login to add products to the cart.");
       return;
@@ -102,6 +104,8 @@ function ShowProductDetails() {
     } catch (error) {
       console.error("Error adding product to cart:", error);
     }
+    updateNumberOfCartItems();
+    setButtonLoading(false);
   };
 
   const showModal = () => {
@@ -166,6 +170,7 @@ function ShowProductDetails() {
                   className="add-to-cart-button"
                   type="primary"
                   onClick={handleAddToCart}
+                  loading={buttonLoading}
                 >
                   Add to Cart
                 </Button>
