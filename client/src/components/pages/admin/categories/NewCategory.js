@@ -8,8 +8,10 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const {fetchCategories} = useAllContext();
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const { fetchCategories } = useAllContext();
   const onFinish = async (values) => {
+    setButtonLoading(true);
     if (values.name) {
       try {
         const response = await axios.post(
@@ -32,6 +34,7 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
           setErrorMessage(error.message);
         }
       }
+      setButtonLoading(false);
     }
   };
 
@@ -101,7 +104,12 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
           )}
 
           <Form.Item>
-            <Button style={{ width: "100%" }} type="primary" htmlType="submit">
+            <Button
+              style={{ width: "100%" }}
+              type="primary"
+              htmlType="submit"
+              loading={buttonLoading}
+            >
               Add Category
             </Button>
           </Form.Item>

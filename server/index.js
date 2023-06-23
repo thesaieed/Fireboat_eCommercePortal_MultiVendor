@@ -3,6 +3,8 @@ const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
 const multer = require("multer");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
+const saltRounds = 12;
 
 const app = express(); // running app
 app.use(cors());
@@ -35,9 +37,12 @@ app.post("/login", async (req, res) => {
 
     if (foundUser.rows.length > 0) {
       // if email exists, a row array is sent back in foundUser obj
-      if (password === foundUser.rows[0].password) {
-        //checking if body password === db.password
-
+      const passwordMatched = await bcrypt.compare(
+        password,
+        foundUser.rows[0].password
+      ); //checking if body password === db.password
+      // console.log("result login hashCheck : ", passwordMatched);
+      if (passwordMatched) {
         const { id, name, isadmin } = foundUser.rows[0];
         data = { loginStatus: 200, user: { id, name, isadmin } };
       } else {
@@ -57,7 +62,9 @@ app.post("/login", async (req, res) => {
 //Signup up route handling
 app.post("/signup", async (req, res) => {
   // console.log("req.body : ", req.body);
-  const { fullname, email, password, phone } = req.body;
+  var { fullname, email, password, phone } = req.body;
+  password = await bcrypt.hash(password, saltRounds);
+  // console.log("hashed Password :", password);
   try {
     const newUser = await pool.query(
       // `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
@@ -323,9 +330,30 @@ app.post("/addtocart", async (req, res) => {
   }
 });
 
+app.post("/numberofcartproducts", async (req, res) => {
+  const { userId } = req.body;
+  // console.log(userId);
+  try {
+    const productIds = await pool.query(
+      // "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
+      // [user_id] //basically checks db and returns dintinct product_ids(i.e different prods in cart of user) or user with corresponding details
+
+      "select product_id from cart where user_id=$1",
+      [userId] //simplified logic with updation
+    );
+    // console.log(productIds);
+    // console.log(productIds.rows.length);
+    res.send({ itemCount: productIds.rows.length });
+  } catch (err) {
+    console.log(err);
+    res.send({ itemCount: 0 });
+  }
+});
+
 //handle get request from Cart
 app.get("/cart", async (req, res) => {
   const user_id = req.query.id;
+
   // console.log(user_id)
   try {
     const cartDetails1 = await pool.query(

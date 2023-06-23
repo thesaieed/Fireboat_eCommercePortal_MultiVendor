@@ -15,6 +15,7 @@ import {
   Alert,
   Tooltip,
   Card,
+  Typography,
 } from "antd";
 import {
   UploadOutlined,
@@ -25,6 +26,7 @@ import {
 } from "@ant-design/icons";
 import useAllContext from "../../../../context/useAllContext";
 import TextEditor from "./TextEditor";
+import LoadingScreen from "../../../layout/LoadingScreen";
 
 function AllProducts() {
   const [search, setSearch] = useState("");
@@ -43,12 +45,17 @@ function AllProducts() {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [refreshPage, setRefreshPage] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState([]);
+
+  const { Text } = Typography;
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
   const getProducts = async () => {
+    setLoading(true);
     try {
       const response = await axios.get("http://localhost:5000/viewproducts");
       setProducts(response.data);
@@ -56,9 +63,12 @@ function AllProducts() {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
   useEffect(() => {
+    // setLoading(true);
     getProducts();
+    // setLoading(false);
   }, [refreshPage]);
 
   useEffect(() => {
@@ -69,7 +79,7 @@ function AllProducts() {
   }, [search, products]);
 
   const openModal = (rowData) => {
-    console.log(rowData);
+    // console.log(rowData);
     setTextDesc(rowData.description);
     setSelectedRowId(rowData.id);
     const initialValues = {
@@ -79,9 +89,9 @@ function AllProducts() {
       price: rowData.price,
       stock_available: rowData.stock_available,
     };
-
     setSelectedRowData(initialValues);
     setModalVisible(true);
+
     form.setFieldsValue(initialValues);
   };
 
@@ -100,6 +110,7 @@ function AllProducts() {
     setModalVisible(false);
   };
   const onFinish = async (values) => {
+    setButtonLoading(true);
     // console.log("Success", values);
     try {
       // console.log(selectedRowData.id);
@@ -136,6 +147,7 @@ function AllProducts() {
       form.resetFields();
       console.log(error);
     }
+    setButtonLoading(false);
   };
   const onFinishFailed = (errorInfo) => {
     setErrorMessage("Form submission failed. Please check the fields");
@@ -143,6 +155,11 @@ function AllProducts() {
   };
 
   const deleteItemFromProducts = async (itemId, imagePath) => {
+    setButtonLoading((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[itemId] = true;
+      return newLoadings;
+    });
     const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
@@ -176,6 +193,11 @@ function AllProducts() {
         message.error("Network error occurred. Please try again later.");
       }
     }
+    setButtonLoading((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[itemId] = false;
+      return newLoadings;
+    });
   };
 
   const columns = [
@@ -313,6 +335,7 @@ function AllProducts() {
             }}
           >
             <Button
+              id={row.id}
               style={{
                 width: "51%",
                 marginLeft: 10,
@@ -322,6 +345,7 @@ function AllProducts() {
               danger
               type="primary"
               icon={<DeleteOutlined />}
+              loading={buttonLoading[row.id]}
             >
               Delete
             </Button>
@@ -353,7 +377,7 @@ function AllProducts() {
     },
   };
 
-  return (
+  return !loading ? (
     <>
       <Card>
         {/* <Header search={search} setSearch={setSearch} /> */}
@@ -477,7 +501,10 @@ function AllProducts() {
                   label="Price"
                   name="price"
                   rules={[
-                    { required: true, message: "Please input product price!" },
+                    {
+                      required: true,
+                      message: "Please input product price!",
+                    },
                   ]}
                 >
                   <Input
@@ -538,7 +565,11 @@ function AllProducts() {
               </Col>
             </Row>
             <Row>
-              Description
+              <Text>Description </Text>
+              <Text italic disabled>
+                (* if styling doesn't appear in the box properly, close and open
+                the edit window again!)
+              </Text>
               <Col
                 style={{
                   padding: ".5rem",
@@ -553,46 +584,46 @@ function AllProducts() {
                   <TextEditor textDesc={textDesc} setTextDesc={setTextDesc} />
                 </Form.Item>
                 {/* <Form.List name="description">
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <div
-                          key={key}
-                          className="d-flex justify-content-evenly align-items-baseline"
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <div
+                        key={key}
+                        className="d-flex justify-content-evenly align-items-baseline"
+                      >
+                        <Form.Item
+                          {...restField}
+                          style={{ width: "100%" }}
+                          name={[name]}
+                          // name={[""]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Missing Description List Item",
+                            },
+                          ]}
                         >
-                          <Form.Item
-                            {...restField}
-                            style={{ width: "100%" }}
-                            name={[name]}
-                            // name={[""]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing Description List Item",
-                              },
-                            ]}
-                          >
-                            <Input
-                              style={{ width: "98%" }}
-                              placeholder="Description List Item"
-                            />
-                          </Form.Item>
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </div>
-                      ))}
-                      <Form.Item key="descr">
-                        <Button
-                          type="dashed"
-                          onClick={() => add()}
-                          block
-                          icon={<PlusOutlined />}
-                        >
-                          Add Description Item
-                        </Button>
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List> */}
+                          <Input
+                            style={{ width: "98%" }}
+                            placeholder="Description List Item"
+                          />
+                        </Form.Item>
+                        <MinusCircleOutlined onClick={() => remove(name)} />
+                      </div>
+                    ))}
+                    <Form.Item key="descr">
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Add Description Item
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List> */}
               </Col>
             </Row>
             {errorMessage && (
@@ -609,28 +640,29 @@ function AllProducts() {
 
             <Form.Item>
               {/* <Popconfirm
-                title="Are you sure you want to update this product?"
-                onConfirm={() => onFinish(form.getFieldsValue())}
-                okText="Yes"
-                cancelText="No"
-                okButtonProps={{
-                  style: {
-                    height: 40,
-                    width: 45,
-                    // background: "#f53131",
-                    // color: "white",
-                  },
-                }}
-                cancelButtonProps={{
-                  style: { height: 40, width: 40 },
-                  type: "default",
-                }}
-              > */}
+              title="Are you sure you want to update this product?"
+              onConfirm={() => onFinish(form.getFieldsValue())}
+              okText="Yes"
+              cancelText="No"
+              okButtonProps={{
+                style: {
+                  height: 40,
+                  width: 45,
+                  // background: "#f53131",
+                  // color: "white",
+                },
+              }}
+              cancelButtonProps={{
+                style: { height: 40, width: 40 },
+                type: "default",
+              }}
+            > */}
               <Button
                 style={{ width: 150 }}
                 type="primary"
                 htmlType="submit"
                 className="float-end"
+                loading={buttonLoading}
               >
                 Update
               </Button>
@@ -640,7 +672,12 @@ function AllProducts() {
         </Modal>
       </Card>
     </>
+  ) : (
+    <LoadingScreen />
   );
 }
+// return (
+
+// );
 
 export default AllProducts;
