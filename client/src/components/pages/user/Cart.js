@@ -8,7 +8,7 @@ import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import { Content } from "antd/lib/layout/layout";
 function Cart() {
-  const appUser = useAllContext();
+  const { appUser, updateNumberOfCartItems } = useAllContext();
   const [productData, setProductData] = useState([]);
 
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ function Cart() {
       try {
         const response = await axios.get("http://localhost:5000/cart", {
           params: {
-            id: appUser.appUser.id,
+            id: appUser.id,
           },
         });
 
@@ -50,10 +50,10 @@ function Cart() {
       }
     };
 
-    if (appUser.appUser.id) {
+    if (appUser.id) {
       fetchData();
     }
-  }, [appUser.appUser.id]);
+  }, [appUser.id]);
 
   const incrementQuantity = (index) => {
     setProductData((prevData) => {
@@ -122,6 +122,7 @@ function Cart() {
       setProductData((prevData) =>
         prevData.filter((item) => item.id !== itemId)
       );
+      updateNumberOfCartItems();
     } catch (error) {
       console.error("Error deleting item from cart:", error);
     }

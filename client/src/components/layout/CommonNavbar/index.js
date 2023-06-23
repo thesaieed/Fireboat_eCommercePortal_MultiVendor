@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RightMenu from "./RightMenu";
 import LeftMenu from "./LeftMenu";
-import { Layout, Button, Drawer, Input, Menu } from "antd";
+import { Layout, Button, Drawer, Input, Menu, Badge } from "antd";
 import {
   MenuOutlined,
   ShoppingCartOutlined,
@@ -9,10 +9,12 @@ import {
 } from "@ant-design/icons";
 import { useLocation, Link } from "react-router-dom";
 import logo from "../../../assets/images/logo.png";
+import useAllContext from "../../../context/useAllContext";
 
 const CommonNavbar = ({ handleSearch }) => {
   const [visible, setVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const { numberOfProductsInCart } = useAllContext();
   const showDrawer = () => {
     setVisible(!visible);
   };
@@ -116,10 +118,17 @@ const CommonNavbar = ({ handleSearch }) => {
 
       <div className="header-col header-btn">
         <Link to="/cart">
-          <Button type="primary">
-            <ShoppingCartOutlined />
-            Cart
-          </Button>
+          <Badge
+            count={numberOfProductsInCart}
+            color="blue"
+            title="Number of Items in Cart"
+            offset={[-5, 5]}
+          >
+            <Button type="primary">
+              <ShoppingCartOutlined />
+              Cart
+            </Button>
+          </Badge>
         </Link>
       </div>
     </Layout.Header>

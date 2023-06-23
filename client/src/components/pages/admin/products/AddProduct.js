@@ -24,6 +24,7 @@ function AddProduct() {
   const [prodImgPreview, setProdImgPreview] = useState(cardImage);
   const [form] = Form.useForm();
   const { categories, fetchCategories } = useAllContext();
+  const [buttonLoading, setButtonLoading] = useState(false);
   // const navigate = useNavigate();
   const [textDesc, setTextDesc] = useState("");
 
@@ -35,7 +36,8 @@ function AddProduct() {
   }, [fetchCategories]);
 
   const onFinish = async (values) => {
-    console.log("values: ", values);
+    setButtonLoading(true);
+    // console.log("values: ", values);
     try {
       const formData = new FormData();
       formData.append("category", values.category);
@@ -69,6 +71,8 @@ function AddProduct() {
       form.resetFields();
       console.log(error);
     }
+    setTextDesc("");
+    setButtonLoading(false);
   };
   const onFinishFailed = (errorInfo) => {
     setErrorMessage("Something went wrong");
@@ -291,6 +295,7 @@ function AddProduct() {
               type="primary"
               htmlType="submit"
               className="float-end"
+              loading={buttonLoading}
             >
               Add Product
             </Button>

@@ -34,6 +34,7 @@ const { /*Header,*/ Footer, Content } = Layout;
 
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [form] = Form.useForm();
   const {
     setAppUser,
@@ -53,9 +54,10 @@ export default function SignUp() {
         navigate("/");
       }
     }
-  }, [isValidToken, appUser.isadmin,navigate]);
+  }, [isValidToken, appUser.isadmin, navigate]);
 
   const onFinish = async (values) => {
+    setButtonLoading(true);
     try {
       const response = await axios.post("http://localhost:5000/signup", values);
       // console.log("Responce : ", response);
@@ -90,15 +92,18 @@ export default function SignUp() {
       // console.error("Error : ", error);
       if (error.response?.status === 409) {
         form.resetFields();
-        setErrorMessage("Email already registered, please sign in !");
+        setErrorMessage("Email already registered!");
       } else {
-        setErrorMessage("Soomething went wrong!");
+        setErrorMessage("Something went wrong!");
       }
     }
+    setButtonLoading(false);
   };
 
   const onFinishFailed = (errorInfo) => {
-    setErrorMessage("Details not submitted, check form details and try again !");
+    setErrorMessage(
+      "Details not submitted, check form details and try again !"
+    );
     // console.log("Failed:", errorInfo);
   };
   return (
@@ -294,6 +299,7 @@ export default function SignUp() {
                   style={{ width: "100%" }}
                   type="primary"
                   htmlType="submit"
+                  loading={buttonLoading}
                 >
                   SIGN UP
                 </Button>
