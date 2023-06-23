@@ -31,7 +31,7 @@ const { /*Header,*/ Footer, Content } = Layout;
 
 function SignIn() {
   const navigate = useNavigate();
-
+  const [buttonLoading, setButtonLoading] = useState(false);
   const {
     setAppUser,
     appUser,
@@ -57,7 +57,7 @@ function SignIn() {
 
   const onFinish = async (values) => {
     // console.log("Success:", values);
-
+    setButtonLoading(true);
     const res = await axios.post("http://localhost:5000/login", values);
     switch (res.data.loginStatus) {
       case 200:
@@ -90,13 +90,14 @@ function SignIn() {
         break;
       case 404:
         // console.log("User doesn't exist");
-        setErrorMessage("User not Found ! Please SignUp first.");
+        setErrorMessage("User not Found ! Please SignUp.");
         form.resetFields();
         break;
       default:
         // console.log("Something went wrong!");
         setErrorMessage("Something went wrong!");
     }
+    setButtonLoading(false);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -108,17 +109,18 @@ function SignIn() {
     <>
       <Layout className="layout-default layout-signin bg-none vh-100 d-flex ">
         <Content className="signin d-flex ">
-          <Row gutter={[24, 0]} justify="space-around">
+          <Row gutter={[24, 0]} justify="space-around" align="middle">
             <Col
               className=""
               id="loginColumn"
-              xs={{ span: 24, offset: 0 }}
-              lg={{ span: 6, offset: 2 }}
-              md={{ span: 12 }}
+              xs={{ span: 22, offset: 0 }}
+              md={{ span: 11, offset: 1 }}
+              lg={{ span: 8, offset: 2 }}
+              xl={{ span: 6, offset: 3 }}
             >
-              <Title className="mb-15">Sign In</Title>
+              <Title className="mb-15">Login</Title>
               <Title className="font-regular text-muted" level={5}>
-                Enter your email and password to sign in
+                Enter your email and password to login
               </Title>
               <Form
                 form={form}
@@ -177,6 +179,7 @@ function SignIn() {
                   <Form.Item>
                     <Alert
                       message={errorMessage}
+                      style={{ maxWidth: "100%" }}
                       type="error"
                       showIcon
                       closable
@@ -190,6 +193,7 @@ function SignIn() {
                     type="primary"
                     htmlType="submit"
                     style={{ width: "100%" }}
+                    loading={buttonLoading}
                   >
                     SIGN IN
                   </Button>

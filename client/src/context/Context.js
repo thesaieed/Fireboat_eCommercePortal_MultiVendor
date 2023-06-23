@@ -8,8 +8,25 @@ function Provider({ children }) {
   const [isValidToken, setIsValidToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState([]);
+  const [numberOfProductsInCart, setNumberOfProductsInCart] = useState(0);
 
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+
+  const updateNumberOfCartItems = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/numberofcartproducts",
+        {
+          userId: appUser.id,
+        }
+      );
+      setNumberOfProductsInCart(res.data.itemCount);
+      // console.log(res);
+    } catch (err) {
+      console.log(err);
+      // setNumberOfProductsInCart(0);
+    }
+  };
 
   const removeSavedUserToken = async (userToken, id) => {
     try {
@@ -44,6 +61,19 @@ function Provider({ children }) {
       });
       // console.log("user Data : ", userdata);
       setAppUser(userdata.data);
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/numberofcartproducts",
+          {
+            userId: userdata.data.id,
+          }
+        );
+        setNumberOfProductsInCart(res.data.itemCount);
+        // console.log(res);
+      } catch (err) {
+        console.log(err);
+        setNumberOfProductsInCart(0);
+      }
       setIsLoading(false);
     } catch (error) {
       setAppUser({});
@@ -105,6 +135,8 @@ function Provider({ children }) {
     logout,
     fetchCategories,
     categories,
+    numberOfProductsInCart,
+    updateNumberOfCartItems,
   };
 
   return (
