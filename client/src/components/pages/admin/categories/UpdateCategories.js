@@ -120,7 +120,7 @@ function Updatecategories() {
       cell: (row) => (
         <>
           <Button
-            style={{ width: "43%", color: "black" }}
+           style={{ width: "43%", background: "#4b7ee5", color: "#fff" }}
             type="primary"
             onClick={() => openModal(row)}
             icon={<EditOutlined />}
@@ -147,7 +147,12 @@ function Updatecategories() {
             }}
           >
             <Button
-              style={{ width: "51%", marginLeft: 10 }}
+             style={{
+              width: "51%",
+              marginLeft: 10,
+              background: "#9e2426",
+              color: "#fff",
+            }}
               type="primary"
               danger
               icon={<DeleteOutlined />}
