@@ -116,6 +116,37 @@ app.post("/verifyEmail", async (req, res) => {
         status: 404,
         message: "User Not Found ! ",
       });
+    } else {
+      jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
+        // console.log("error : ", err);
+        // console.log("decoded : ", decoded);
+        if (err) {
+          // console.log(err);
+          res.send({
+            status: 400,
+            message: "Token invalid or Expired ! ",
+          });
+        } else if (decoded) {
+          // console.log(decoded);
+          const userid = decoded?.data;
+          try {
+            // console.log(user);
+            await pool.query(
+              `update users set isemailverified = true WHERE id=${userid};`
+            );
+            res.send({
+              status: 200,
+              message: "Email Verified Successfully! ",
+            });
+          } catch (error) {
+            console.error(error);
+            res.send({
+              status: 400,
+              message: "Failed to Verify Email! ",
+            });
+          }
+        }
+      });
     }
   } catch (err) {
     console.log();
@@ -125,47 +156,6 @@ app.post("/verifyEmail", async (req, res) => {
     });
   }
   // console.log("token : ", token);
-  jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
-    // console.log("error : ", err);
-    // console.log("decoded : ", decoded);
-    if (err) {
-      // console.log(err);
-      res.send({
-        status: 400,
-        message: "Token invalid or Expired ! ",
-      });
-    }
-    if (decoded) {
-      // console.log(decoded);
-      const userid = decoded?.data;
-      try {
-        const user = await pool.query(
-          `select * from users  WHERE id=${userid};`
-        );
-        // console.log(user);
-        if (user.rows[0]?.id) {
-          await pool.query(
-            `update users set isemailverified = true WHERE id=${userid};`
-          );
-          res.send({
-            status: 200,
-            message: "Email Verified Successfully! ",
-          });
-        } else {
-          res.send({
-            status: 404,
-            message: "User Not Found ! ",
-          });
-        }
-      } catch (error) {
-        console.error(error);
-        res.send({
-          status: 404,
-          message: "Failed to Verify Email! ",
-        });
-      }
-    }
-  });
 });
 
 app.post("/resendEmailverification", async (req, res) => {
@@ -232,6 +222,7 @@ app.post("/signup", async (req, res) => {
       }
     } catch (err) {
       // res.send(respond);
+      console.log(err);
       res.send({
         status: 404,
         message: "Failed to send Verification Email! ",
@@ -241,7 +232,7 @@ app.post("/signup", async (req, res) => {
     //   const data = { user: { id, name } };
     //   res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     if (error.code == 23505) {
       //error code trying to insert duplicate value
       // console.log("User already exists");
