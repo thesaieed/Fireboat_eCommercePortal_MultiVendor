@@ -6,6 +6,7 @@ import "./assets/styles/responsive.css";
 import { useEffect } from "react";
 
 // Common Components
+import { VerifyEmail } from "./components/pages/user/auth/VerifyEmail";
 import LoadingScreen from "./components/layout/LoadingScreen";
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
@@ -45,6 +46,9 @@ function App() {
       <div className="App">
         <Routes>
           <Route index element={<Home />} />
+          <Route path="auth">
+            <Route path="verifyemail" element={<VerifyEmail />}></Route>
+          </Route>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<SignIn />} />
           {/* user routes Start*/}

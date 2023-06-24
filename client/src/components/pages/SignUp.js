@@ -34,16 +34,11 @@ const { /*Header,*/ Footer, Content } = Layout;
 
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
   const [buttonLoading, setButtonLoading] = useState(false);
   const [form] = Form.useForm();
-  const {
-    setAppUser,
-    generateRandomString,
-    setIsValidToken,
-    setUserToken,
-    isValidToken,
-    appUser,
-  } = useAllContext();
+  const { isValidToken, appUser } = useAllContext();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -62,31 +57,33 @@ export default function SignUp() {
       const response = await axios.post("http://localhost:5000/signup", values);
       // console.log("Responce : ", response);
       //if signup is successfull
-      if (response.status === 200) {
+      if (response.data.status === 200) {
+        setSuccessMessage(response.data.message);
         //keep a userToken saved locally and in database to keep loggedIn
-        const userToken = generateRandomString(12);
+        // const userToken = generateRandomString(12);
         //set userToken in local Storage
-        localStorage.setItem("userToken", userToken);
-        setUserToken(userToken);
-        setAppUser(response.data.user);
+        // localStorage.setItem("userToken", userToken);
+        // setUserToken(userToken);
+        // setAppUser(response.data.user);
         //add userToken to database
-        try {
-          await axios.post("http://localhost:5000/addusersloggedintokens", {
-            token: userToken,
-            id: response.data.user.id,
-          });
-          setIsValidToken(true);
-        } catch (err) {
-          console.error(err);
-        }
+        // try {
+        //   await axios.post("http://localhost:5000/addusersloggedintokens", {
+        //     token: userToken,
+        //     id: response.data.user.id,
+        //   });
+        //   setIsValidToken(true);
+        // } catch (err) {
+        //   console.error(err);
+        // }
         form.resetFields();
-        if (response.data.user.isadmin === true) {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/");
-        }
+
+        //   if (response.data.user.isadmin === true) {
+        //     navigate("/admin/dashboard");
+        //   } else {
+        //     navigate("/");
+        //   }
       } else {
-        setErrorMessage("Something went Wrong !");
+        setErrorMessage(response.data.message);
       }
     } catch (error) {
       // console.error("Error : ", error);
@@ -290,6 +287,18 @@ export default function SignUp() {
                     showIcon
                     closable
                     onClose={() => setErrorMessage("")}
+                  />
+                </Form.Item>
+              )}
+
+              {successMessage && (
+                <Form.Item>
+                  <Alert
+                    message={successMessage}
+                    type="success"
+                    showIcon
+                    closable
+                    onClose={() => setSuccessMessage("")}
                   />
                 </Form.Item>
               )}
