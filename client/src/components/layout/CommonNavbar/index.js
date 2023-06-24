@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import RightMenu from "./RightMenu";
-import LeftMenu from "./LeftMenu";
+// import LeftMenu from "./LeftMenu";
 import { Layout, Button, Drawer, Input, Menu, Badge } from "antd";
 import {
   MenuOutlined,
@@ -74,9 +74,7 @@ const CommonNavbar = ({ handleSearch }) => {
       </div>
 
       <div className="navbar-menu">
-        <div className="leftMenu">
-          <LeftMenu mode={"horizontal"} />
-        </div>
+        <div className="leftMenu">{/* <LeftMenu mode={"horizontal"} /> */}</div>
 
         <div className="rightMenu ">
           <Menu
@@ -111,7 +109,7 @@ const CommonNavbar = ({ handleSearch }) => {
           open={visible}
           style={{ zIndex: 99999 }}
         >
-          <LeftMenu mode={"inline"} />
+          {/* <LeftMenu mode={"inline"} /> */}
           <RightMenu mode={"inline"} />
         </Drawer>
       </div>
