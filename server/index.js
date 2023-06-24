@@ -105,7 +105,25 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/verifyEmail", async (req, res) => {
-  const { token } = req.body;
+  const { token, email } = req.body;
+
+  try {
+    const user = await pool.query(
+      `select * from users  WHERE email='${email}';`
+    );
+    if (!user.rows[0]?.id) {
+      res.send({
+        status: 404,
+        message: "User Not Found ! ",
+      });
+    }
+  } catch (err) {
+    console.log();
+    res.send({
+      status: 500,
+      message: "Server Error! ",
+    });
+  }
   // console.log("token : ", token);
   jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
     // console.log("error : ", err);
@@ -113,23 +131,34 @@ app.post("/verifyEmail", async (req, res) => {
     if (err) {
       // console.log(err);
       res.send({
-        status: 404,
-        message: "Failed to Verify Email! ",
+        status: 400,
+        message: "Token invalid or Expired ! ",
       });
     }
     if (decoded) {
       // console.log(decoded);
       const userid = decoded?.data;
       try {
-        await pool.query(
-          `update users set isemailverified = true WHERE id=${userid};`
+        const user = await pool.query(
+          `select * from users  WHERE id=${userid};`
         );
-        res.send({
-          status: 200,
-          message: "Email Verified Successfully! ",
-        });
+        // console.log(user);
+        if (user.rows[0]?.id) {
+          await pool.query(
+            `update users set isemailverified = true WHERE id=${userid};`
+          );
+          res.send({
+            status: 200,
+            message: "Email Verified Successfully! ",
+          });
+        } else {
+          res.send({
+            status: 404,
+            message: "User Not Found ! ",
+          });
+        }
       } catch (error) {
-        // console.error(error);
+        console.error(error);
         res.send({
           status: 404,
           message: "Failed to Verify Email! ",

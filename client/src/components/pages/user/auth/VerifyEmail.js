@@ -13,6 +13,9 @@ export const VerifyEmail = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [mailSent, setMailSent] = useState(false);
+  const [extraMessage, setExtraMessage] = useState("");
+  const [showMailInfo, setShowMailInfo] = useState(true);
+
   const [loading, setIsLoading] = useState(false);
   const { Title } = Typography;
   const [searchParams] = useSearchParams();
@@ -33,13 +36,22 @@ export const VerifyEmail = () => {
     setIsVerifying(true);
     const res = await axios.post("http://localhost:5000/verifyEmail", {
       token: token,
+      email: email,
     });
+    console.log(res);
     if (res.data.status === 200) {
       message.success(res.data.message);
       setIsVerified(true);
       //   navigate("/");
+    } else if (res.data.status === 404) {
+      // message.error(res.data.message);
+      setExtraMessage("User Not Found");
+      setShowMailInfo(false);
+      setIsVerified(false);
+      setMailSent(true);
     } else {
       message.error(res.data.message);
+      setExtraMessage(res.data.message);
       setIsVerified(false);
     }
     setIsVerifying(false);
@@ -55,6 +67,7 @@ export const VerifyEmail = () => {
       if (res.data.status === 200) {
         setMailSent(true);
       } else if (res.data.status === 202) {
+        // navigate("/login");
         setIsVerifying(false);
         setIsVerified(true);
       } else {
@@ -126,20 +139,29 @@ export const VerifyEmail = () => {
                         style={{ color: "red", fontSize: 30 }}
                       />
                       Email Verification Failed!
+                      <br />
+                      <br />
+                      {extraMessage}
                     </Title>
-                    {mailSent ? (
+                    {mailSent && showMailInfo ? (
                       <Title level={5}>
                         ReVerification Email sent Successfully!
                         <br /> Please Check your email
                       </Title>
                     ) : (
-                      <Button
-                        type="primary"
-                        onClick={handleReVerify}
-                        loading={loading}
-                      >
-                        Click to send Verification Email again
-                      </Button>
+                      <>
+                        {showMailInfo ? (
+                          <Button
+                            type="primary"
+                            onClick={handleReVerify}
+                            loading={loading}
+                          >
+                            Click to send Verification Email again
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </div>
                 )}
