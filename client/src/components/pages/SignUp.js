@@ -58,6 +58,7 @@ export default function SignUp() {
       // console.log("Responce : ", response);
       //if signup is successfull
       if (response.data.status === 200) {
+        setErrorMessage("");
         setSuccessMessage(response.data.message);
         //keep a userToken saved locally and in database to keep loggedIn
         // const userToken = generateRandomString(12);
@@ -84,14 +85,17 @@ export default function SignUp() {
         //   }
       } else {
         setErrorMessage(response.data.message);
+        setSuccessMessage("");
       }
     } catch (error) {
       // console.error("Error : ", error);
       if (error.response?.status === 409) {
         form.resetFields();
         setErrorMessage("Email already registered!");
+        setSuccessMessage("");
       } else {
         setErrorMessage("Something went wrong!");
+        setSuccessMessage("");
       }
     }
     setButtonLoading(false);
