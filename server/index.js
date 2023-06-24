@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
@@ -5,6 +6,9 @@ const multer = require("multer");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
 const saltRounds = 12;
+const { verifyEmail } = require("./utils/verifyEmail");
+var jwt = require("jsonwebtoken");
+const { sendMail } = require("./utils/sendMail");
 
 const app = express(); // running app
 app.use(cors());
@@ -22,6 +26,42 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+const generateTokenAndSendMail = async (userId, email) => {
+  //generate a token including userID as data for verification
+  const token = jwt.sign(
+    {
+      data: userId,
+    },
+    process.env.TOKENPVTKEY,
+    { expiresIn: 5 * 60 }
+  );
+  try {
+    //send a verification email with token
+    const emailResponce = await verifyEmail({
+      token: token,
+      email: email,
+    });
+    // console.log("emailResponce : ", emailResponce);
+    if (!emailResponce) {
+      return {
+        status: 404,
+        message: "Failed to send Verification Email! ",
+      };
+    } else {
+      return {
+        status: 200,
+        message: "Verification Email sent on the registered Email. ",
+      };
+    }
+  } catch (err) {
+    // res.send(respond);
+    return {
+      status: 404,
+      message: "Failed to send Verification Email! ",
+    };
+  }
+};
 
 //login route
 app.post("/login", async (req, res) => {
@@ -43,8 +83,13 @@ app.post("/login", async (req, res) => {
       ); //checking if body password === db.password
       // console.log("result login hashCheck : ", passwordMatched);
       if (passwordMatched) {
-        const { id, name, isadmin } = foundUser.rows[0];
-        data = { loginStatus: 200, user: { id, name, isadmin } };
+        const { id, name, isadmin, isemailverified } = foundUser.rows[0];
+        if (!isemailverified) {
+          await generateTokenAndSendMail(id, email);
+          data = { loginStatus: 407 };
+        } else {
+          data = { loginStatus: 200, user: { id, name, isadmin } };
+        }
       } else {
         // console.log("Invalid Credentials");
         data = { loginStatus: 401 }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
@@ -56,6 +101,63 @@ app.post("/login", async (req, res) => {
     res.send(data); //finaly send the data variable(obj)
   } catch (error) {
     console.log("Error : ", error.message);
+  }
+});
+
+app.post("/verifyEmail", async (req, res) => {
+  const { token } = req.body;
+  // console.log("token : ", token);
+  jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
+    // console.log("error : ", err);
+    // console.log("decoded : ", decoded);
+    if (err) {
+      // console.log(err);
+      res.send({
+        status: 404,
+        message: "Failed to Verify Email! ",
+      });
+    }
+    if (decoded) {
+      // console.log(decoded);
+      const userid = decoded?.data;
+      try {
+        await pool.query(
+          `update users set isemailverified = true WHERE id=${userid};`
+        );
+        res.send({
+          status: 200,
+          message: "Email Verified Successfully! ",
+        });
+      } catch (error) {
+        // console.error(error);
+        res.send({
+          status: 404,
+          message: "Failed to Verify Email! ",
+        });
+      }
+    }
+  });
+});
+
+app.post("/resendEmailverification", async (req, res) => {
+  const { email } = req.body;
+  // console.log(email);
+  try {
+    const resp = await pool.query(`select * from users where email='${email}'`);
+    // console.log(resp);
+    if (resp.rows[0].isemailverified) {
+      res.send({ status: 202, message: "Email already Verified!" });
+    } else {
+      const response = await generateTokenAndSendMail(resp.rows[0].id, email);
+      // console.log(response);
+      res.send(response);
+    }
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 404,
+      message: "Failed to send Verification Email! ",
+    });
   }
 });
 
@@ -73,14 +175,47 @@ app.post("/signup", async (req, res) => {
     );
     // console.log("newUSer", newUser);
 
-    const { id, name } = newUser.rows[0];
-    const data = { user: { id, name } };
-    res.send(data); //send data.. it will be under res.data in client
+    //generate a token including userID as data for verification
+    const token = jwt.sign(
+      {
+        data: newUser.rows[0].id,
+      },
+      process.env.TOKENPVTKEY,
+      { expiresIn: 5 * 60 }
+    );
+    try {
+      //send a verification email with token
+      const emailResponce = await verifyEmail({
+        token: token,
+        email: email,
+      });
+      // console.log("emailResponce : ", emailResponce);
+      if (!emailResponce) {
+        res.send({
+          status: 404,
+          message: "Failed to send Verification Email! ",
+        });
+      } else {
+        res.send({
+          status: 200,
+          message: "Verification Email sent on the registered Email. ",
+        });
+      }
+    } catch (err) {
+      // res.send(respond);
+      res.send({
+        status: 404,
+        message: "Failed to send Verification Email! ",
+      });
+    }
+    //   const { id, name } = newUser.rows[0];
+    //   const data = { user: { id, name } };
+    //   res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     if (error.code == 23505) {
       //error code trying to insert duplicate value
-      console.log("User already exists");
+      // console.log("User already exists");
       res
         .status(409)
         .json({ message: "user already exists, please use SignIn" });
