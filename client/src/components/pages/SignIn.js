@@ -52,6 +52,7 @@ function SignIn() {
   }, [isValidToken, appUser.isadmin]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [errorDescription, setErrorDescription] = useState();
 
   const [form] = Form.useForm();
 
@@ -91,6 +92,17 @@ function SignIn() {
       case 404:
         // console.log("User doesn't exist");
         setErrorMessage("User not Found ! Please SignUp.");
+        form.resetFields();
+        break;
+      case 407:
+        // console.log("User doesn't exist");
+        setErrorMessage("Please Verify your Email");
+        setErrorDescription(
+          <code>
+            Verification Link has
+            <br /> been sent to your email.
+          </code>
+        );
         form.resetFields();
         break;
       default:
@@ -179,11 +191,19 @@ function SignIn() {
                   <Form.Item>
                     <Alert
                       message={errorMessage}
-                      style={{ maxWidth: "100%" }}
+                      description={errorDescription}
                       type="error"
                       showIcon
                       closable
-                      onClose={() => setErrorMessage("")}
+                      onClose={() => {
+                        setErrorMessage("");
+                        setErrorDescription();
+                      }}
+                      style={{
+                        width: "100%",
+
+                        overflow: "hidden",
+                      }}
                     />
                   </Form.Item>
                 )}
