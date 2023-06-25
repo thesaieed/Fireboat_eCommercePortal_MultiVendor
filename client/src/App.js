@@ -22,6 +22,7 @@ import Profile from "./components/pages/admin/Profile";
 import AddProduct from "./components/pages/admin/products/AddProduct";
 import AllProducts from "./components/pages/admin/products/AllProducts";
 import AllCategories from "./components/pages/admin/categories/AllCategories";
+import Brands from "./components/pages/admin/brands/Brands";
 //Admin Components Ends
 
 //User Components
@@ -67,7 +68,6 @@ function App() {
               <Route index element={<AddProduct />} />
               <Route path="allproducts" element={<AllProducts />} />
               <Route path="*" element={<AddProduct />} />
-              {/* <Route path="productdetails" element={<ShowProductDetails/>}/> */}
             </Route>
             <Route path="categories">
               <Route
@@ -78,8 +78,9 @@ function App() {
                   </>
                 }
               />
-              {/* <Route path="updatecategories" element={<Updatecategories />} />
-            <Route path="addcategory" element={<AllCategories />} /> */}
+            </Route>
+            <Route path="brands">
+              <Route index element={<Brands />} />
             </Route>
           </Route>
           {/* Admin Routes end */}

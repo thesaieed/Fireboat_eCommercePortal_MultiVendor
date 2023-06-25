@@ -18,7 +18,6 @@ import {
   FacebookOutlined,
   UserOutlined,
   IdcardOutlined,
-  MobileOutlined,
   LockOutlined,
 } from "@ant-design/icons";
 
@@ -199,7 +198,7 @@ export default function SignUp() {
                 />
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 name="phone"
                 type="phone"
                 rules={[
@@ -216,7 +215,7 @@ export default function SignUp() {
                   prefix={<MobileOutlined className="site-form-item-icon" />}
                   placeholder="Phone Number"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item
                 name="password"
