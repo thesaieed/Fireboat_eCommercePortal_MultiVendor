@@ -24,14 +24,23 @@ function AddProduct() {
   const [prodImgPreview, setProdImgPreview] = useState(cardImage);
   const [form] = Form.useForm();
   const { categories, fetchCategories } = useAllContext();
+  const [brands, setBrands] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   // const navigate = useNavigate();
   const [textDesc, setTextDesc] = useState("");
 
   //get request to get the categories available stored in db
   const { Option } = Select;
-
+  const getBrands = async () => {
+    try {
+      const brands = await axios.get("http://localhost:5000/brands");
+      setBrands(brands.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
+    getBrands();
     fetchCategories();
   }, [fetchCategories]);
 
@@ -44,6 +53,7 @@ function AddProduct() {
       formData.append("name", values.name);
       formData.append("description", textDesc);
       formData.append("price", values.price);
+      formData.append("brand", values.brand);
       formData.append("stock_available", values.stock_available);
       formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
 
@@ -125,7 +135,10 @@ function AddProduct() {
           // encType="multipart/form-data"
         >
           <Row>
-            <Col style={{ paddingRight: ".5rem" }} span={12}>
+            <Col
+              //  style={{ paddingRight: ".5rem" }}
+              span={24}
+            >
               <Form.Item
                 //   label="Name"
                 name="name"
@@ -136,7 +149,29 @@ function AddProduct() {
                 <Input placeholder="Product Name" />
               </Form.Item>
             </Col>
-            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                name="brand"
+                // label="Category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a Brand",
+                  },
+                ]}
+              >
+                <Select className="ant-input " placeholder="Brand">
+                  {brands.map((brand) => (
+                    <Option key={brand.id} value={brand.id}>
+                      {brand.brand}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col style={{ paddingLeft: "0.5rem" }} span={12}>
               <Form.Item
                 name="category"
                 // label="Category"
@@ -159,7 +194,7 @@ function AddProduct() {
           </Row>
 
           <Row>
-            <Col style={{ paddingRight: ".5rem" }} span={12}>
+            <Col span={12}>
               <Form.Item
                 //   label="Price"
                 name="price"
@@ -170,7 +205,7 @@ function AddProduct() {
                 <Input placeholder="Product Price" type="number" min="0" />
               </Form.Item>
             </Col>
-            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+            <Col style={{ paddingLeft: "0.5rem" }} span={12}>
               <Form.Item
                 //   label="Stock Available"
                 name="stock_available"

@@ -39,10 +39,12 @@ function Dashboard() {
   const items = [
     {
       label: <Link to="/admin/categories">Categories</Link>,
-      key: "0",
+      key: "CategoryManagement",
     },
+
     {
-      type: "divider",
+      label: <Link to="/admin/brands">Brands</Link>,
+      key: "brandManagement",
     },
   ];
   return (

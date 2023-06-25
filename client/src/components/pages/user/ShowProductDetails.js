@@ -11,8 +11,11 @@ import {
   Modal,
   Row,
   Typography,
+  Descriptions,
 } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import brandIcon from "../../../assets/images/brandIcon.png";
+import categoryIcon from "../../../assets/images/categoryIcon.png";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 
@@ -125,20 +128,45 @@ function ShowProductDetails() {
       <Layout className="layout-default">
         <CommonNavbar handleSearch={handleSearch} />
         <Card className="show-productDetails-card">
-          <Row className="row-spd" justify="space-around" align="top">
-            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
+          <Row className="row-spd" justify="space-around" align="middle">
+            <Col xs={24} sm={24} md={6} lg={7} xl={8} className="column-spd">
               {/* <div className="image-container"> */}
               <img src={imageUrl} alt="Product" onClick={showModal} />
               {/* </div> */}
             </Col>
-            <Col xs={24} sm={24} md={8} lg={8} xl={8} className="column-spd">
+            <Col xs={24} sm={24} md={10} lg={9} xl={8} className="column-spd">
               <div className="spd">
                 {productDetails ? (
-                  <div className="details-content">
-                    <h1>Product: {productDetails.name}</h1>
+                  <div className="details-content ">
+                    <h1> {productDetails.name}</h1>
                     <span>Price:</span>
                     <strong> &#8377; {productDetails.price}</strong>
-                    <p>Category: {productDetails.category}</p>
+                    <Descriptions column={1} style={{ marginTop: 25 }}>
+                      <Descriptions.Item icon>
+                        <img
+                          src={brandIcon}
+                          alt="brandIcon"
+                          style={{
+                            height: 25,
+                            width: 25,
+                            marginRight: 5,
+                          }}
+                        />
+                        {productDetails.brand}
+                      </Descriptions.Item>
+                      <Descriptions.Item>
+                        <img
+                          src={categoryIcon}
+                          alt="categoryIcon"
+                          style={{
+                            height: 25,
+                            width: 25,
+                            marginRight: 5,
+                          }}
+                        />
+                        {productDetails.category}
+                      </Descriptions.Item>
+                    </Descriptions>
                   </div>
                 ) : (
                   <p>Loading...</p>
@@ -151,10 +179,10 @@ function ShowProductDetails() {
               md={8}
               lg={8}
               xl={8}
-              className="column-spd actionButtons-spd"
+              className="column-spd actionButtons-spd p-0"
             >
               <div className="div-buttons-spd w-100 text-center">
-                <div className="quantity-controls-spd d-flex justify-content-start ml-5 ">
+                <div className="quantity-controls-spd d-flex justify-content-start">
                   <p style={{ marginRight: 10 }}>Quantity </p>
                   <Button type="default" onClick={decrementQuantity}>
                     <MinusOutlined />

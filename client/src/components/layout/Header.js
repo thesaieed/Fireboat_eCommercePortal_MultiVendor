@@ -11,9 +11,10 @@
 */
 
 import { useEffect } from "react";
-import { Row, Col, Button, Input, Space } from "antd";
+import { Row, Col, Button, Space } from "antd";
 
-import { SearchOutlined, UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const toggler = [
   <svg
@@ -55,12 +56,14 @@ function Header({ subName, onPress, appUser }) {
             <UserOutlined />
             <span>{appUser?.name}</span>
           </Space>
-
-          <Input
+          <Link to="/" style={{ marginRight: 10 }}>
+            <Button type="default">HomePage</Button>
+          </Link>
+          {/* <Input
             className="header-search"
             placeholder="Type here..."
             prefix={<SearchOutlined />}
-          />
+          /> */}
         </Col>
       </Row>
     </>

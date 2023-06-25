@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 12;
 const { verifyEmail } = require("./utils/verifyEmail");
 var jwt = require("jsonwebtoken");
-const { sendMail } = require("./utils/sendMail");
+const { log } = require("console");
 
 const app = express(); // running app
 app.use(cors());
@@ -183,14 +183,14 @@ app.post("/resendEmailverification", async (req, res) => {
 //Signup up route handling
 app.post("/signup", async (req, res) => {
   // console.log("req.body : ", req.body);
-  var { fullname, email, password, phone } = req.body;
+  var { fullname, email, password } = req.body;
   password = await bcrypt.hash(password, saltRounds);
   // console.log("hashed Password :", password);
   try {
     const newUser = await pool.query(
       // `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
-      "INSERT INTO users(name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING *",
-      [fullname, email, password, phone]
+      "INSERT INTO users(name, email, password) VALUES ($1, $2, $3) RETURNING *",
+      [fullname, email, password]
     );
     // console.log("newUSer", newUser);
 
@@ -262,6 +262,24 @@ app.post("/addcategory", async (req, res) => {
     }
   }
 });
+// add new brand
+app.post("/addbrand", async (req, res) => {
+  const { brand } = req.body;
+
+  try {
+    const newBrand = await pool.query(
+      "insert into brands(brand) values ($1) returning *",
+      [brand]
+    );
+    res.send(newBrand.rows[0]);
+  } catch (err) {
+    if (err.code == 23505) {
+      res.status(409).send();
+    } else {
+      res.status(500).send("Internal Server Error");
+    }
+  }
+});
 
 //handle the get request for categories from client
 
@@ -278,10 +296,23 @@ app.get("/admin/categories", async (req, res) => {
   }
 });
 
+//getallbrands
+app.get("/brands", async (req, res) => {
+  try {
+    const brand = await pool.query(`select * from brands`);
+    // console.log(brand);
+    res.send(brand.rows);
+  } catch (error) {
+    console.error(error);
+    res.send({});
+  }
+});
+
 //Modified addProduct handle to handle image upload also
 
 app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
-  const { category, name, description, price, stock_available } = req.body;
+  const { category, name, description, price, stock_available, brand } =
+    req.body;
   // console.log(req.body)
   // console.log(req.file)
   // console.log("description: ", description);
@@ -289,8 +320,8 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
 
   try {
     const newProduct = await pool.query(
-      "insert into products(category_id,name,description,price,stock_available,image) values ($1,$2,$3,$4,$5,$6) returning *",
-      [category, name, description, price, stock_available, imagePath]
+      "insert into products(category_id,name,description,price,stock_available,image,brand_id) values ($1,$2,$3,$4,$5,$6,$7) returning *",
+      [category, name, description, price, stock_available, imagePath, brand]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
@@ -386,13 +417,19 @@ app.get("/admin/productdetails", async (req, res) => {
   const productId = req.query.id;
   // console.log(productId)
   try {
-    const productDetails = await pool.query(
+    let productDetails = await pool.query(
       "select * from products where id =$1",
       [productId]
     );
     if (productDetails.rows.length === 0) {
       res.sendStatus(404);
     } else {
+      const brandDetails = await pool.query(
+        "select * from brands where id =$1",
+        [productDetails.rows[0].brand_id]
+      );
+      productDetails.rows[0].brand = brandDetails.rows[0].brand;
+      // console.log("prod : ", productDetails.rows[0]);
       res.send(productDetails.rows[0]);
     }
   } catch (error) {
@@ -527,7 +564,7 @@ app.get("/cart", async (req, res) => {
       const productIds = data1.map((item) => item.product_id); //get array of productIds
       // console.log(productIds)
       const query = {
-        text: "SELECT id, name, price, image, category FROM products WHERE  id= ANY($1::int[])",
+        text: "SELECT id, name, price, image, category,brand_id FROM products WHERE  id= ANY($1::int[])",
         values: [productIds],
       };
       const cartDetails2 = await pool.query(query);
@@ -642,7 +679,8 @@ app.put(
   upload.single("image"),
   async (req, res) => {
     const { productId } = req.params;
-    const { category, name, description, price, stock_available } = req.body;
+    const { category, name, description, price, stock_available, brand_id } =
+      req.body;
     const imagePath = req.file ? req.file.path : null; // Check if image file is present
     // console.log(productId, category, price, stock_available, name, description);
     // console.log(req.body)
@@ -653,7 +691,7 @@ app.put(
       if (imagePath) {
         // Update the image field along with other details
         query =
-          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5, image = $6 WHERE id = $7";
+          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5, image = $6, brand_id =$7 WHERE id = $8";
         queryValues = [
           category,
           name,
@@ -661,18 +699,20 @@ app.put(
           price,
           stock_available,
           imagePath,
+          brand_id,
           productId,
         ];
       } else {
         // Keep the existing image value in the database
         query =
-          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5 WHERE id = $6";
+          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5,brand_id =$6 WHERE id = $7";
         queryValues = [
           category,
           name,
           description,
           price,
           stock_available,
+          brand_id,
           productId,
         ];
       }
@@ -724,6 +764,35 @@ app.put("/updatecategories/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+//Brands
+
+//edit Brand
+app.put("/updatebrands/:id", async (req, res) => {
+  const itemId = req.params.id;
+  const { brand } = req.body;
+  try {
+    // Update the Category name in categories table
+    const updateQuery = "UPDATE brands SET brand = $1 WHERE id = $2";
+    await pool.query(updateQuery, [brand, itemId]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+//delete brand
+app.delete("/updatebrands/:itemId", async (req, res) => {
+  const itemId = req.params.itemId;
+  try {
+    await pool.query("DELETE FROM brands WHERE id = $1", [itemId]);
+    res.status(200).json({ message: "Brand deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting Brand", error);
+    res.status(500).json({ error: "Failed to delete Brand" });
   }
 });
 

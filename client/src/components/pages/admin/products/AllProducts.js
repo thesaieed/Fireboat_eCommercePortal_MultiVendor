@@ -31,6 +31,7 @@ import LoadingScreen from "../../../layout/LoadingScreen";
 function AllProducts() {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [imageModalVisible, setImageModalVisible] = useState(false);
@@ -58,8 +59,21 @@ function AllProducts() {
     setLoading(true);
     try {
       const response = await axios.get("http://localhost:5000/viewproducts");
-      setProducts(response.data);
-      setFilteredProducts(response.data);
+      const brands = await axios.get("http://localhost:5000/brands");
+      // console.log("brands.data : ", brands.data);
+      var products = [];
+      response.data.map((product) => {
+        products.push({
+          ...product,
+          brand: brands.data.find((brand) => {
+            if (brand.id === product.brand_id) return true;
+          }),
+        });
+      });
+      // console.log("products : ", products);
+      setProducts(products);
+      setBrands(brands.data);
+      setFilteredProducts(products);
     } catch (error) {
       console.log(error);
     }
@@ -85,6 +99,7 @@ function AllProducts() {
     const initialValues = {
       name: rowData.name,
       category: rowData.category_id,
+      brand: rowData.brand.brand,
       description: textDesc,
       price: rowData.price,
       stock_available: rowData.stock_available,
@@ -116,6 +131,7 @@ function AllProducts() {
       // console.log(selectedRowData.id);
       const formData = new FormData();
       formData.append("category", values.category);
+      formData.append("brand_id", values.brand);
       formData.append("name", values.name);
       formData.append("description", textDesc);
       formData.append("price", values.price);
@@ -221,7 +237,7 @@ function AllProducts() {
     },
     {
       name: "Product Name",
-      width: "55%",
+      width: "45%",
       cell: (row) => (
         <div
           style={{
@@ -260,6 +276,11 @@ function AllProducts() {
     {
       name: "Category",
       selector: (row) => row.category,
+      width: "8%",
+    },
+    {
+      name: "Brand",
+      selector: (row) => row.brand.brand,
       width: "8%",
     },
     {
@@ -458,7 +479,7 @@ function AllProducts() {
             className="row-col"
           >
             <Row>
-              <Col style={{ paddingRight: ".5rem" }} span={16}>
+              <Col style={{ paddingRight: ".5rem" }} span={24}>
                 <Form.Item
                   label="Product Name"
                   name="name"
@@ -469,8 +490,30 @@ function AllProducts() {
                   <Input.TextArea placeholder="Enter product name" />
                 </Form.Item>
               </Col>
+            </Row>
+            <Row>
+              <Col style={{ paddingLeft: ".5rem" }} span={12}>
+                <Form.Item
+                  name="brand"
+                  label="Brand"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select a Brand",
+                    },
+                  ]}
+                >
+                  <Select className="ant-input " placeholder="Select a Brand">
+                    {brands.map((brand) => (
+                      <Option key={brand.id} value={brand.id}>
+                        {brand.brand}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
 
-              <Col style={{ paddingLeft: ".5rem" }} span={8}>
+              <Col style={{ paddingLeft: ".5rem" }} span={12}>
                 <Form.Item
                   name="category"
                   label="Category"

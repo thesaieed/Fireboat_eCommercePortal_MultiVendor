@@ -73,7 +73,7 @@ function Main() {
       setIsLoading(true);
     } else if (!appUser.isadmin) {
       navigate("/");
-      message.error("Permission denied!");
+      // message.error("Permission denied!");
     } else if (appUser.isadmin) {
       setIsLoading(false);
     }
