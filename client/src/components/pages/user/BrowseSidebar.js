@@ -14,16 +14,23 @@ function BrowseSidebar({
   sortValue,
   onSortChange,
   categories,
+  brands,
   onCategoryChange,
+  onBrandChange,
   priceRange,
   setPriceRange,
   sliderRange,
   selectedCategories,
+  selectedBrands,
   clearAllFilters,
 }) {
-  const categoryOptions = [];
+  let categoryOptions = [];
   for (let category of categories) {
     categoryOptions.push({ value: category });
+  }
+  let brandOptions = [];
+  for (let brand of brands) {
+    brandOptions.push({ value: brand });
   }
   const tagRender = (props) => {
     const { label, closable, onClose } = props;
@@ -49,6 +56,9 @@ function BrowseSidebar({
   const handleCategoryChange = (selectedcategories) => {
     onCategoryChange(selectedcategories);
   };
+  const handleBrandChange = (selectedbrands) => {
+    onBrandChange(selectedbrands);
+  };
 
   const handlePriceSliderChange = (e) => {
     setPriceRange({ minPrice: e[0], maxPrice: e[1] });
@@ -70,6 +80,33 @@ function BrowseSidebar({
             height: "100%",
           }}
           options={categoryOptions}
+        />
+      ),
+      key: "browseCategory",
+      style: {
+        width: "95%",
+        border: "1px solid lightgrey",
+        height: "max-content",
+        background: "none",
+      },
+    },
+  ];
+  const brandMenuItems = [
+    {
+      label: (
+        <Select
+          placeholder="Select Brands"
+          mode="multiple"
+          showArrow
+          tagRender={tagRender}
+          // defaultValue={[]}
+          value={selectedBrands}
+          onChange={handleBrandChange}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          options={brandOptions}
         />
       ),
       key: "browseCategory",
@@ -112,6 +149,18 @@ function BrowseSidebar({
           theme="light"
           mode="inline"
           items={categoryMenuItems}
+          className="categoryMenu"
+        />
+      </div>
+      <div>
+        <hr />
+      </div>
+      <div className="sidebarSubHeading ">
+        <span>Brand</span>
+        <Menu
+          theme="light"
+          mode="inline"
+          items={brandMenuItems}
           className="categoryMenu"
         />
       </div>

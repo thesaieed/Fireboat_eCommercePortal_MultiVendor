@@ -16,45 +16,32 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import useAllContext from "../../../../context/useAllContext";
 
-function Updatecategories() {
-  // const [categories, setCategories] = useState([]);
-  const [filteredCategories, setFilteredCategories] = useState([]);
+function UpdateBrands({
+  brands,
+  getBrands,
+  setFilteredBrands,
+  filteredBrands,
+}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [search, setSearch] = useState("");
   const [refreshPage, setRefreshPage] = useState(false);
-  const { categories, fetchCategories } = useAllContext();
   const [buttonLoading, setButtonLoading] = useState([]);
   const [editButtonLoading, setEditButtonLoading] = useState(false);
-  // const getCategories = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "http://localhost:5000/updatecategories"
-  //     );
-  //     setCategories(response.data);
-  //     // console.log(response.data)
-  //     setFilteredCategories(response.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   useEffect(() => {
-    fetchCategories();
-  }, [refreshPage, fetchCategories]);
+    getBrands();
+  }, [refreshPage, getBrands]);
 
   useEffect(() => {
-    const result = categories.filter((category) => {
-      return category.name
-        .toLocaleLowerCase()
-        .match(search.toLocaleLowerCase());
+    const result = brands.filter((brand) => {
+      return brand.brand.toLocaleLowerCase().match(search.toLocaleLowerCase());
     });
-    setFilteredCategories(result);
-  }, [search, categories]);
+    setFilteredBrands(result);
+  }, [search, brands, setFilteredBrands]);
 
   const deleteItemFromCategories = async (itemId) => {
     setButtonLoading((prevLoadings) => {
@@ -64,17 +51,16 @@ function Updatecategories() {
     });
     try {
       const response = await axios.delete(
-        `http://localhost:5000/updatecategories/${itemId}`
+        `http://localhost:5000/updatebrands/${itemId}`
       );
 
       if (response.status === 200) {
-        fetchCategories((prevData) =>
-          prevData.filter((item) => item.id !== itemId)
-        );
-        message.success("Category Type deleted successfully");
+        getBrands();
+        message.success("Brand Deleted Successfully!");
       }
     } catch (error) {
-      console.error("Error Deleting Item", error);
+      // console.error("Error Deleting Brand", error);
+      message.error("Couldn't Delete the Brand");
     }
     setButtonLoading((prevLoadings) => {
       const newLoadings = [...prevLoadings];
@@ -86,7 +72,7 @@ function Updatecategories() {
   const openModal = (row) => {
     setSelectedRowId(row.id);
     form.setFieldsValue({
-      categoryType: row.name,
+      brand: row.brand,
     });
     setModalVisible(true);
   };
@@ -100,19 +86,19 @@ function Updatecategories() {
     setEditButtonLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/updatecategories/${selectedRowId}`,
+        `http://localhost:5000/updatebrands/${selectedRowId}`,
         values
       );
       if (response.status === 200) {
         setRefreshPage(true);
         closeModal();
-        message.success("Category Type updated successfully");
+        message.success("Brand updated successfully");
         if (refreshPage) {
           setRefreshPage(false);
         }
       }
     } catch (error) {
-      console.error("Error updating category type", error);
+      // console.error("Error updating category type", error);
       message.error("Could not update the category type");
     }
     setEditButtonLoading(false);
@@ -124,8 +110,8 @@ function Updatecategories() {
   };
   const columns = [
     {
-      name: "Category Type",
-      selector: (row) => row.name,
+      name: "Brand Name",
+      selector: (row) => row.brand,
     },
     {
       name: "Actions",
@@ -188,11 +174,11 @@ function Updatecategories() {
   };
 
   return (
-    <div className="d-flex justify-content-center mt-20">
+    <div className="d-flex justify-content-center">
       <Card className="categoryCard">
         <DataTable
           columns={columns}
-          data={filteredCategories}
+          data={filteredBrands}
           customStyles={customStyles}
           pagination
           paginationRowsPerPageOptions={[5, 10, 15, 20]}
@@ -200,9 +186,7 @@ function Updatecategories() {
           //   fixedHeader
           //   fixedHeaderScrollHeight="500px"
           title={
-            <h2 style={{ color: "orange", fontWeight: "bold" }}>
-              All Categories
-            </h2>
+            <h2 style={{ color: "orange", fontWeight: "bold" }}>All Brands</h2>
           }
           subHeader
           subHeaderComponent={
@@ -219,7 +203,7 @@ function Updatecategories() {
         />
 
         <Modal
-          title="Edit Category"
+          title="Edit Brand"
           open={modalVisible}
           onCancel={closeModal}
           footer={null}
@@ -234,13 +218,11 @@ function Updatecategories() {
             className="row-col"
           >
             <Form.Item
-              label="Category Name"
-              name="categoryType"
-              rules={[
-                { required: true, message: "Please Enter Category Name" },
-              ]}
+              label="Brand Name"
+              name="brand"
+              rules={[{ required: true, message: "Please Enter Brand Name" }]}
             >
-              <Input placeholder="Enter Category Type" />
+              <Input placeholder="Enter Brand Name" />
             </Form.Item>
             {errorMessage && (
               <Form.Item>
@@ -278,4 +260,4 @@ function Updatecategories() {
   );
 }
 
-export default Updatecategories;
+export default UpdateBrands;
