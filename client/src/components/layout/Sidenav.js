@@ -135,8 +135,10 @@ function Sidenav({ color }) {
       key: "addProducts",
     },
     {
-      label: <span className="label menu-item-header">Categories</span>,
-      key: "categoriesHeading",
+      label: (
+        <span className="label menu-item-header">Additional Information</span>
+      ),
+      key: "additionalInfo",
       type: "group",
     },
     {
@@ -150,7 +152,23 @@ function Sidenav({ color }) {
           >
             <UnorderedListOutlined />
           </span>
-          <span className="label">All Categories</span>
+          <span className="label">Categories</span>
+        </NavLink>
+      ),
+      key: "Categories",
+    },
+    {
+      label: (
+        <NavLink to="/admin/brands">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <UnorderedListOutlined />
+          </span>
+          <span className="label">Brands</span>
         </NavLink>
       ),
       key: "allcategories",

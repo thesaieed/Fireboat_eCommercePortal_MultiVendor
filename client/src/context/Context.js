@@ -86,6 +86,7 @@ function Provider({ children }) {
     setAppUser({});
     setUserToken("");
     removeSavedUserToken(userToken, appUser.id);
+    window.location.reload();
   };
   const generateRandomString = (len) => {
     let result = "";

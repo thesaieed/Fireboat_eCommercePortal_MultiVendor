@@ -11,13 +11,15 @@ import {
 } from "antd";
 import CommonNavbar from "../../layout/CommonNavbar";
 import LoadingScreen from "../../layout/LoadingScreen";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useAllContext from "../../../context/useAllContext";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import BrowseSidebar from "./BrowseSidebar";
 import { FilterOutlined } from "@ant-design/icons";
+import brandIcon from "../../../assets/images/brandIcon.png";
+import categoryIcon from "../../../assets/images/categoryIcon.png";
 
 const Browse = () => {
   const [browseProducts, setBrowseProducts] = useState([]);
@@ -43,7 +45,9 @@ const Browse = () => {
     max: 10000,
   });
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
   const onSortChange = (e) => {
     setSortValue(e.target.value);
   };
@@ -51,8 +55,12 @@ const Browse = () => {
   const onCategoryChange = (selectedOptions) => {
     setSelectedCategories(selectedOptions);
   };
+  const onBrandChange = (selectedOptions) => {
+    setSelectedBrands(selectedOptions);
+  };
   const clearAllFilters = () => {
     setSelectedCategories([]);
+    setSelectedBrands([]);
     setSortValue(0);
     priceRangeSet(browseProducts);
   };
@@ -84,29 +92,44 @@ const Browse = () => {
     });
   };
 
-  const getSearchResults = async (params) => {
+  const getSearchResults = useCallback(async (params) => {
     setLoading(true);
     try {
       const res = await axios.post("http://localhost:5000/search", {
         searchTerms: params,
       });
+      const brands = await axios.get("http://localhost:5000/brands");
+      // console.log("brands.data : ", brands.data);
 
       if (!res.data.length) {
         setNoProductMessage(true);
         setBrowseProducts([]);
         setShownProducts([]);
       } else {
+        let products = [];
+        res.data.map((product) => {
+          products.push({
+            ...product,
+            brand: brands.data.find((brand) => {
+              if (brand.id === product.brand_id) return true;
+              else return false;
+            }),
+          });
+          return null;
+        });
+        // console.log("prods : ", products);
         setNoProductMessage(false);
-        setBrowseProducts(res.data);
-        setShownProducts(res.data);
-        setCategories([...new Set(res.data.map((x) => x.category))]);
-        priceRangeSet(res.data);
+        setBrowseProducts(products);
+        setShownProducts(products);
+        setCategories([...new Set(products.map((x) => x.category))]);
+        setBrands([...new Set(products.map((x) => x.brand.brand))]);
+        priceRangeSet(products);
       }
     } catch (error) {}
     setLoading(false);
-  };
+  }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     var filteredArray = [];
 
     //Filter by category First
@@ -116,6 +139,12 @@ const Browse = () => {
       });
     } else {
       filteredArray = browseProducts;
+    }
+    //Filter new array by Brand
+    if (selectedBrands.length) {
+      filteredArray = filteredArray.filter(function (product) {
+        return selectedBrands.includes(product.brand.brand);
+      });
     }
 
     //filter the new array by Price Range
@@ -155,7 +184,14 @@ const Browse = () => {
 
     // Finally set The shown products
     setShownProducts(filteredArray);
-  };
+  }, [
+    browseProducts,
+    priceRange.maxPrice,
+    priceRange.minPrice,
+    selectedBrands,
+    selectedCategories,
+    sortValue,
+  ]);
 
   const handleAddToCart = async (product_id) => {
     setCartButtonLoading((prevLoadings) => {
@@ -221,16 +257,41 @@ const Browse = () => {
                 className="d-flex flex-column justify-content-center align-items-start"
               >
                 <Link to={`/product/?id=${product.id}`} className="two-lines">
-                  <Title strong level={5}>
-                    {product.name}
-                  </Title>
+                  <Title level={5}>{product.name}</Title>
                 </Link>
               </Row>
-              <Row>
-                <Paragraph>{product.category}</Paragraph>
+              <Row
+                justify="space-between"
+                style={{ paddingRight: 15, marginTop: 10 }}
+              >
+                <Paragraph strong type="secondary" level={5}>
+                  <img
+                    src={brandIcon}
+                    alt="brandIcon"
+                    style={{
+                      height: 25,
+                      width: 25,
+                      marginRight: 5,
+                    }}
+                  />
+                  {product.brand.brand}
+                </Paragraph>
+
+                <Paragraph type="secondary" className="m-0 p-0">
+                  <img
+                    src={categoryIcon}
+                    alt="categoryIcon"
+                    style={{
+                      height: 25,
+                      width: 25,
+                      marginRight: 5,
+                    }}
+                  />
+                  {product.category}
+                </Paragraph>
               </Row>
               <Row>
-                <Paragraph className="productPrice">
+                <Paragraph className="productPrice ">
                   &#8377; {product.price}
                 </Paragraph>
               </Row>
@@ -241,7 +302,6 @@ const Browse = () => {
                   __html: product.description,
                 }}
               />
-
               <Row className="d-flex mt-20">
                 <Button
                   onClick={() => {
@@ -299,11 +359,11 @@ const Browse = () => {
 
   useEffect(() => {
     getSearchResults(searchTerms);
-  }, [searchTerms]);
+  }, [searchTerms, getSearchResults]);
 
   useEffect(() => {
     applyFilters();
-  }, [sortValue, selectedCategories, priceRange]);
+  }, [sortValue, selectedCategories, priceRange, selectedBrands, applyFilters]);
 
   const showDrawer = () => {
     setVisible(!visible);
@@ -329,11 +389,14 @@ const Browse = () => {
               sortValue={sortValue}
               onSortChange={onSortChange}
               categories={categories}
+              brands={brands}
               onCategoryChange={onCategoryChange}
+              onBrandChange={onBrandChange}
               priceRange={priceRange}
               setPriceRange={setPriceRange}
               sliderRange={sliderRange}
               selectedCategories={selectedCategories}
+              selectedBrands={selectedBrands}
               clearAllFilters={clearAllFilters}
             />
           </Sider>
@@ -350,11 +413,14 @@ const Browse = () => {
               sortValue={sortValue}
               onSortChange={onSortChange}
               categories={categories}
+              brands={brands}
               onCategoryChange={onCategoryChange}
+              onBrandChange={onBrandChange}
               priceRange={priceRange}
               setPriceRange={setPriceRange}
               sliderRange={sliderRange}
               selectedCategories={selectedCategories}
+              selectedBrands={selectedBrands}
               clearAllFilters={clearAllFilters}
             />
           </Drawer>
