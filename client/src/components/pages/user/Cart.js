@@ -2,7 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAllContext from "../../../context/useAllContext";
-import { Button, Card, Popconfirm, Modal, Layout, Row, Col } from "antd";
+import {
+  Button,
+  Card,
+  Popconfirm,
+  Layout,
+  Row,
+  Col,
+  Typography,
+  Image,
+} from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
@@ -10,7 +19,7 @@ import { Content } from "antd/lib/layout/layout";
 function Cart() {
   const appUser = useAllContext();
   const [productData, setProductData] = useState([]);
-
+  const [Paragraph] = [Typography];
   const navigate = useNavigate();
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
@@ -127,16 +136,16 @@ function Cart() {
     }
   };
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const openModal = (image) => {
-    setSelectedImage(image);
-    setModalVisible(image);
-    setModalVisible(true);
-  };
-  const closeModal = () => {
-    setModalVisible(false);
-  };
+  // const [modalVisible, setModalVisible] = useState(false);
+  // const [selectedImage, setSelectedImage] = useState(null);
+  // const openModal = (image) => {
+  //   setSelectedImage(image);
+  //   setModalVisible(image);
+  //   setModalVisible(true);
+  // };
+  // const closeModal = () => {
+  //   setModalVisible(false);
+  // };
   const handleClick = () => {
     navigate("/checkout");
   };
@@ -144,8 +153,8 @@ function Cart() {
   return (
     <Layout className="layout-default">
       <CommonNavbar handleSearch={handleSearch} />
-      <Content className="cart-content">
-        <Card style={{ height: "100%" }} className="show-productDetails-card">
+      <Content>
+        <Card style={{ height: "100%" }}>
           <div className="cart-header">
             <h1>
               <ShoppingCartOutlined
@@ -155,14 +164,12 @@ function Cart() {
             </h1>
           </div>
           {productData.map((item, index) => (
-            <div className="cart-item" key={index}>
-              <Row>
-                <Col span={6}>
-                  <div
-                    className="image-container"
-                    onClick={() => openModal(item.image)}
-                  >
-                    <img
+            <div className="cart-container" key={index}>
+              <Row justify="center" align={"middle"}>
+                <Col xs={24} sm={12} md={8} lg={8} xl={8}>
+                  <div className="cart-col">
+                    <Image
+                      style={{ maxWidth: "180px" }}
                       src={`http://localhost:5000/${item.image.replace(
                         /\\/g,
                         "/"
@@ -171,35 +178,26 @@ function Cart() {
                     />
                   </div>
                 </Col>
-                <Modal open={modalVisible} onCancel={closeModal} footer={null}>
-                  {selectedImage && (
-                    <img
-                      src={`http://localhost:5000/${selectedImage.replace(
-                        /\\/g,
-                        "/"
-                      )}`}
-                      className="enlarged-image"
-                      alt="EnlargedProductImg"
-                    />
-                  )}
-                </Modal>
-                <Col span={6}>
-                  <div className="product-details">
-                    <h3>Product: {item.name}</h3>
-                    <p>Price: {item.price}</p>
-                    <p>Category: {item.category}</p>
+
+                <Col xs={24} sm={12} md={8} lg={8} xl={8}>
+                  <div className="cart-col">
+                    <Paragraph>
+                      <h3>Product: {item.name}</h3>
+                      <p>Price: {item.price}</p>
+                      <p>Category: {item.category}</p>
+                      <p>Quantity: </p>
+                      <Button onClick={() => decrementQuantity(index)}>
+                        -
+                      </Button>
+                      <span style={{ padding: "2px" }}>{item.quantity}</span>
+                      <Button onClick={() => incrementQuantity(index)}>
+                        +
+                      </Button>
+                    </Paragraph>
                   </div>
                 </Col>
-                <Col span={6}>
-                  <div className="quantity-controls">
-                    <p>Quantity: </p>
-                    <button onClick={() => decrementQuantity(index)}>-</button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => incrementQuantity(index)}>+</button>
-                  </div>
-                </Col>
-                <Col span={6}>
-                  <div className="delete-button">
+                <Col xs={24} sm={12} md={8} lg={8} xl={8}>
+                  <div className="cart-col">
                     <Popconfirm
                       title="Are you sure you want to delete this item from the cart?"
                       onConfirm={() => deleteItemFromCart(item.id)}
@@ -218,7 +216,7 @@ function Cart() {
                         type: "default",
                       }}
                     >
-                      <Button className="DelFromCartButton" type="link">
+                      <Button className="cart-delete-button" type="danger">
                         Delete from Cart
                       </Button>
                     </Popconfirm>

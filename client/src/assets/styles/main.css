@@ -3588,48 +3588,8 @@ div.ant-upload {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 600px; /* Adjust the width as per your needs */
-  height: 600px; /* Adjust the height as per your needs */
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background-color: #ffffff; /* White background color */
-  padding: 10px; /* Optional: Add padding for spacing */
-}
-
-.image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Adjust the image size while maintaining aspect ratio */
-}
-
-/* Css for cart page */
-/* .layout-dashboard {
-  width: 80%;
-  margin: 0 auto;
-  padding: 20px;
-} */
-.cart-content {
-  width: 80%;
-  margin: auto;
-  /* height: 87vh !important; */
-}
-
-.cart-header {
-  border-bottom: 1px solid #ddd;
-  padding: 20px 0;
-  text-align: center;
-}
-
-.cart-item {
-  display: justify;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #ddd;
-}
-
-.image-container {
+  background-color: #ffffff;
+  padding: 10px;
   width: 180px;
   height: 180px;
   margin-right: 20px;
@@ -3639,81 +3599,33 @@ div.ant-upload {
 .image-container img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* Adjust the image size while maintaining aspect ratio */
 }
 
-.product-details {
-  flex-grow: 1;
+/* Css for cart page */
+
+.cart-col {
+  background-color: white;
+  padding: 20px 60px;
 }
 
-.product-details h3 {
-  margin-bottom: 10px;
+.cart-container {
+  border-bottom: 1.5px solid #ddd;
+}
+.cart-delete-button {
+  font-size: 16px;
+  background-color: #c01414;
+
+  color: white;
+}
+.cart-delete-button:hover {
+  background-color: red;
 }
 
-.product-details p {
-  margin-bottom: 5px;
-}
-
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.quantity-controls p {
-  margin-right: 10px;
-  font-weight: bold;
-  padding-top: 10px;
-}
-
-.quantity-controls button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: none;
-  background-color: #f0f0f0;
-  border-color: unset;
-  border-radius: 4px;
-  color: #333;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-right: 5px;
-  margin-left: 5px;
-}
-
-.quantity-controls button:hover {
-  background-color: #ccc;
-}
-
-.quantity-controls button:active {
-  background-color: #999;
-}
-
-.delete-button {
-  color: #f00;
-  font-size: 14px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  margin-left: 10px;
-  padding: 5px;
-}
-
-.DelFromCartButton {
-  padding-left: 0px;
-  color: rgb(0, 85, 255);
-  color: red;
-  font-size: 14px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  margin-left: 0px;
-  padding-bottom: 50px;
-}
-
-.DelFromCartButton:hover {
-  color: rgb(235, 66, 66) !important;
+.cart-header {
+  border-bottom: 1.5px solid #ddd;
+  padding: 20px 0;
+  text-align: center;
 }
 
 .cart-summary {
@@ -3762,7 +3674,7 @@ div.ant-upload {
   background-color: #eeff00;
 }
 
-@media screen and (max-width: 900px) {
+/* @media screen and (max-width: 900px) {
   .cart-item {
     flex-wrap: wrap;
   }
@@ -3789,9 +3701,9 @@ div.ant-upload {
     margin-top: 10px;
     padding: 0;
   }
-}
+} */
 
-@media screen and (max-width: 768px) {
+/* @media screen and (max-width: 768px) {
   .cart-item {
     flex-direction: column;
     align-items: flex-start;
@@ -3857,7 +3769,7 @@ div.ant-upload {
   .layout-dashboard {
     width: 100%;
   }
-}
+} */
 
 /* css for ShowProductDetails */
 
