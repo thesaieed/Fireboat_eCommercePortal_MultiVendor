@@ -3623,7 +3623,7 @@ div.ant-upload {
 }
 
 .cart-item {
-  display: flex;
+  display: justify;
   align-items: center;
   padding: 20px;
   border-bottom: 1px solid #ddd;

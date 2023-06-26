@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAllContext from "../../../context/useAllContext";
-import { Button, Card, Popconfirm, Modal, Layout } from "antd";
+import { Button, Card, Popconfirm, Modal, Layout, Row, Col } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
@@ -137,6 +137,9 @@ function Cart() {
   const closeModal = () => {
     setModalVisible(false);
   };
+  const handleClick = () => {
+    navigate("/checkout");
+  };
 
   return (
     <Layout className="layout-default">
@@ -153,65 +156,75 @@ function Cart() {
           </div>
           {productData.map((item, index) => (
             <div className="cart-item" key={index}>
-              <div
-                className="image-container"
-                onClick={() => openModal(item.image)}
-              >
-                <img
-                  src={`http://localhost:5000/${item.image.replace(
-                    /\\/g,
-                    "/"
-                  )}`}
-                  alt="ProductImg"
-                />
-              </div>
-              <Modal open={modalVisible} onCancel={closeModal} footer={null}>
-                {selectedImage && (
-                  <img
-                    src={`http://localhost:5000/${selectedImage.replace(
-                      /\\/g,
-                      "/"
-                    )}`}
-                    className="enlarged-image"
-                    alt="EnlargedProductImg"
-                  />
-                )}
-              </Modal>
-              <div className="product-details">
-                <h3>Product: {item.name}</h3>
-                <p>Price: {item.price}</p>
-                <p>Category: {item.category}</p>
-              </div>
-              <div className="quantity-controls">
-                <p>Quantity: </p>
-                <button onClick={() => decrementQuantity(index)}>-</button>
-                <span>{item.quantity}</span>
-                <button onClick={() => incrementQuantity(index)}>+</button>
-              </div>
-              <div className="delete-button">
-                <Popconfirm
-                  title="Are you sure you want to delete this item from the cart?"
-                  onConfirm={() => deleteItemFromCart(item.id)}
-                  okText="Yes"
-                  cancelText="No"
-                  okButtonProps={{
-                    style: {
-                      height: 40,
-                      width: 40,
-                      background: "#f53131",
-                      color: "white",
-                    },
-                  }}
-                  cancelButtonProps={{
-                    style: { height: 40, width: 40 },
-                    type: "default",
-                  }}
-                >
-                  <Button className="DelFromCartButton" type="link">
-                    Delete from Cart
-                  </Button>
-                </Popconfirm>
-              </div>
+              <Row>
+                <Col span={6}>
+                  <div
+                    className="image-container"
+                    onClick={() => openModal(item.image)}
+                  >
+                    <img
+                      src={`http://localhost:5000/${item.image.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      alt="ProductImg"
+                    />
+                  </div>
+                </Col>
+                <Modal open={modalVisible} onCancel={closeModal} footer={null}>
+                  {selectedImage && (
+                    <img
+                      src={`http://localhost:5000/${selectedImage.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      className="enlarged-image"
+                      alt="EnlargedProductImg"
+                    />
+                  )}
+                </Modal>
+                <Col span={6}>
+                  <div className="product-details">
+                    <h3>Product: {item.name}</h3>
+                    <p>Price: {item.price}</p>
+                    <p>Category: {item.category}</p>
+                  </div>
+                </Col>
+                <Col span={6}>
+                  <div className="quantity-controls">
+                    <p>Quantity: </p>
+                    <button onClick={() => decrementQuantity(index)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => incrementQuantity(index)}>+</button>
+                  </div>
+                </Col>
+                <Col span={6}>
+                  <div className="delete-button">
+                    <Popconfirm
+                      title="Are you sure you want to delete this item from the cart?"
+                      onConfirm={() => deleteItemFromCart(item.id)}
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{
+                        style: {
+                          height: 40,
+                          width: 40,
+                          background: "#f53131",
+                          color: "white",
+                        },
+                      }}
+                      cancelButtonProps={{
+                        style: { height: 40, width: 40 },
+                        type: "default",
+                      }}
+                    >
+                      <Button className="DelFromCartButton" type="link">
+                        Delete from Cart
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                </Col>
+              </Row>
             </div>
           ))}
           <div className="cart-summary">
@@ -220,7 +233,9 @@ function Cart() {
               <span className="spanItems">{calculateTotalItems()}</span> items{" "}
               <span className="spanCost">&#8377;{calculateSubtotal()}</span>
             </h1>
-            <Button type="primary">Proceed To Buy</Button>
+            <Button onClick={handleClick} type="primary">
+              Proceed To Buy
+            </Button>
           </div>
         </Card>
       </Content>
