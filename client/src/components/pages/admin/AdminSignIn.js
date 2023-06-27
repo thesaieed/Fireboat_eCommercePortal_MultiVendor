@@ -13,7 +13,7 @@ import {
   Alert,
 } from "antd";
 
-import signinbg from "../../assets/images/1.png";
+import signinbg from "../../../assets/images/vendorSigin.png";
 
 import {
   TwitterOutlined,
@@ -24,12 +24,12 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import useAllContext from "../../context/useAllContext";
+import useAllContext from "../../../context/useAllContext";
 
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
 
-function SignIn() {
+function AdminSignIn() {
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);
   const {
@@ -47,11 +47,10 @@ function SignIn() {
       if (appUser.isadmin) {
         navigate("/admin/dashboard");
       } else {
-        console.log("signIn navs to home");
         navigate("/");
       }
     }
-  }, [isValidToken, appUser.is_admin]);
+  }, [isValidToken, appUser.isadmin]);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [errorDescription, setErrorDescription] = useState();
@@ -61,28 +60,33 @@ function SignIn() {
   const onFinish = async (values) => {
     // console.log("Success:", values);
     setButtonLoading(true);
-    const res = await axios.post("http://localhost:5000/login", values);
+    const res = await axios.post("http://localhost:5000/vendor/login", values);
     switch (res.data.loginStatus) {
       case 200:
         const userToken = generateRandomString(12);
         // console.log("Res.data.user : ", res.data.user);
         // console.log("Login UserToken : ", userToken);
         localStorage.setItem("userToken", userToken);
-        localStorage.setItem("isa", false);
+        localStorage.setItem("isa", true);
         setUserToken(userToken);
-        setUserTokenIsAdmin(false);
+        setUserTokenIsAdmin(true);
         setAppUser(res.data.user);
         try {
           await axios.post("http://localhost:5000/addusersloggedintokens", {
             token: userToken,
             id: res.data.user.id,
-            isvendor: false,
+            isvendor: true,
           });
           setIsValidToken(true);
         } catch (err) {
           console.error(err);
         }
-        navigate("/");
+        console.log(res.data);
+        if (res.data.user.is_admin === true) {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
 
         break;
       case 401:
@@ -93,6 +97,26 @@ function SignIn() {
       case 404:
         // console.log("User doesn't exist");
         setErrorMessage("User not Found ! Please SignUp.");
+        form.resetFields();
+        break;
+      case 102:
+        // console.log("User doesn't exist");
+        setErrorMessage(
+          <code>
+            Your Approval is in Process!
+            <br /> Please check your email for status!
+          </code>
+        );
+        form.resetFields();
+        break;
+      case 406:
+        // console.log("User doesn't exist");
+        setErrorMessage(
+          <code>
+            You have not been Approved!
+            <br /> Please check your email for status!
+          </code>
+        );
         form.resetFields();
         break;
       case 407:
@@ -129,9 +153,9 @@ function SignIn() {
               xs={{ span: 22, offset: 0 }}
               md={{ span: 11, offset: 1 }}
               lg={{ span: 8, offset: 2 }}
-              xl={{ span: 6, offset: 3 }}
+              xl={{ span: 9, offset: 0 }}
             >
-              <Title className="mb-15">Login</Title>
+              <Title className="mb-15">Vendor Login</Title>
               <Title className="font-regular text-muted" level={5}>
                 Enter your email and password to login
               </Title>
@@ -202,8 +226,7 @@ function SignIn() {
                       }}
                       style={{
                         width: "100%",
-
-                        overflow: "hidden",
+                        overflow: "auto",
                       }}
                     />
                   </Form.Item>
@@ -216,21 +239,13 @@ function SignIn() {
                     style={{ width: "100%" }}
                     loading={buttonLoading}
                   >
-                    SIGN IN
+                    Login
                   </Button>
                 </Form.Item>
                 <p className="font-semibold text-muted">
                   Don't have an account?{" "}
-                  <Link to="/signup" className="text-dark font-bold">
+                  <Link to="/adminsignup" className="text-dark font-bold">
                     Sign Up
-                  </Link>
-                </p>
-                <p className="font-semibold text-muted">
-                  <Link
-                    to="/adminlogin"
-                    className="text-dark font-bold float-end"
-                  >
-                    Vendor Login
                   </Link>
                 </p>
               </Form>
@@ -240,8 +255,8 @@ function SignIn() {
               className="sign-img"
               style={{ padding: 12 }}
               xs={{ span: 24 }}
-              lg={{ span: 12 }}
-              md={{ span: 12 }}
+              lg={{ span: 11 }}
+              md={{ span: 11 }}
             >
               <img src={signinbg} alt="" />
             </Col>
@@ -266,4 +281,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default AdminSignIn;

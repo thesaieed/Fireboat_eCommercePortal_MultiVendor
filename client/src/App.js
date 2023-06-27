@@ -15,8 +15,15 @@ import { ConfigProvider } from "antd";
 import appTheme from "./eCommerseTheme.json";
 //Common Components End
 
+//SuperAdmin Components
+import AllVendors from "./components/pages/admin/superAdmin/allVendors";
+import ApproveVendors from "./components/pages/admin/superAdmin/approveVendors";
+//SuperAdmin Components ends
+
 //Admin Components
 import Main from "./components/layout/Main";
+import AdminSignIn from "./components/pages/admin/AdminSignIn";
+import AdminSignUp from "./components/pages/admin/AdminSignUp";
 import Dashboard from "./components/pages/admin/Dashboard";
 import Profile from "./components/pages/admin/Profile";
 import AddProduct from "./components/pages/admin/products/AddProduct";
@@ -34,7 +41,7 @@ import Updatecategories from "./components/pages/admin/categories/UpdateCategori
 //User Components End
 
 function App() {
-  const { validateUserToken, isLoading, userToken } = useAllContext();
+  const { userToken, validateUserToken, isLoading } = useAllContext();
 
   useEffect(() => {
     validateUserToken();
@@ -59,7 +66,13 @@ function App() {
           {/* user routes end */}
 
           {/* Admin Routes start */}
+          <Route path="/adminsignup" element={<AdminSignUp />} />
+          <Route path="/adminlogin" element={<AdminSignIn />} />
           <Route path="/admin" element={<Main />}>
+            <Route path="superadmin">
+              <Route path="allvendors" element={<AllVendors />} />
+              <Route path="approvevendors" element={<ApproveVendors />} />
+            </Route>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
@@ -84,7 +97,9 @@ function App() {
             </Route>
           </Route>
           {/* Admin Routes end */}
-
+          <Route path="/mainadmin" element={<Main />}>
+            <Route index element={<Dashboard />} />
+          </Route>
           <Route
             path="*"
             element={

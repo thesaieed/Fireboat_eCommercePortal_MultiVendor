@@ -15,13 +15,16 @@ function BrowseSidebar({
   onSortChange,
   categories,
   brands,
+  vendors,
   onCategoryChange,
   onBrandChange,
+  onVendorChange,
   priceRange,
   setPriceRange,
   sliderRange,
   selectedCategories,
   selectedBrands,
+  selectedVendors,
   clearAllFilters,
 }) {
   let categoryOptions = [];
@@ -31,6 +34,10 @@ function BrowseSidebar({
   let brandOptions = [];
   for (let brand of brands) {
     brandOptions.push({ value: brand });
+  }
+  let vendorOptions = [];
+  for (let vendor of vendors) {
+    vendorOptions.push({ value: vendor });
   }
   const tagRender = (props) => {
     const { label, closable, onClose } = props;
@@ -58,6 +65,9 @@ function BrowseSidebar({
   };
   const handleBrandChange = (selectedbrands) => {
     onBrandChange(selectedbrands);
+  };
+  const handleVendorChange = (selectedvendors) => {
+    onVendorChange(selectedvendors);
   };
 
   const handlePriceSliderChange = (e) => {
@@ -118,6 +128,33 @@ function BrowseSidebar({
       },
     },
   ];
+  const vendorMenuItems = [
+    {
+      label: (
+        <Select
+          placeholder="Select Sellers"
+          mode="multiple"
+          showArrow
+          tagRender={tagRender}
+          // defaultValue={[]}
+          value={selectedVendors}
+          onChange={handleVendorChange}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          options={vendorOptions}
+        />
+      ),
+      key: "browseCategory",
+      style: {
+        width: "95%",
+        border: "1px solid lightgrey",
+        height: "max-content",
+        background: "none",
+      },
+    },
+  ];
 
   return (
     <div className="homeSidebarDiv">
@@ -161,6 +198,18 @@ function BrowseSidebar({
           theme="light"
           mode="inline"
           items={brandMenuItems}
+          className="categoryMenu"
+        />
+      </div>
+      <div>
+        <hr />
+      </div>
+      <div className="sidebarSubHeading ">
+        <span>Seller</span>
+        <Menu
+          theme="light"
+          mode="inline"
+          items={vendorMenuItems}
           className="categoryMenu"
         />
       </div>

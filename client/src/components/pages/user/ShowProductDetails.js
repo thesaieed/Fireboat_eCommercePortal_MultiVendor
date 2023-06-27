@@ -14,6 +14,7 @@ import {
   Descriptions,
 } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import vendorIcon from "../../../assets/images/vendorsIcon.png";
 import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
 import CommonNavbar from "../../layout/CommonNavbar";
@@ -94,6 +95,12 @@ function ShowProductDetails() {
     setButtonLoading(true);
     if (!appUser || !appUser.id) {
       message.info("Please login to add products to the cart.");
+      setButtonLoading(false);
+      return;
+    }
+    if (appUser.is_admin) {
+      message.info("Admin not Allowed to add to Cart Yet!");
+      setButtonLoading(false);
       return;
     }
 
@@ -142,29 +149,47 @@ function ShowProductDetails() {
                     <span>Price:</span>
                     <strong> &#8377; {productDetails.price}</strong>
                     <Descriptions column={1} style={{ marginTop: 25 }}>
-                      <Descriptions.Item icon>
-                        <img
-                          src={brandIcon}
-                          alt="brandIcon"
-                          style={{
-                            height: 25,
-                            width: 25,
-                            marginRight: 5,
-                          }}
-                        />
-                        {productDetails.brand}
+                      <Descriptions.Item>
+                        <div className="d-flex">
+                          <img
+                            src={brandIcon}
+                            alt="brandIcon"
+                            style={{
+                              height: 25,
+                              width: 25,
+                              marginRight: 5,
+                            }}
+                          />
+                          {productDetails.brand}
+                        </div>
                       </Descriptions.Item>
                       <Descriptions.Item>
-                        <img
-                          src={categoryIcon}
-                          alt="categoryIcon"
-                          style={{
-                            height: 25,
-                            width: 25,
-                            marginRight: 5,
-                          }}
-                        />
-                        {productDetails.category}
+                        <div className="d-flex">
+                          <img
+                            src={categoryIcon}
+                            alt="categoryIcon"
+                            style={{
+                              height: 25,
+                              width: 25,
+                              marginRight: 5,
+                            }}
+                          />
+                          {productDetails.category}
+                        </div>
+                      </Descriptions.Item>
+                      <Descriptions.Item>
+                        <div className="d-flex">
+                          <img
+                            src={vendorIcon}
+                            alt="vendonIcon"
+                            style={{
+                              height: 25,
+                              width: 25,
+                              marginRight: 5,
+                            }}
+                          />
+                          <span> {productDetails.vendor}</span>
+                        </div>
                       </Descriptions.Item>
                     </Descriptions>
                   </div>
