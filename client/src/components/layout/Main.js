@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import { Layout, Drawer, Affix, message } from "antd";
+import { Layout, Drawer, Affix } from "antd";
 import Sidenav from "./Sidenav";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -49,7 +49,6 @@ function Main() {
 
   let { pathname } = useLocation();
   pathname = pathname.replace("/", "");
-  // console.log("main isValid TOken : ", isValidToken);
 
   useEffect(() => {
     if (!isValidToken) {
@@ -71,10 +70,10 @@ function Main() {
 
     if (!appUser.id) {
       setIsLoading(true);
-    } else if (!appUser.isadmin) {
+    } else if (!appUser.is_admin) {
       navigate("/");
       // message.error("Permission denied!");
-    } else if (appUser.isadmin) {
+    } else if (appUser.is_admin) {
       setIsLoading(false);
     }
   }, [appUser]);

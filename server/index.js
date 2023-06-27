@@ -8,8 +8,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 12;
 const { verifyEmail } = require("./utils/verifyEmail");
 var jwt = require("jsonwebtoken");
-const { log } = require("console");
-
+const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
+const vendorRoutes = require("./routes/vendor");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -27,41 +27,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const generateTokenAndSendMail = async (userId, email) => {
-  //generate a token including userID as data for verification
-  const token = jwt.sign(
-    {
-      data: userId,
-    },
-    process.env.TOKENPVTKEY,
-    { expiresIn: 5 * 60 }
-  );
-  try {
-    //send a verification email with token
-    const emailResponce = await verifyEmail({
-      token: token,
-      email: email,
-    });
-    // console.log("emailResponce : ", emailResponce);
-    if (!emailResponce) {
-      return {
-        status: 404,
-        message: "Failed to send Verification Email! ",
-      };
-    } else {
-      return {
-        status: 200,
-        message: "Verification Email sent on the registered Email. ",
-      };
-    }
-  } catch (err) {
-    // res.send(respond);
-    return {
-      status: 404,
-      message: "Failed to send Verification Email! ",
-    };
-  }
-};
+app.use("/vendor", vendorRoutes);
 
 //login route
 app.post("/login", async (req, res) => {
@@ -105,12 +71,18 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/verifyEmail", async (req, res) => {
-  const { token, email } = req.body;
-
+  const { token, email, isVendor } = req.body;
+  // console.log(req.body);
   try {
-    const user = await pool.query(
-      `select * from users  WHERE email='${email}';`
-    );
+    var user;
+    if (isVendor === "false") {
+      // console.log("user verify");
+      user = await pool.query(`select * from users  WHERE email='${email}';`);
+    } else if (isVendor === "true") {
+      // console.log("Vendor verify");
+      user = await pool.query(`select * from vendors  WHERE email='${email}';`);
+    }
+
     if (!user.rows[0]?.id) {
       res.send({
         status: 404,
@@ -131,13 +103,42 @@ app.post("/verifyEmail", async (req, res) => {
           const userid = decoded?.data;
           try {
             // console.log(user);
-            await pool.query(
-              `update users set isemailverified = true WHERE id=${userid};`
-            );
-            res.send({
-              status: 200,
-              message: "Email Verified Successfully! ",
-            });
+            if (isVendor === "false") {
+              await pool.query(
+                `update users set isemailverified = true WHERE id=${userid};`
+              );
+              res.send({
+                status: 200,
+                message: "Email Verified Successfully! ",
+              });
+            } else if (isVendor === "true") {
+              await pool.query(
+                `update vendors set isemailverified = true, is_under_approval=true WHERE id=${userid};`
+              );
+              let newVendorError = false;
+              try {
+                await pool.query(
+                  `INSERT INTO newvendorsapproval(vendor_id) VALUES (${userid})`
+                );
+              } catch (newVendorErr) {
+                newVendorError = true;
+                console.error(newVendorErr);
+                if (newVendorErr.code == 23505) {
+                  res.send({
+                    status: 102,
+                    message:
+                      "Email Verified Already! Approval Pending! Please Check your email for the same. ",
+                  });
+                }
+              }
+              if (!newVendorError) {
+                res.send({
+                  status: 102,
+                  message:
+                    "Email Verified Successfully! Please wait for an Approval from us. An Email will be sent on Registered Email for the same. ",
+                });
+              }
+            }
           } catch (error) {
             console.error(error);
             res.send({
@@ -159,17 +160,32 @@ app.post("/verifyEmail", async (req, res) => {
 });
 
 app.post("/resendEmailverification", async (req, res) => {
-  const { email } = req.body;
+  const { email, isVendor } = req.body;
   // console.log(email);
   try {
-    const resp = await pool.query(`select * from users where email='${email}'`);
+    var resp;
+    if (isVendor === "false") {
+      resp = await pool.query(`select * from users where email='${email}'`);
+    } else if (isVendor === "true") {
+      resp = await pool.query(`select * from vendors  WHERE email='${email}';`);
+    }
+
     // console.log(resp);
     if (resp.rows[0].isemailverified) {
       res.send({ status: 202, message: "Email already Verified!" });
     } else {
-      const response = await generateTokenAndSendMail(resp.rows[0].id, email);
+      if (isVendor === "false") {
+        const response = await generateTokenAndSendMail(resp.rows[0].id, email);
+        res.send(response);
+      } else if (isVendor === "true") {
+        const response = await generateTokenAndSendMail(
+          resp.rows[0].id,
+          email,
+          true
+        );
+        res.send(response);
+      }
       // console.log(response);
-      res.send(response);
     }
   } catch (error) {
     console.log(error);
@@ -311,8 +327,15 @@ app.get("/brands", async (req, res) => {
 //Modified addProduct handle to handle image upload also
 
 app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
-  const { category, name, description, price, stock_available, brand } =
-    req.body;
+  const {
+    category,
+    name,
+    description,
+    price,
+    stock_available,
+    brand,
+    vendor_id,
+  } = req.body;
   // console.log(req.body)
   // console.log(req.file)
   // console.log("description: ", description);
@@ -320,8 +343,17 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
 
   try {
     const newProduct = await pool.query(
-      "insert into products(category_id,name,description,price,stock_available,image,brand_id) values ($1,$2,$3,$4,$5,$6,$7) returning *",
-      [category, name, description, price, stock_available, imagePath, brand]
+      "insert into products(category_id,name,description,price,stock_available,image,brand_id,vendor_id ) values ($1,$2,$3,$4,$5,$6,$7,$8) returning *",
+      [
+        category,
+        name,
+        description,
+        price,
+        stock_available,
+        imagePath,
+        brand,
+        vendor_id,
+      ]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
@@ -343,14 +375,27 @@ app.get("/allproducts", async (req, res) => {
 });
 
 app.post("/checkusersloggedintokens", async (req, res) => {
-  const { userToken } = req.body;
-  // console.log("token :", userToken);
+  var { userToken, isvendor } = req.body;
+
+  // console.log("isVendorType before :", typeof isvendor);
+  typeof isvendor == "string"
+    ? (isvendor = JSON.parse(isvendor.toLowerCase()))
+    : (isvendor = isvendor);
+  // console.log("isVendorType after :", typeof isvendor);
   try {
-    const user = await pool.query(
-      `select * from users where '${userToken}' = ANY (logged_in_tokens)`
-    );
+    // console.log("isVendor : ", isvendor);
+    var user;
+    if (!isvendor) {
+      user = await pool.query(
+        `select * from users where '${userToken}' = ANY (logged_in_tokens)`
+      );
+    } else if (isvendor) {
+      user = await pool.query(
+        `select * from vendors where '${userToken}' = ANY (logged_in_tokens)`
+      );
+    }
     // console.log(user);
-    if (user.rows.length) {
+    if (user.rows.length > 0) {
       res.send(true);
     } else {
       res.send(false);
@@ -362,12 +407,20 @@ app.post("/checkusersloggedintokens", async (req, res) => {
 });
 
 app.post("/addusersloggedintokens", async (req, res) => {
-  const { id, token } = req.body;
+  const { id, token, isvendor } = req.body;
   // console.log("token :", token);
   try {
-    const oldTokens = await pool.query(
-      `SELECT logged_in_tokens from users WHERE id=${id}`
-    );
+    var oldTokens;
+    if (!isvendor) {
+      oldTokens = await pool.query(
+        `SELECT logged_in_tokens from users WHERE id=${id}`
+      );
+    } else if (isvendor) {
+      oldTokens = await pool.query(
+        `SELECT logged_in_tokens from vendors WHERE id=${id}`
+      );
+    }
+
     var newTokens = oldTokens.rows[0].logged_in_tokens;
     // console.log("new Tokens", newTokens);
     if (!newTokens) {
@@ -375,10 +428,18 @@ app.post("/addusersloggedintokens", async (req, res) => {
     } else {
       newTokens.push(token);
     }
-    await pool.query(
-      `UPDATE users SET logged_in_tokens = '{${newTokens}}'
+
+    if (!isvendor) {
+      await pool.query(
+        `UPDATE users SET logged_in_tokens = '{${newTokens}}'
       WHERE id = ${id} returning *`
-    );
+      );
+    } else if (isvendor) {
+      await pool.query(
+        `UPDATE vendors SET logged_in_tokens = '{${newTokens}}'
+      WHERE id = ${id} returning *`
+      );
+    }
     res.send(true);
   } catch (error) {
     // console.error(error);
@@ -386,12 +447,18 @@ app.post("/addusersloggedintokens", async (req, res) => {
   }
 });
 app.post("/removeusersloggedintokens", async (req, res) => {
-  const { id, userToken } = req.body;
+  const { id, userToken, isvendor } = req.body;
   // console.log("token :", token);
   try {
-    await pool.query(
-      `update users set logged_in_tokens = array_remove(logged_in_tokens, '${userToken}') WHERE id=${id};`
-    );
+    if (!isvendor) {
+      await pool.query(
+        `update users set logged_in_tokens = array_remove(logged_in_tokens, '${userToken}') WHERE id=${id};`
+      );
+    } else if (isvendor) {
+      await pool.query(
+        `update vendors set logged_in_tokens = array_remove(logged_in_tokens, '${userToken}') WHERE id=${id};`
+      );
+    }
     res.send(true);
   } catch (error) {
     // console.error(error);
@@ -399,14 +466,41 @@ app.post("/removeusersloggedintokens", async (req, res) => {
   }
 });
 app.post("/userdetails", async (req, res) => {
-  const { userToken } = req.body;
+  var { userToken, isvendor } = req.body;
+  typeof isvendor == "string"
+    ? (isvendor = JSON.parse(isvendor.toLowerCase()))
+    : (isvendor = isvendor);
+  var user;
   try {
-    const user = await pool.query(
-      `select * from users where '${userToken}' = ANY (logged_in_tokens)`
-    );
-
-    const { id, name, email, isadmin, address, phone } = user.rows[0];
-    res.send({ id, name, email, isadmin, address, phone });
+    if (!isvendor) {
+      user = await pool.query(
+        `select * from users where '${userToken}' = ANY (logged_in_tokens)`
+      );
+      const { id, name, email, address, phone } = user.rows[0];
+      res.send({ id, name, email, is_admin: false, address, phone });
+    } else if (isvendor) {
+      user = await pool.query(
+        `select * from vendors where '${userToken}' = ANY (logged_in_tokens)`
+      );
+      const {
+        id,
+        business_name,
+        email,
+        is_admin,
+        is_super_admin,
+        business_address,
+        phone,
+      } = user.rows[0];
+      res.send({
+        id,
+        name: business_name,
+        email,
+        is_admin,
+        is_super_admin,
+        address: business_address,
+        phone,
+      });
+    }
   } catch (err) {
     res.send({});
   }
@@ -428,7 +522,12 @@ app.get("/admin/productdetails", async (req, res) => {
         "select * from brands where id =$1",
         [productDetails.rows[0].brand_id]
       );
+      const vendorDetails = await pool.query(
+        "select business_name from vendors where id =$1",
+        [productDetails.rows[0].vendor_id]
+      );
       productDetails.rows[0].brand = brandDetails.rows[0].brand;
+      productDetails.rows[0].vendor = vendorDetails.rows[0].business_name;
       // console.log("prod : ", productDetails.rows[0]);
       res.send(productDetails.rows[0]);
     }
@@ -704,6 +803,7 @@ app.put(
         ];
       } else {
         // Keep the existing image value in the database
+
         query =
           "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5,brand_id =$6 WHERE id = $7";
         queryValues = [
@@ -721,6 +821,7 @@ app.put(
       res.sendStatus(200); // Send status code 200 to indicate successful update
     } catch (error) {
       console.error(error);
+
       res.sendStatus(500); // Send status code 500 for internal server error
     }
   }
@@ -793,6 +894,19 @@ app.delete("/updatebrands/:itemId", async (req, res) => {
   } catch (error) {
     console.error("Error deleting Brand", error);
     res.status(500).json({ error: "Failed to delete Brand" });
+  }
+});
+
+//getvendordata
+app.get("/allvendors", async (req, res) => {
+  try {
+    const allVendors = await pool.query(
+      "SELECT id, business_name, business_address, email, phone FROM vendors"
+    );
+    res.send(allVendors.rows);
+  } catch (err) {
+    console.error(err);
+    res.send([]);
   }
 });
 

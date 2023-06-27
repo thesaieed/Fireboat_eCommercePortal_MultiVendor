@@ -13,7 +13,12 @@
 import { Menu } from "antd";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
-import { PlusCircleOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  PlusCircleOutlined,
+  UnorderedListOutlined,
+  ExclamationCircleFilled,
+  DatabaseFilled,
+} from "@ant-design/icons";
 import useAllContext from "../../context/useAllContext";
 
 function Sidenav({ color }) {
@@ -78,7 +83,7 @@ function Sidenav({ color }) {
     </svg>,
   ];
 
-  const { logout } = useAllContext();
+  const { logout, appUser } = useAllContext();
 
   const sidenavItems = [
     {
@@ -97,6 +102,44 @@ function Sidenav({ color }) {
       ),
       key: "adminDashboard",
     },
+    appUser.is_super_admin && {
+      label: <span className="label menu-item-header">Vendors</span>,
+      key: "vendorHeading",
+      type: "group",
+    },
+    appUser.is_super_admin && {
+      label: (
+        <NavLink to="/admin/superadmin/allvendors">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <DatabaseFilled />
+          </span>
+          <span className="label">All Vendors</span>
+        </NavLink>
+      ),
+      key: "allVendors",
+    },
+    appUser.is_super_admin && {
+      label: (
+        <NavLink to="/admin/superadmin/approvevendors">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <ExclamationCircleFilled />
+          </span>
+          <span className="label">Approve Vendors</span>
+        </NavLink>
+      ),
+      key: "approveVendors",
+    },
+
     {
       label: <span className="label menu-item-header">Products</span>,
       key: "productHeading",

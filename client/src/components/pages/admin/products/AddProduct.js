@@ -23,7 +23,7 @@ function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
   const [prodImgPreview, setProdImgPreview] = useState(cardImage);
   const [form] = Form.useForm();
-  const { categories, fetchCategories } = useAllContext();
+  const { categories, fetchCategories, appUser } = useAllContext();
   const [brands, setBrands] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   // const navigate = useNavigate();
@@ -54,6 +54,7 @@ function AddProduct() {
       formData.append("description", textDesc);
       formData.append("price", values.price);
       formData.append("brand", values.brand);
+      formData.append("vendor_id", appUser.id);
       formData.append("stock_available", values.stock_available);
       formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
 

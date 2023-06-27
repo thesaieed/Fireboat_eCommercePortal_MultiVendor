@@ -18,11 +18,14 @@ import {
   EyeOutlined,
   SettingOutlined,
   MoreOutlined,
+  IssuesCloseOutlined,
 } from "@ant-design/icons";
+import vendorsImg from "../../../assets/images/vendorsCardImage.jpg";
 import prodImg from "../../../assets/images/productsCardImage.jpg";
 import ordersImg from "../../../assets/images/ordersCardImage.jpg";
 import usersImg from "../../../assets/images/usersCard.jpg";
 import prodIcon from "../../../assets/images/productsIcon.png";
+import vendorIcon from "../../../assets/images/vendorsIcon.png";
 import ordersIcon from "../../../assets/images/ordersIcon.png";
 import usersIcon from "../../../assets/images/usersIcon.png";
 import queueCart from "../../../assets/images/queueCart.png";
@@ -30,11 +33,15 @@ import finishCart from "../../../assets/images/finishCart.png";
 import cancelledCart from "../../../assets/images/cancelledCart.png";
 import historyCart from "../../../assets/images/historyCart.png";
 
+import useAllContext from "../../../context/useAllContext";
+
 import { Dropdown } from "antd";
 
 import { Link } from "react-router-dom";
 const { Meta } = Card;
 function Dashboard() {
+  const { appUser } = useAllContext();
+
   const { dropdownRef } = useRef(null);
   const items = [
     {
@@ -47,12 +54,43 @@ function Dashboard() {
       key: "brandManagement",
     },
   ];
+
   return (
     <>
       <Row
         gutter={[24, 0]}
         className="d-flex align-items-center justify-content-around "
       >
+        {appUser.is_super_admin && (
+          <Col className=" mb-24">
+            <Card
+              style={{ width: 320 }}
+              cover={<img alt="VendorCardCover" src={vendorsImg} />}
+              actions={[
+                <Tooltip title="View all Vendors" color={"orange"}>
+                  <Link to="/admin/superadmin/allvendors">
+                    <UnorderedListOutlined key="allvendors" />
+                  </Link>
+                </Tooltip>,
+                <Tooltip title="Approve Vendors" color={"orange"}>
+                  <Link to="/admin/superadmin/approvevendors">
+                    <IssuesCloseOutlined key="approvevendors" />
+                  </Link>
+                </Tooltip>,
+
+                // <EditOutlined key="edit" />,
+                // <EllipsisOutlined key="ellipsis" />,
+              ]}
+            >
+              <Meta
+                avatar={<Avatar src={vendorIcon} />}
+                title="Vendors"
+                description="Information of Vendors"
+              />
+            </Card>
+          </Col>
+        )}
+
         <Col className=" mb-24">
           <Card
             style={{ width: 320 }}

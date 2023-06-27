@@ -128,8 +128,9 @@ function Updatecategories() {
       selector: (row) => row.name,
     },
     {
-      name: "Actions",
+      name: <div style={{ width: "100%", textAlign: "center" }}>Actions</div>,
       width: "200px",
+      style: { display: "flex", justifyContent: "center" },
       cell: (row) => (
         <>
           <Button
