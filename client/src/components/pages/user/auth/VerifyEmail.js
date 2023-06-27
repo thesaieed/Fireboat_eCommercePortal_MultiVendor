@@ -15,12 +15,14 @@ export const VerifyEmail = () => {
   const [mailSent, setMailSent] = useState(false);
   const [extraMessage, setExtraMessage] = useState("");
   const [showMailInfo, setShowMailInfo] = useState(true);
+  const [isVerifiedMessage, setIsVerifiedMessage] = useState("");
 
   const [loading, setIsLoading] = useState(false);
   const { Title } = Typography;
   const [searchParams] = useSearchParams();
   const token = searchParams.get("verify");
   const email = searchParams.get("email");
+  const isVendor = searchParams.get("iv");
 
   const navigate = useNavigate();
   const antIcon = (
@@ -37,10 +39,19 @@ export const VerifyEmail = () => {
     const res = await axios.post("http://localhost:5000/verifyEmail", {
       token: token,
       email: email,
+      isVendor: isVendor,
     });
-    console.log(res);
+    // console.log(res);
     if (res.data.status === 200) {
       message.success(res.data.message);
+      setIsVerifiedMessage(
+        "Email Verified Successfully ! Please Login to continue."
+      );
+      setIsVerified(true);
+      //   navigate("/");
+    } else if (res.data.status === 102) {
+      message.success(res.data.message);
+      setIsVerifiedMessage(res.data.message);
       setIsVerified(true);
       //   navigate("/");
     } else if (res.data.status === 404) {
@@ -61,7 +72,7 @@ export const VerifyEmail = () => {
     try {
       const res = await axios.post(
         "http://localhost:5000/resendEmailverification",
-        { email: email }
+        { email: email, isVendor: isVendor }
       );
       console.log(res);
       if (res.data.status === 200) {
@@ -69,6 +80,7 @@ export const VerifyEmail = () => {
       } else if (res.data.status === 202) {
         // navigate("/login");
         setIsVerifying(false);
+        setIsVerifiedMessage(res.data.message);
         setIsVerified(true);
       } else {
         message.error("Failed to send Email. please try again");
@@ -115,12 +127,13 @@ export const VerifyEmail = () => {
                   <>
                     <div className="d-flex justify-content-evenly">
                       <CheckCircleOutlined
-                        style={{ color: "green", fontSize: 60 }}
+                        style={{
+                          color: "green",
+                          fontSize: 60,
+                          marginRight: 10,
+                        }}
                       />
-                      <Title level={4}>
-                        Email Verified Successfully !<br /> Please Login to
-                        continue
-                      </Title>
+                      <Title level={4}>{isVerifiedMessage}</Title>
                     </div>
                     <Button
                       type="primary"

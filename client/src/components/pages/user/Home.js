@@ -27,12 +27,18 @@ const Home = () => {
       );
       const brands = await axios.get("http://localhost:5000/brands");
       // console.log(res);
+      const allVendors = await axios.get("http://localhost:5000/allvendors");
+
       var products = [];
       response.data.map((product) => {
         products.push({
           ...product,
           brand: brands.data.find((brand) => {
             if (brand.id === product.brand_id) return true;
+            else return false;
+          }),
+          vendor: allVendors.data.find((vendor) => {
+            if (vendor.id === product.vendor_id) return true;
             else return false;
           }),
         });
@@ -152,6 +158,18 @@ const Home = () => {
                                 }}
                               />{" "}
                               {product.category}
+                            </Paragraph>
+                            <Paragraph strong type="secondary" level={5}>
+                              <img
+                                src={brandIcon}
+                                alt="brandIcon"
+                                style={{
+                                  height: 25,
+                                  width: 25,
+                                  marginRight: 5,
+                                }}
+                              />
+                              {product.vendor.business_name}
                             </Paragraph>
                           </Row>
                           <Row>

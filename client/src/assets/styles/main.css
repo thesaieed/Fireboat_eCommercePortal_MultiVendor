@@ -2086,6 +2086,9 @@ body {
   background: url("../images/bg-signup.jpg") no-repeat center;
   background-size: cover;
 }
+.vendor-sign-up-header {
+  background: url("../images/vendor-bg-signup.jpg") no-repeat center;
+}
 .header-col.header-brand {
   white-space: nowrap;
 }
@@ -2204,6 +2207,11 @@ body {
 .mt-25,
 .my-25 {
   margin-top: 25px;
+}
+.m-5,
+.mt-5,
+.my-5 {
+  margin-top: 5px;
 }
 .m-20,
 .mt-20,
@@ -3508,7 +3516,7 @@ div.ant-upload {
   line-height: 1.5;
 }
 .productShow .ant-card-body {
-  background-color: #fffcf9;
+  background-color: #faf2fc;
 }
 .bg-light {
   background-color: #fafafa;
@@ -4098,4 +4106,8 @@ div.ant-upload {
 /* Css for data tables */
 .ql-editor {
   min-height: 200px !important;
+}
+.centered-cell {
+  text-align: center !important;
+  background-color: #00369e;
 }
