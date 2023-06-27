@@ -35,10 +35,14 @@ const modules = {
 //   "clean",
 // ];
 
-function TextEditor({ textDesc, setTextDesc }) {
+function TextEditor({
+  textDesc,
+  setTextDesc,
+  placeholder = "Product Description",
+}) {
   return (
     <ReactQuill
-      placeholder="Product Description"
+      placeholder={placeholder}
       theme="snow"
       defaultValue={textDesc}
       value={textDesc}

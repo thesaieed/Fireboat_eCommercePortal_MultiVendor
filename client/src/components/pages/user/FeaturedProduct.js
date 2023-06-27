@@ -34,7 +34,7 @@ const FeaturedProduct = ({ product }) => {
             {product.name}
           </Title>
           <Paragraph level={1} className="featuredproductsDescription">
-            {product.description}
+            <p dangerouslySetInnerHTML={{ __html: product.description }}></p>
           </Paragraph>
         </Col>
       </Row>
