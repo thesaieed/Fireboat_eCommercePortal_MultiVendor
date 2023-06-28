@@ -58,7 +58,7 @@ function AddProduct() {
       formData.append("stock_available", values.stock_available);
       formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
 
-      console.log("formData : ", formData);
+      // console.log("formData : ", formData);
       const response = await axios.post(
         "http://localhost:5000/admin/addproduct",
         formData,
@@ -106,23 +106,31 @@ function AddProduct() {
         }
         bordered="false"
         cover={
-          <Upload
-            // className="d-flex flex-column justify-content-center align-items-center"
+          <Form.Item
             name="image"
-            showUploadList={false}
-            accept="image/*"
-            beforeUpload={(event) => {
-              setProdImgPreview(URL.createObjectURL(event));
-              return false;
-            }}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+            rules={[{ required: true, message: "Image is required!" }]}
+            hasFeedback
           >
-            <img
-              style={{ width: "100%", margin: "auto", padding: 5 }}
-              id="prod_img_preview"
-              alt="example"
-              src={prodImgPreview}
-            />
-          </Upload>
+            <Upload
+              // className="d-flex flex-column justify-content-center align-items-center"
+              name="image"
+              showUploadList={false}
+              accept="image/*"
+              beforeUpload={(event) => {
+                setProdImgPreview(URL.createObjectURL(event));
+                return false;
+              }}
+            >
+              <img
+                style={{ width: "100%", margin: "auto", padding: 5 }}
+                id="prod_img_preview"
+                alt="example"
+                src={prodImgPreview}
+              />
+            </Upload>
+          </Form.Item>
         }
       >
         <Form
@@ -259,59 +267,8 @@ function AddProduct() {
               <Form.Item name="description">
                 <TextEditor textDesc={textDesc} setTextDesc={setTextDesc} />
               </Form.Item>
-
-              {/* <Form.List name="description">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map(({ key, name, ...restField }) => (
-                      <div
-                        key={key}
-                        className="d-flex justify-content-evenly align-items-baseline"
-                      >
-                        <Form.Item
-                          {...restField}
-                          style={{ width: "100%" }}
-                          name={[name]}
-                          // name={[""]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Missing Description List Item",
-                            },
-                          ]}
-                        >
-                          <Input
-                            style={{ width: "98%" }}
-                            placeholder="Description List Item"
-                          />
-                        </Form.Item>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
-                      </div>
-                    ))}
-                    <Form.Item key="descr">
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                      >
-                        Description Item
-                      </Button>
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List> */}
             </Col>
           </Row>
-          {/* <Form.Item
-            //   label="Description"
-            name="description"
-            rules={[
-              { required: true, message: "Please input product description!" },
-            ]}
-          >
-            <Input.TextArea placeholder="Enter product description" />
-          </Form.Item> */}
 
           {errorMessage && (
             <Form.Item>

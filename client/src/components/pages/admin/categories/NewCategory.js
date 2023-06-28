@@ -9,15 +9,15 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
-  const { fetchCategories } = useAllContext();
+  const { fetchCategories, appUser } = useAllContext();
   const onFinish = async (values) => {
     setButtonLoading(true);
     if (values.name) {
       try {
-        const response = await axios.post(
-          "http://localhost:5000/addcategory",
-          values
-        );
+        const response = await axios.post("http://localhost:5000/addcategory", {
+          name: values.name,
+          vendorId: appUser.id,
+        });
         // console.log(response);
         if (response.data.id) {
           setSuccessMessage(`Category ${values.name} Created Successfully !`);

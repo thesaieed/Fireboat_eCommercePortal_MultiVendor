@@ -262,15 +262,16 @@ app.post("/signup", async (req, res) => {
 });
 
 app.post("/addcategory", async (req, res) => {
-  const { name } = req.body;
+  const { name, vendorId } = req.body;
 
   try {
     const newCategory = await pool.query(
-      "insert into categories(name) values ($1) returning *",
-      [name]
+      "insert into categories(name, vendor_id) values ($1,$2) returning *",
+      [name, vendorId]
     );
     res.send(newCategory.rows[0]);
   } catch (err) {
+    console.log(err);
     if (err.code == 23505) {
       res.status(409).send();
     } else {
@@ -280,12 +281,12 @@ app.post("/addcategory", async (req, res) => {
 });
 // add new brand
 app.post("/addbrand", async (req, res) => {
-  const { brand } = req.body;
+  const { brand, vendorId } = req.body;
 
   try {
     const newBrand = await pool.query(
-      "insert into brands(brand) values ($1) returning *",
-      [brand]
+      "insert into brands(brand,vendor_id) values ($1,$2) returning *",
+      [brand, vendorId]
     );
     res.send(newBrand.rows[0]);
   } catch (err) {
@@ -300,6 +301,7 @@ app.post("/addbrand", async (req, res) => {
 //handle the get request for categories from client
 
 app.get("/admin/categories", async (req, res) => {
+  // console.log(req.body);
   try {
     const categories = await pool.query("select * from categories");
 
@@ -361,16 +363,6 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
     res.send(data);
   } catch (error) {
     console.error(error);
-  }
-});
-
-//get all products route
-app.get("/allproducts", async (req, res) => {
-  try {
-    const products = await pool.query(`select * from products`);
-    res.send(products.rows);
-  } catch (err) {
-    console.error(err);
   }
 });
 
@@ -736,13 +728,37 @@ app.delete("/cart/:itemId", async (req, res) => {
 });
 
 //Handle get Request from AllProducts
+app.post("/viewproducts", async (req, res) => {
+  const { is_super_admin, vendorId } = req.body;
+  if (is_super_admin) {
+    try {
+      const getProducts = await pool.query("select * from products");
+      // console.log(getProducts.rows);
+      res.send(getProducts.rows);
+    } catch (error) {
+      console.error(error);
+    }
+  } else if (!is_super_admin) {
+    try {
+      const getProducts = await pool.query(
+        "select * from products where vendor_id=$1",
+        [vendorId]
+      );
+      // console.log(getProducts.rows);
+      res.send(getProducts.rows);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+});
+
+//get all products route
 app.get("/viewproducts", async (req, res) => {
   try {
-    const getProducts = await pool.query("select * from products");
-    // console.log(getProducts.rows);
-    res.send(getProducts.rows);
-  } catch (error) {
-    console.error(error);
+    const products = await pool.query(`select * from products`);
+    res.send(products.rows);
+  } catch (err) {
+    console.error(err);
   }
 });
 
