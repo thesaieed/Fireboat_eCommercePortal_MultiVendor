@@ -4,7 +4,7 @@ import { IdcardOutlined } from "@ant-design/icons";
 import { React, useState } from "react";
 import axios from "axios";
 
-const NewBrand = ({ modalOpen, setModalOpen, getBrands }) => {
+const NewBrand = ({ modalOpen, setModalOpen, getBrands, appUser }) => {
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -13,10 +13,10 @@ const NewBrand = ({ modalOpen, setModalOpen, getBrands }) => {
     setButtonLoading(true);
     if (values.brand) {
       try {
-        const response = await axios.post(
-          "http://localhost:5000/addbrand",
-          values
-        );
+        const response = await axios.post("http://localhost:5000/addbrand", {
+          brand: values.brand,
+          vendorId: appUser.id,
+        });
         // console.log(response);
         if (response.data.id) {
           setSuccessMessage(`Brand '${values.brand}' Created Successfully !`);

@@ -89,7 +89,7 @@ function Provider({ children }) {
       setAppUser({});
       setIsLoading(false);
     }
-  }, [userToken]);
+  }, [userToken, userTokenIsAdmin]);
 
   const logout = () => {
     localStorage.removeItem("userToken");
@@ -114,16 +114,29 @@ function Provider({ children }) {
   };
 
   const fetchCategories = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/categories"
-      );
-      // console.log("Categories Responce : ", response.data.categories);
-      setCategories(response.data.categories);
-    } catch (error) {
-      console.error(error);
+    if (appUser.id) {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/admin/categories"
+        );
+        const allVendors = await axios.get("http://localhost:5000/allvendors");
+        var categories = [];
+        response.data.categories.map((category) => {
+          categories.push({
+            ...category,
+            vendor: allVendors.data.find((vendor) => {
+              if (vendor.id === category.vendor_id) return true;
+              else return false;
+            }),
+          });
+          return null;
+        });
+        setCategories(categories);
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }, []);
+  }, [appUser.id]);
 
   useEffect(() => {
     if (isValidToken) {
