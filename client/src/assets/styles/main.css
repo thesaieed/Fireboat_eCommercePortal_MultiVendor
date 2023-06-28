@@ -4027,6 +4027,7 @@ div.ant-upload {
   text-decoration: underline;
 }
 .categoryCard {
+  min-width: 40%;
   padding: 1.5rem;
 }
 .div-buttons-spd {
@@ -4110,4 +4111,26 @@ div.ant-upload {
 .centered-cell {
   text-align: center !important;
   background-color: #00369e;
+}
+.scrollformore,
+.productsscrollformore {
+  display: none;
+}
+@media (max-width: 500px) {
+  .scrollformore {
+    display: block;
+    float: right;
+    text-align: end;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+}
+@media (max-width: 900px) {
+  .productsscrollformore {
+    display: block;
+    float: right;
+    text-align: end;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
 }

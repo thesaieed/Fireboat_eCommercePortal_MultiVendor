@@ -22,6 +22,7 @@ function UpdateBrands({
   getBrands,
   setFilteredBrands,
   filteredBrands,
+  appUser,
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -37,12 +38,26 @@ function UpdateBrands({
   }, [refreshPage, getBrands]);
 
   useEffect(() => {
-    const result = brands.filter((brand) => {
-      return brand.brand.toLocaleLowerCase().match(search.toLocaleLowerCase());
-    });
-    setFilteredBrands(result);
-  }, [search, brands, setFilteredBrands]);
-
+    if (!appUser.is_super_admin) {
+      const vendorBrands = brands.filter((brand) => {
+        return brand.vendor_id === appUser.id;
+      });
+      const result = vendorBrands.filter((brand) => {
+        return brand.brand
+          ?.toLocaleLowerCase()
+          .match(search.toLocaleLowerCase());
+      });
+      setFilteredBrands(result);
+    } else if (appUser.is_super_admin) {
+      const result = brands.filter((brand) => {
+        return brand.brand
+          ?.toLocaleLowerCase()
+          .match(search.toLocaleLowerCase());
+      });
+      setFilteredBrands(result);
+    }
+  }, [search, brands, setFilteredBrands, appUser.is_super_admin, appUser.id]);
+  // console.log(brands);
   const deleteItemFromCategories = async (itemId) => {
     setButtonLoading((prevLoadings) => {
       const newLoadings = [...prevLoadings];
@@ -110,8 +125,13 @@ function UpdateBrands({
   };
   const columns = [
     {
-      name: "Brand Name",
+      name: "Brand",
+      width: "100px",
       selector: (row) => row.brand,
+    },
+    appUser.is_super_admin && {
+      name: "Seller",
+      selector: (row) => row.vendor?.business_name,
     },
     {
       name: <div style={{ width: "100%", textAlign: "center" }}>Actions</div>,
@@ -119,14 +139,16 @@ function UpdateBrands({
       style: { display: "flex", justifyContent: "center" },
       cell: (row) => (
         <>
-          <Button
-            style={{ width: "43%", background: "#4b7ee5", color: "#fff" }}
-            type="primary"
-            onClick={() => openModal(row)}
-            icon={<EditOutlined />}
-          >
-            Edit
-          </Button>
+          {!appUser.is_super_admin && (
+            <Button
+              style={{ width: "43%", background: "#4b7ee5", color: "#fff" }}
+              type="primary"
+              onClick={() => openModal(row)}
+              icon={<EditOutlined />}
+            >
+              Edit
+            </Button>
+          )}
 
           <Popconfirm
             title="Are you sure you want to delete this Category?"
@@ -164,6 +186,7 @@ function UpdateBrands({
       ),
     },
   ];
+
   const customStyles = {
     headCells: {
       style: {
@@ -172,92 +195,109 @@ function UpdateBrands({
         fontSize: "1rem",
       },
     },
+    rows: {
+      style: {
+        height: "60px",
+        width: "100%",
+      },
+    },
+    cells: {
+      style: {
+        height: "100%",
+        // width: "100%",
+      },
+    },
   };
 
   return (
-    <div className="d-flex justify-content-center">
-      <Card className="categoryCard">
-        <DataTable
-          columns={columns}
-          data={filteredBrands}
-          customStyles={customStyles}
-          pagination
-          paginationRowsPerPageOptions={[5, 10, 15, 20]}
-          highlightOnHover
-          //   fixedHeader
-          //   fixedHeaderScrollHeight="500px"
-          title={
-            <h2 style={{ color: "orange", fontWeight: "bold" }}>All Brands</h2>
-          }
-          subHeader
-          subHeaderComponent={
+    // <div className="d-flex justify-content-center">
+    <Card className="categoryCard">
+      <DataTable
+        columns={columns}
+        data={filteredBrands}
+        customStyles={customStyles}
+        pagination
+        paginationRowsPerPageOptions={[5, 10, 15, 20]}
+        highlightOnHover
+        //   fixedHeader
+        //   fixedHeaderScrollHeight="500px"
+        title={
+          <h2 style={{ color: "orange", fontWeight: "bold" }}>
+            {appUser.is_super_admin ? "All Brands" : " Your Brands"}
+          </h2>
+        }
+        subHeader
+        subHeaderComponent={
+          <div style={{ width: "50%" }}>
             <Input
               prefix={<SearchOutlined />}
               type="text"
               placeholder="Search here"
-              style={{ width: "40%" }}
+              style={{ width: "100%" }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-          }
-          subHeaderAlign="right"
-        />
+            <p className="scrollformore">{"Scroll for More -->"}</p>
+          </div>
+        }
+        subHeaderAlign="right"
+      />
 
-        <Modal
-          title="Edit Brand"
-          open={modalVisible}
-          onCancel={closeModal}
-          footer={null}
+      <Modal
+        title="Edit Brand"
+        open={modalVisible}
+        onCancel={closeModal}
+        footer={null}
+      >
+        <Form
+          form={form}
+          name="basic"
+          labelCol={{ span: 24 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          className="row-col"
         >
-          <Form
-            form={form}
-            name="basic"
-            labelCol={{ span: 24 }}
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            className="row-col"
+          <Form.Item
+            label="Brand Name"
+            name="brand"
+            rules={[{ required: true, message: "Please Enter Brand Name" }]}
           >
-            <Form.Item
-              label="Brand Name"
-              name="brand"
-              rules={[{ required: true, message: "Please Enter Brand Name" }]}
-            >
-              <Input placeholder="Enter Brand Name" />
-            </Form.Item>
-            {errorMessage && (
-              <Form.Item>
-                <Alert
-                  message={errorMessage}
-                  type="error"
-                  showIcon
-                  closable
-                  onClose={() => setErrorMessage("")}
-                />
-              </Form.Item>
-            )}
+            <Input placeholder="Enter Brand Name" />
+          </Form.Item>
+          {errorMessage && (
             <Form.Item>
-              {/* <Popconfirm
+              <Alert
+                message={errorMessage}
+                type="error"
+                showIcon
+                closable
+                onClose={() => setErrorMessage("")}
+              />
+            </Form.Item>
+          )}
+          <Form.Item>
+            {/* <Popconfirm
                 title="Are you sure you want to update this category?"
                 onConfirm={() => onFinish(form.getFieldsValue())}
                 okText="Yes"
                 cancelText="No"
               > */}
-              <Button
-                style={{ width: 150 }}
-                type="primary"
-                htmlType="submit"
-                className="float-end"
-                loading={editButtonLoading}
-              >
-                Update
-              </Button>
-              {/* </Popconfirm> */}
-            </Form.Item>
-          </Form>
-        </Modal>
-      </Card>
-    </div>
+            <Button
+              style={{ width: 150 }}
+              type="primary"
+              htmlType="submit"
+              className="float-end"
+              loading={editButtonLoading}
+            >
+              Update
+            </Button>
+            {/* </Popconfirm> */}
+          </Form.Item>
+        </Form>
+      </Modal>
+    </Card>
+    // </div>
   );
 }
 
