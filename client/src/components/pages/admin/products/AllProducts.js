@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import {
@@ -56,10 +56,13 @@ function AllProducts() {
     fetchCategories();
   }, [fetchCategories]);
 
-  const getProducts = async () => {
+  const getProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/viewproducts");
+      const response = await axios.post("http://localhost:5000/viewproducts", {
+        vendorId: appUser.id,
+        is_super_admin: appUser.is_super_admin,
+      });
       const allVendors = await axios.get("http://localhost:5000/allvendors");
       const brands = await axios.get("http://localhost:5000/brands");
       // console.log("brands.data : ", brands.data);
@@ -86,12 +89,12 @@ function AllProducts() {
       console.log(error);
     }
     setLoading(false);
-  };
+  }, [appUser.id, appUser.is_super_admin]);
   useEffect(() => {
     // setLoading(true);
     getProducts();
     // setLoading(false);
-  }, [refreshPage]);
+  }, [refreshPage, getProducts]);
 
   useEffect(() => {
     const result = products.filter((product) => {
@@ -407,7 +410,7 @@ function AllProducts() {
           highlightOnHover
           title={
             <h2 style={{ color: "#ff8400", fontWeight: "bold" }}>
-              All Products
+              {appUser.is_super_admin ? "All Products" : " Your Products"}
             </h2>
           }
           fixedHeader
@@ -416,14 +419,17 @@ function AllProducts() {
           paginationRowsPerPageOptions={[5, 10, 15, 20]}
           subHeader
           subHeaderComponent={
-            <Input
-              prefix={<SearchOutlined />}
-              type="text"
-              placeholder="Search Products "
-              style={{ width: "20em", marginBottom: 10 }}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div style={{ width: "20em", marginBottom: 10 }}>
+              <Input
+                prefix={<SearchOutlined />}
+                type="text"
+                placeholder="Search Products "
+                style={{ width: "100%" }}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <p className="productsscrollformore">{"Scroll for More -->"}</p>
+            </div>
           }
           subHeaderAlign="right"
         />

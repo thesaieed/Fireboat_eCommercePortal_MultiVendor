@@ -4,15 +4,29 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import NewBrand from "./NewBrand";
 import UpdateBrands from "./UpdateBrands";
+import useAllContext from "../../../../context/useAllContext";
 const Brands = () => {
   const [brands, setBrands] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [filteredBrands, setFilteredBrands] = useState([]);
-
+  const { appUser } = useAllContext();
   const getBrands = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:5000/brands");
-      setBrands(response.data);
+      const allVendors = await axios.get("http://localhost:5000/allvendors");
+      var brands = [];
+      response.data.map((brand) => {
+        brands.push({
+          ...brand,
+          vendor: allVendors.data.find((vendor) => {
+            if (vendor.id === brand.vendor_id) return true;
+            else return false;
+          }),
+        });
+        return null;
+      });
+
+      setBrands(brands);
       // console.log(response.data);
       setFilteredBrands(response.data);
     } catch (error) {
@@ -42,6 +56,7 @@ const Brands = () => {
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
             getBrands={getBrands}
+            appUser={appUser}
           />
         </Col>
       </Row>
@@ -53,6 +68,7 @@ const Brands = () => {
             filteredBrands={filteredBrands}
             setFilteredBrands={setFilteredBrands}
             getBrands={getBrands}
+            appUser={appUser}
           />
         </Col>
       </Row>
