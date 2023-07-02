@@ -48,18 +48,20 @@ function Updatecategories() {
   useEffect(() => {
     fetchCategories();
   }, [refreshPage, fetchCategories]);
+  // console.log(categories);
   useEffect(() => {
-    // console.log(categories);
     if (!appUser.is_super_admin) {
       const vendorcategories = categories.filter((category) => {
         return category.vendor_id === appUser.id;
       });
+      // console.log(vendorcategories)
       const result = vendorcategories.filter((category) => {
         return category.name
           ?.toLocaleLowerCase()
           .match(search.toLocaleLowerCase());
       });
       setFilteredCategories(result);
+      // console.log(result)
     } else if (appUser.is_super_admin) {
       const result = categories.filter((category) => {
         return category.name
