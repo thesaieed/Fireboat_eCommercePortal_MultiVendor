@@ -3,33 +3,32 @@ import { Button, Card, Form, Input, Alert, Modal } from "antd";
 import { IdcardOutlined } from "@ant-design/icons";
 import { React, useState } from "react";
 import axios from "axios";
-import useAllContext from "../../../../context/useAllContext";
-const NewCategory = ({ modalOpen, setModalOpen }) => {
+
+const NewBrand = ({ modalOpen, setModalOpen, getBrands, appUser }) => {
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
-  const { fetchCategories, appUser } = useAllContext();
   const onFinish = async (values) => {
     setButtonLoading(true);
-    if (values.name) {
+    if (values.brand) {
       try {
-        const response = await axios.post("http://localhost:5000/addcategory", {
-          name: values.name,
+        const response = await axios.post("http://localhost:5000/addbrand", {
+          brand: values.brand,
           vendorId: appUser.id,
         });
         // console.log(response);
         if (response.data.id) {
-          setSuccessMessage(`Category ${values.name} Created Successfully !`);
+          setSuccessMessage(`Brand '${values.brand}' Created Successfully !`);
           form.resetFields();
-          fetchCategories();
+          getBrands();
         } else {
           setErrorMessage("Something went Wrong !");
         }
       } catch (error) {
         // console.error("Error : ", error);
         if (error.response?.status === 409) {
-          setErrorMessage(`Category '${values.name}' already Exists !`);
+          setErrorMessage(`Brand '${values.brand}' already Exists !`);
         } else {
           setErrorMessage(error.message);
         }
@@ -44,7 +43,7 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
   };
   return (
     <Modal
-      title="Add Category"
+      title="Add New Brand"
       centered
       footer={null}
       open={modalOpen}
@@ -58,25 +57,25 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
     >
       <Card
         className="card-category header-solid h-full ant-card pt-0  mb-2"
-        title={"Add a New Category"}
+        // title={"Add New Brand"}
         bordered="true"
       >
         <Form
           form={form}
-          name="addcategory"
+          name="addbrand"
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           className="p-15"
         >
           <Form.Item
-            name="name"
-            rules={[{ required: true, message: "Please enter a Category" }]}
+            name="brand"
+            rules={[{ required: true, message: "Please enter a Brand Name" }]}
             hasFeedback
           >
             <Input
               prefix={<IdcardOutlined className="site-form-item-icon" />}
-              placeholder="New Category"
+              placeholder="New Brand"
             />
           </Form.Item>
 
@@ -110,7 +109,7 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
               htmlType="submit"
               loading={buttonLoading}
             >
-              Add Category
+              Add Brand
             </Button>
           </Form.Item>
         </Form>
@@ -118,4 +117,4 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
     </Modal>
   );
 };
-export default NewCategory;
+export default NewBrand;

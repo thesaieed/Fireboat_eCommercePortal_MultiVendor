@@ -1,9 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const pool = require("./db"); //database include
 const cors = require("cors"); //used for handing trasmission json data from server to client
 const multer = require("multer");
 const fs = require("fs");
-
+const bcrypt = require("bcrypt");
+const saltRounds = 12;
+const { verifyEmail } = require("./utils/verifyEmail");
+var jwt = require("jsonwebtoken");
+const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
+const vendorRoutes = require("./routes/vendor");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -21,6 +27,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+app.use("/vendor", vendorRoutes);
+
 //login route
 app.post("/login", async (req, res) => {
   // console.log("body: ", req.body);
@@ -35,11 +43,19 @@ app.post("/login", async (req, res) => {
 
     if (foundUser.rows.length > 0) {
       // if email exists, a row array is sent back in foundUser obj
-      if (password === foundUser.rows[0].password) {
-        //checking if body password === db.password
-
-        const { id, name, isadmin } = foundUser.rows[0];
-        data = { loginStatus: 200, user: { id, name, isadmin } };
+      const passwordMatched = await bcrypt.compare(
+        password,
+        foundUser.rows[0].password
+      ); //checking if body password === db.password
+      // console.log("result login hashCheck : ", passwordMatched);
+      if (passwordMatched) {
+        const { id, name, isadmin, isemailverified } = foundUser.rows[0];
+        if (!isemailverified) {
+          await generateTokenAndSendMail(id, email);
+          data = { loginStatus: 407 };
+        } else {
+          data = { loginStatus: 200, user: { id, name, isadmin } };
+        }
       } else {
         // console.log("Invalid Credentials");
         data = { loginStatus: 401 }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
@@ -54,26 +70,188 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/verifyEmail", async (req, res) => {
+  const { token, email, isVendor } = req.body;
+  // console.log(req.body);
+  try {
+    var user;
+    if (isVendor === "false") {
+      // console.log("user verify");
+      user = await pool.query(`select * from users  WHERE email='${email}';`);
+    } else if (isVendor === "true") {
+      // console.log("Vendor verify");
+      user = await pool.query(`select * from vendors  WHERE email='${email}';`);
+    }
+
+    if (!user.rows[0]?.id) {
+      res.send({
+        status: 404,
+        message: "User Not Found ! ",
+      });
+    } else {
+      jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
+        // console.log("error : ", err);
+        // console.log("decoded : ", decoded);
+        if (err) {
+          // console.log(err);
+          res.send({
+            status: 400,
+            message: "Token invalid or Expired ! ",
+          });
+        } else if (decoded) {
+          // console.log(decoded);
+          const userid = decoded?.data;
+          try {
+            // console.log(user);
+            if (isVendor === "false") {
+              await pool.query(
+                `update users set isemailverified = true WHERE id=${userid};`
+              );
+              res.send({
+                status: 200,
+                message: "Email Verified Successfully! ",
+              });
+            } else if (isVendor === "true") {
+              await pool.query(
+                `update vendors set isemailverified = true, is_under_approval=true WHERE id=${userid};`
+              );
+              let newVendorError = false;
+              try {
+                await pool.query(
+                  `INSERT INTO newvendorsapproval(vendor_id) VALUES (${userid})`
+                );
+              } catch (newVendorErr) {
+                newVendorError = true;
+                console.error(newVendorErr);
+                if (newVendorErr.code == 23505) {
+                  res.send({
+                    status: 102,
+                    message:
+                      "Email Verified Already! Approval Pending! Please Check your email for the same. ",
+                  });
+                }
+              }
+              if (!newVendorError) {
+                res.send({
+                  status: 102,
+                  message:
+                    "Email Verified Successfully! Please wait for an Approval from us. An Email will be sent on Registered Email for the same. ",
+                });
+              }
+            }
+          } catch (error) {
+            console.error(error);
+            res.send({
+              status: 400,
+              message: "Failed to Verify Email! ",
+            });
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.log();
+    res.send({
+      status: 500,
+      message: "Server Error! ",
+    });
+  }
+  // console.log("token : ", token);
+});
+
+app.post("/resendEmailverification", async (req, res) => {
+  const { email, isVendor } = req.body;
+  // console.log(email);
+  try {
+    var resp;
+    if (isVendor === "false") {
+      resp = await pool.query(`select * from users where email='${email}'`);
+    } else if (isVendor === "true") {
+      resp = await pool.query(`select * from vendors  WHERE email='${email}';`);
+    }
+
+    // console.log(resp);
+    if (resp.rows[0].isemailverified) {
+      res.send({ status: 202, message: "Email already Verified!" });
+    } else {
+      if (isVendor === "false") {
+        const response = await generateTokenAndSendMail(resp.rows[0].id, email);
+        res.send(response);
+      } else if (isVendor === "true") {
+        const response = await generateTokenAndSendMail(
+          resp.rows[0].id,
+          email,
+          true
+        );
+        res.send(response);
+      }
+      // console.log(response);
+    }
+  } catch (error) {
+    console.log(error);
+    res.send({
+      status: 404,
+      message: "Failed to send Verification Email! ",
+    });
+  }
+});
+
 //Signup up route handling
 app.post("/signup", async (req, res) => {
   // console.log("req.body : ", req.body);
-  const { fullname, email, password, phone } = req.body;
+  var { fullname, email, password } = req.body;
+  password = await bcrypt.hash(password, saltRounds);
+  // console.log("hashed Password :", password);
   try {
     const newUser = await pool.query(
       // `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
-      "INSERT INTO users(name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING *",
-      [fullname, email, password, phone]
+      "INSERT INTO users(name, email, password) VALUES ($1, $2, $3) RETURNING *",
+      [fullname, email, password]
     );
     // console.log("newUSer", newUser);
 
-    const { id, name } = newUser.rows[0];
-    const data = { user: { id, name } };
-    res.send(data); //send data.. it will be under res.data in client
+    //generate a token including userID as data for verification
+    const token = jwt.sign(
+      {
+        data: newUser.rows[0].id,
+      },
+      process.env.TOKENPVTKEY,
+      { expiresIn: 5 * 60 }
+    );
+    try {
+      //send a verification email with token
+      const emailResponce = await verifyEmail({
+        token: token,
+        email: email,
+      });
+      // console.log("emailResponce : ", emailResponce);
+      if (!emailResponce) {
+        res.send({
+          status: 404,
+          message: "Failed to send Verification Email! ",
+        });
+      } else {
+        res.send({
+          status: 200,
+          message: "Verification Email sent on the registered Email. ",
+        });
+      }
+    } catch (err) {
+      // res.send(respond);
+      console.log(err);
+      res.send({
+        status: 404,
+        message: "Failed to send Verification Email! ",
+      });
+    }
+    //   const { id, name } = newUser.rows[0];
+    //   const data = { user: { id, name } };
+    //   res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
     console.error(error);
     if (error.code == 23505) {
       //error code trying to insert duplicate value
-      console.log("User already exists");
+      // console.log("User already exists");
       res
         .status(409)
         .json({ message: "user already exists, please use SignIn" });
@@ -84,14 +262,33 @@ app.post("/signup", async (req, res) => {
 });
 
 app.post("/addcategory", async (req, res) => {
-  const { name } = req.body;
+  const { name, vendorId } = req.body;
 
   try {
     const newCategory = await pool.query(
-      "insert into categories(name) values ($1) returning *",
-      [name]
+      "insert into categories(name, vendor_id) values ($1,$2) returning *",
+      [name, vendorId]
     );
     res.send(newCategory.rows[0]);
+  } catch (err) {
+    console.log(err);
+    if (err.code == 23505) {
+      res.status(409).send();
+    } else {
+      res.status(500).send("Internal Server Error");
+    }
+  }
+});
+// add new brand
+app.post("/addbrand", async (req, res) => {
+  const { brand, vendorId } = req.body;
+
+  try {
+    const newBrand = await pool.query(
+      "insert into brands(brand,vendor_id) values ($1,$2) returning *",
+      [brand, vendorId]
+    );
+    res.send(newBrand.rows[0]);
   } catch (err) {
     if (err.code == 23505) {
       res.status(409).send();
@@ -104,6 +301,7 @@ app.post("/addcategory", async (req, res) => {
 //handle the get request for categories from client
 
 app.get("/admin/categories", async (req, res) => {
+  // console.log(req.body);
   try {
     const categories = await pool.query("select * from categories");
 
@@ -116,10 +314,30 @@ app.get("/admin/categories", async (req, res) => {
   }
 });
 
+//getallbrands
+app.get("/brands", async (req, res) => {
+  try {
+    const brand = await pool.query(`select * from brands`);
+    // console.log(brand);
+    res.send(brand.rows);
+  } catch (error) {
+    console.error(error);
+    res.send({});
+  }
+});
+
 //Modified addProduct handle to handle image upload also
 
 app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
-  const { category, name, description, price, stock_available } = req.body;
+  const {
+    category,
+    name,
+    description,
+    price,
+    stock_available,
+    brand,
+    vendor_id,
+  } = req.body;
   // console.log(req.body)
   // console.log(req.file)
   // console.log("description: ", description);
@@ -127,8 +345,17 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
 
   try {
     const newProduct = await pool.query(
-      "insert into products(category_id,name,description,price,stock_available,image) values ($1,$2,$3,$4,$5,$6) returning *",
-      [category, name, description, price, stock_available, imagePath]
+      "insert into products(category_id,name,description,price,stock_available,image,brand_id,vendor_id ) values ($1,$2,$3,$4,$5,$6,$7,$8) returning *",
+      [
+        category,
+        name,
+        description,
+        price,
+        stock_available,
+        imagePath,
+        brand,
+        vendor_id,
+      ]
     );
     // console.log("newProduct", newProduct);
     const data = { product: newProduct.rows[0] };
@@ -139,25 +366,28 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
   }
 });
 
-//get all products route
-app.get("/allproducts", async (req, res) => {
-  try {
-    const products = await pool.query(`select * from products`);
-    res.send(products.rows);
-  } catch (err) {
-    console.error(err);
-  }
-});
-
 app.post("/checkusersloggedintokens", async (req, res) => {
-  const { userToken } = req.body;
-  // console.log("token :", userToken);
+  var { userToken, isvendor } = req.body;
+
+  // console.log("isVendorType before :", typeof isvendor);
+  typeof isvendor == "string"
+    ? (isvendor = JSON.parse(isvendor.toLowerCase()))
+    : (isvendor = isvendor);
+  // console.log("isVendorType after :", typeof isvendor);
   try {
-    const user = await pool.query(
-      `select * from users where '${userToken}' = ANY (logged_in_tokens)`
-    );
+    // console.log("isVendor : ", isvendor);
+    var user;
+    if (!isvendor) {
+      user = await pool.query(
+        `select * from users where '${userToken}' = ANY (logged_in_tokens)`
+      );
+    } else if (isvendor) {
+      user = await pool.query(
+        `select * from vendors where '${userToken}' = ANY (logged_in_tokens)`
+      );
+    }
     // console.log(user);
-    if (user.rows.length) {
+    if (user.rows.length > 0) {
       res.send(true);
     } else {
       res.send(false);
@@ -169,12 +399,20 @@ app.post("/checkusersloggedintokens", async (req, res) => {
 });
 
 app.post("/addusersloggedintokens", async (req, res) => {
-  const { id, token } = req.body;
+  const { id, token, isvendor } = req.body;
   // console.log("token :", token);
   try {
-    const oldTokens = await pool.query(
-      `SELECT logged_in_tokens from users WHERE id=${id}`
-    );
+    var oldTokens;
+    if (!isvendor) {
+      oldTokens = await pool.query(
+        `SELECT logged_in_tokens from users WHERE id=${id}`
+      );
+    } else if (isvendor) {
+      oldTokens = await pool.query(
+        `SELECT logged_in_tokens from vendors WHERE id=${id}`
+      );
+    }
+
     var newTokens = oldTokens.rows[0].logged_in_tokens;
     // console.log("new Tokens", newTokens);
     if (!newTokens) {
@@ -182,10 +420,18 @@ app.post("/addusersloggedintokens", async (req, res) => {
     } else {
       newTokens.push(token);
     }
-    await pool.query(
-      `UPDATE users SET logged_in_tokens = '{${newTokens}}'
+
+    if (!isvendor) {
+      await pool.query(
+        `UPDATE users SET logged_in_tokens = '{${newTokens}}'
       WHERE id = ${id} returning *`
-    );
+      );
+    } else if (isvendor) {
+      await pool.query(
+        `UPDATE vendors SET logged_in_tokens = '{${newTokens}}'
+      WHERE id = ${id} returning *`
+      );
+    }
     res.send(true);
   } catch (error) {
     // console.error(error);
@@ -193,12 +439,18 @@ app.post("/addusersloggedintokens", async (req, res) => {
   }
 });
 app.post("/removeusersloggedintokens", async (req, res) => {
-  const { id, userToken } = req.body;
+  const { id, userToken, isvendor } = req.body;
   // console.log("token :", token);
   try {
-    await pool.query(
-      `update users set logged_in_tokens = array_remove(logged_in_tokens, '${userToken}') WHERE id=${id};`
-    );
+    if (!isvendor) {
+      await pool.query(
+        `update users set logged_in_tokens = array_remove(logged_in_tokens, '${userToken}') WHERE id=${id};`
+      );
+    } else if (isvendor) {
+      await pool.query(
+        `update vendors set logged_in_tokens = array_remove(logged_in_tokens, '${userToken}') WHERE id=${id};`
+      );
+    }
     res.send(true);
   } catch (error) {
     // console.error(error);
@@ -206,14 +458,41 @@ app.post("/removeusersloggedintokens", async (req, res) => {
   }
 });
 app.post("/userdetails", async (req, res) => {
-  const { userToken } = req.body;
+  var { userToken, isvendor } = req.body;
+  typeof isvendor == "string"
+    ? (isvendor = JSON.parse(isvendor.toLowerCase()))
+    : (isvendor = isvendor);
+  var user;
   try {
-    const user = await pool.query(
-      `select * from users where '${userToken}' = ANY (logged_in_tokens)`
-    );
-
-    const { id, name, email, isadmin, address, phone } = user.rows[0];
-    res.send({ id, name, email, isadmin, address, phone });
+    if (!isvendor) {
+      user = await pool.query(
+        `select * from users where '${userToken}' = ANY (logged_in_tokens)`
+      );
+      const { id, name, email, address, phone } = user.rows[0];
+      res.send({ id, name, email, is_admin: false, address, phone });
+    } else if (isvendor) {
+      user = await pool.query(
+        `select * from vendors where '${userToken}' = ANY (logged_in_tokens)`
+      );
+      const {
+        id,
+        business_name,
+        email,
+        is_admin,
+        is_super_admin,
+        business_address,
+        phone,
+      } = user.rows[0];
+      res.send({
+        id,
+        name: business_name,
+        email,
+        is_admin,
+        is_super_admin,
+        address: business_address,
+        phone,
+      });
+    }
   } catch (err) {
     res.send({});
   }
@@ -224,13 +503,24 @@ app.get("/admin/productdetails", async (req, res) => {
   const productId = req.query.id;
   // console.log(productId)
   try {
-    const productDetails = await pool.query(
+    let productDetails = await pool.query(
       "select * from products where id =$1",
       [productId]
     );
     if (productDetails.rows.length === 0) {
       res.sendStatus(404);
     } else {
+      const brandDetails = await pool.query(
+        "select * from brands where id =$1",
+        [productDetails.rows[0].brand_id]
+      );
+      const vendorDetails = await pool.query(
+        "select business_name from vendors where id =$1",
+        [productDetails.rows[0].vendor_id]
+      );
+      productDetails.rows[0].brand = brandDetails.rows[0].brand;
+      productDetails.rows[0].vendor = vendorDetails.rows[0].business_name;
+      // console.log("prod : ", productDetails.rows[0]);
       res.send(productDetails.rows[0]);
     }
   } catch (error) {
@@ -323,9 +613,30 @@ app.post("/addtocart", async (req, res) => {
   }
 });
 
+app.post("/numberofcartproducts", async (req, res) => {
+  const { userId } = req.body;
+  // console.log(userId);
+  try {
+    const productIds = await pool.query(
+      // "SELECT DISTINCT ON (product_id) id, product_id, quantity FROM cart WHERE user_id = $1 ORDER BY product_id, created_at DESC",
+      // [user_id] //basically checks db and returns dintinct product_ids(i.e different prods in cart of user) or user with corresponding details
+
+      "select product_id from cart where user_id=$1",
+      [userId] //simplified logic with updation
+    );
+    // console.log(productIds);
+    // console.log(productIds.rows.length);
+    res.send({ itemCount: productIds.rows.length });
+  } catch (err) {
+    console.log(err);
+    res.send({ itemCount: 0 });
+  }
+});
+
 //handle get request from Cart
 app.get("/cart", async (req, res) => {
   const user_id = req.query.id;
+
   // console.log(user_id)
   try {
     const cartDetails1 = await pool.query(
@@ -344,7 +655,7 @@ app.get("/cart", async (req, res) => {
       const productIds = data1.map((item) => item.product_id); //get array of productIds
       // console.log(productIds)
       const query = {
-        text: "SELECT id, name, price, image, category FROM products WHERE  id= ANY($1::int[])",
+        text: "SELECT id, name, price, image, category,brand_id FROM products WHERE  id= ANY($1::int[])",
         values: [productIds],
       };
       const cartDetails2 = await pool.query(query);
@@ -417,13 +728,37 @@ app.delete("/cart/:itemId", async (req, res) => {
 });
 
 //Handle get Request from AllProducts
+app.post("/viewproducts", async (req, res) => {
+  const { is_super_admin, vendorId } = req.body;
+  if (is_super_admin) {
+    try {
+      const getProducts = await pool.query("select * from products");
+      // console.log(getProducts.rows);
+      res.send(getProducts.rows);
+    } catch (error) {
+      console.error(error);
+    }
+  } else if (!is_super_admin) {
+    try {
+      const getProducts = await pool.query(
+        "select * from products where vendor_id=$1",
+        [vendorId]
+      );
+      // console.log(getProducts.rows);
+      res.send(getProducts.rows);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+});
+
+//get all products route
 app.get("/viewproducts", async (req, res) => {
   try {
-    const getProducts = await pool.query("select * from products");
-    // console.log(getProducts.rows);
-    res.send(getProducts.rows);
-  } catch (error) {
-    console.error(error);
+    const products = await pool.query(`select * from products`);
+    res.send(products.rows);
+  } catch (err) {
+    console.error(err);
   }
 });
 
@@ -459,7 +794,8 @@ app.put(
   upload.single("image"),
   async (req, res) => {
     const { productId } = req.params;
-    const { category, name, description, price, stock_available } = req.body;
+    const { category, name, description, price, stock_available, brand_id } =
+      req.body;
     const imagePath = req.file ? req.file.path : null; // Check if image file is present
     // console.log(productId, category, price, stock_available, name, description);
     // console.log(req.body)
@@ -470,7 +806,7 @@ app.put(
       if (imagePath) {
         // Update the image field along with other details
         query =
-          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5, image = $6 WHERE id = $7";
+          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5, image = $6, brand_id =$7 WHERE id = $8";
         queryValues = [
           category,
           name,
@@ -478,18 +814,21 @@ app.put(
           price,
           stock_available,
           imagePath,
+          brand_id,
           productId,
         ];
       } else {
         // Keep the existing image value in the database
+
         query =
-          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5 WHERE id = $6";
+          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5,brand_id =$6 WHERE id = $7";
         queryValues = [
           category,
           name,
           description,
           price,
           stock_available,
+          brand_id,
           productId,
         ];
       }
@@ -498,6 +837,7 @@ app.put(
       res.sendStatus(200); // Send status code 200 to indicate successful update
     } catch (error) {
       console.error(error);
+
       res.sendStatus(500); // Send status code 500 for internal server error
     }
   }
@@ -541,6 +881,48 @@ app.put("/updatecategories/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+//Brands
+
+//edit Brand
+app.put("/updatebrands/:id", async (req, res) => {
+  const itemId = req.params.id;
+  const { brand } = req.body;
+  try {
+    // Update the Category name in categories table
+    const updateQuery = "UPDATE brands SET brand = $1 WHERE id = $2";
+    await pool.query(updateQuery, [brand, itemId]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+//delete brand
+app.delete("/updatebrands/:itemId", async (req, res) => {
+  const itemId = req.params.itemId;
+  try {
+    await pool.query("DELETE FROM brands WHERE id = $1", [itemId]);
+    res.status(200).json({ message: "Brand deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting Brand", error);
+    res.status(500).json({ error: "Failed to delete Brand" });
+  }
+});
+
+//getvendordata
+app.get("/allvendors", async (req, res) => {
+  try {
+    const allVendors = await pool.query(
+      "SELECT id, business_name, business_address, email, phone FROM vendors"
+    );
+    res.send(allVendors.rows);
+  } catch (err) {
+    console.error(err);
+    res.send([]);
   }
 });
 

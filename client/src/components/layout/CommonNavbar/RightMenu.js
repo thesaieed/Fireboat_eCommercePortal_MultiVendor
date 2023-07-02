@@ -32,7 +32,7 @@ const RightMenu = ({ mode }) => {
   ];
 
   const items = [
-    appUser.isadmin
+    appUser.is_admin
       ? {
           label: <Link to="/admin/dashboard">Dashboard</Link>,
           key: "dashboard",
@@ -83,12 +83,13 @@ const RightMenu = ({ mode }) => {
           ),
           key: "navMenuUserName",
           children: [
-            appUser.isadmin && {
+            appUser.is_admin && {
               label: (
                 <Link to="/admin/dashboard">{dashboardIcon} Dashboard</Link>
               ),
               key: "dashboardlink",
             },
+
             {
               label: (
                 <Link to="/profile">

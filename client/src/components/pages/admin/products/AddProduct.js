@@ -23,29 +23,42 @@ function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
   const [prodImgPreview, setProdImgPreview] = useState(cardImage);
   const [form] = Form.useForm();
-  const { categories, fetchCategories } = useAllContext();
+  const { categories, fetchCategories, appUser } = useAllContext();
+  const [brands, setBrands] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
   // const navigate = useNavigate();
   const [textDesc, setTextDesc] = useState("");
 
   //get request to get the categories available stored in db
   const { Option } = Select;
-
+  const getBrands = async () => {
+    try {
+      const brands = await axios.get("http://localhost:5000/brands");
+      setBrands(brands.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
+    getBrands();
     fetchCategories();
   }, [fetchCategories]);
 
   const onFinish = async (values) => {
-    console.log("values: ", values);
+    setButtonLoading(true);
+    // console.log("values: ", values);
     try {
       const formData = new FormData();
       formData.append("category", values.category);
       formData.append("name", values.name);
       formData.append("description", textDesc);
       formData.append("price", values.price);
+      formData.append("brand", values.brand);
+      formData.append("vendor_id", appUser.id);
       formData.append("stock_available", values.stock_available);
       formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
 
-      console.log("formData : ", formData);
+      // console.log("formData : ", formData);
       const response = await axios.post(
         "http://localhost:5000/admin/addproduct",
         formData,
@@ -69,6 +82,8 @@ function AddProduct() {
       form.resetFields();
       console.log(error);
     }
+    setTextDesc("");
+    setButtonLoading(false);
   };
   const onFinishFailed = (errorInfo) => {
     setErrorMessage("Something went wrong");
@@ -91,23 +106,31 @@ function AddProduct() {
         }
         bordered="false"
         cover={
-          <Upload
-            // className="d-flex flex-column justify-content-center align-items-center"
+          <Form.Item
             name="image"
-            showUploadList={false}
-            accept="image/*"
-            beforeUpload={(event) => {
-              setProdImgPreview(URL.createObjectURL(event));
-              return false;
-            }}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+            rules={[{ required: true, message: "Image is required!" }]}
+            hasFeedback
           >
-            <img
-              style={{ width: "100%", margin: "auto", padding: 5 }}
-              id="prod_img_preview"
-              alt="example"
-              src={prodImgPreview}
-            />
-          </Upload>
+            <Upload
+              // className="d-flex flex-column justify-content-center align-items-center"
+              name="image"
+              showUploadList={false}
+              accept="image/*"
+              beforeUpload={(event) => {
+                setProdImgPreview(URL.createObjectURL(event));
+                return false;
+              }}
+            >
+              <img
+                style={{ width: "100%", margin: "auto", padding: 5 }}
+                id="prod_img_preview"
+                alt="example"
+                src={prodImgPreview}
+              />
+            </Upload>
+          </Form.Item>
         }
       >
         <Form
@@ -121,7 +144,10 @@ function AddProduct() {
           // encType="multipart/form-data"
         >
           <Row>
-            <Col style={{ paddingRight: ".5rem" }} span={12}>
+            <Col
+              //  style={{ paddingRight: ".5rem" }}
+              span={24}
+            >
               <Form.Item
                 //   label="Name"
                 name="name"
@@ -132,7 +158,29 @@ function AddProduct() {
                 <Input placeholder="Product Name" />
               </Form.Item>
             </Col>
-            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                name="brand"
+                // label="Category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a Brand",
+                  },
+                ]}
+              >
+                <Select className="ant-input " placeholder="Brand">
+                  {brands.map((brand) => (
+                    <Option key={brand.id} value={brand.id}>
+                      {brand.brand}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col style={{ paddingLeft: "0.5rem" }} span={12}>
               <Form.Item
                 name="category"
                 // label="Category"
@@ -155,7 +203,7 @@ function AddProduct() {
           </Row>
 
           <Row>
-            <Col style={{ paddingRight: ".5rem" }} span={12}>
+            <Col span={12}>
               <Form.Item
                 //   label="Price"
                 name="price"
@@ -166,7 +214,7 @@ function AddProduct() {
                 <Input placeholder="Product Price" type="number" min="0" />
               </Form.Item>
             </Col>
-            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+            <Col style={{ paddingLeft: "0.5rem" }} span={12}>
               <Form.Item
                 //   label="Stock Available"
                 name="stock_available"
@@ -219,59 +267,8 @@ function AddProduct() {
               <Form.Item name="description">
                 <TextEditor textDesc={textDesc} setTextDesc={setTextDesc} />
               </Form.Item>
-
-              {/* <Form.List name="description">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map(({ key, name, ...restField }) => (
-                      <div
-                        key={key}
-                        className="d-flex justify-content-evenly align-items-baseline"
-                      >
-                        <Form.Item
-                          {...restField}
-                          style={{ width: "100%" }}
-                          name={[name]}
-                          // name={[""]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Missing Description List Item",
-                            },
-                          ]}
-                        >
-                          <Input
-                            style={{ width: "98%" }}
-                            placeholder="Description List Item"
-                          />
-                        </Form.Item>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
-                      </div>
-                    ))}
-                    <Form.Item key="descr">
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                      >
-                        Description Item
-                      </Button>
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List> */}
             </Col>
           </Row>
-          {/* <Form.Item
-            //   label="Description"
-            name="description"
-            rules={[
-              { required: true, message: "Please input product description!" },
-            ]}
-          >
-            <Input.TextArea placeholder="Enter product description" />
-          </Form.Item> */}
 
           {errorMessage && (
             <Form.Item>
@@ -291,6 +288,7 @@ function AddProduct() {
               type="primary"
               htmlType="submit"
               className="float-end"
+              loading={buttonLoading}
             >
               Add Product
             </Button>

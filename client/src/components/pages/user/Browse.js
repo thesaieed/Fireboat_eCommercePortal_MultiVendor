@@ -11,13 +11,16 @@ import {
 } from "antd";
 import CommonNavbar from "../../layout/CommonNavbar";
 import LoadingScreen from "../../layout/LoadingScreen";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useAllContext from "../../../context/useAllContext";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import BrowseSidebar from "./BrowseSidebar";
 import { FilterOutlined } from "@ant-design/icons";
+import brandIcon from "../../../assets/images/brandIcon.png";
+import categoryIcon from "../../../assets/images/categoryIcon.png";
+import vendorIcon from "../../../assets/images/vendorsIcon.png";
 
 const Browse = () => {
   const [browseProducts, setBrowseProducts] = useState([]);
@@ -27,9 +30,10 @@ const Browse = () => {
   const [noProductMessage, setNoProductMessage] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [cartButtonLoading, setCartButtonLoading] = useState([]);
 
   const navigate = useNavigate();
-  const { appUser } = useAllContext();
+  const { appUser, updateNumberOfCartItems } = useAllContext();
 
   //Filter States and functions
   const [sortValue, setSortValue] = useState(0);
@@ -42,7 +46,11 @@ const Browse = () => {
     max: 10000,
   });
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [vendors, setVendors] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedVendors, setSelectedVendors] = useState([]);
   const onSortChange = (e) => {
     setSortValue(e.target.value);
   };
@@ -50,8 +58,16 @@ const Browse = () => {
   const onCategoryChange = (selectedOptions) => {
     setSelectedCategories(selectedOptions);
   };
+  const onBrandChange = (selectedOptions) => {
+    setSelectedBrands(selectedOptions);
+  };
+  const onVendorChange = (selectedOptions) => {
+    setSelectedVendors(selectedOptions);
+  };
   const clearAllFilters = () => {
     setSelectedCategories([]);
+    setSelectedBrands([]);
+    setSelectedVendors([]);
     setSortValue(0);
     priceRangeSet(browseProducts);
   };
@@ -83,29 +99,53 @@ const Browse = () => {
     });
   };
 
-  const getSearchResults = async (params) => {
+  const getSearchResults = useCallback(async (params) => {
     setLoading(true);
     try {
       const res = await axios.post("http://localhost:5000/search", {
         searchTerms: params,
       });
+      const brands = await axios.get("http://localhost:5000/brands");
+      // console.log("brands.data : ", brands.data);
+
+      const allVendors = await axios.get("http://localhost:5000/allvendors");
+
+      // console.log(allVendors);
 
       if (!res.data.length) {
         setNoProductMessage(true);
         setBrowseProducts([]);
         setShownProducts([]);
       } else {
+        let products = [];
+        res.data.map((product) => {
+          products.push({
+            ...product,
+            brand: brands.data.find((brand) => {
+              if (brand.id === product.brand_id) return true;
+              else return false;
+            }),
+            vendor: allVendors.data.find((vendor) => {
+              if (vendor.id === product.vendor_id) return true;
+              else return false;
+            }),
+          });
+          return null;
+        });
+        // console.log("prods : ", products);
         setNoProductMessage(false);
-        setBrowseProducts(res.data);
-        setShownProducts(res.data);
-        setCategories([...new Set(res.data.map((x) => x.category))]);
-        priceRangeSet(res.data);
+        setBrowseProducts(products);
+        setShownProducts(products);
+        setCategories([...new Set(products.map((x) => x.category))]);
+        setBrands([...new Set(products.map((x) => x.brand.brand))]);
+        setVendors([...new Set(products.map((x) => x.vendor.business_name))]);
+        priceRangeSet(products);
       }
     } catch (error) {}
     setLoading(false);
-  };
+  }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     var filteredArray = [];
 
     //Filter by category First
@@ -115,6 +155,18 @@ const Browse = () => {
       });
     } else {
       filteredArray = browseProducts;
+    }
+    //Filter new array by Brand
+    if (selectedBrands.length) {
+      filteredArray = filteredArray.filter(function (product) {
+        return selectedBrands.includes(product.brand.brand);
+      });
+    }
+    //Filter new array by Vendor
+    if (selectedVendors.length) {
+      filteredArray = filteredArray.filter(function (product) {
+        return selectedVendors.includes(product.vendor.business_name);
+      });
     }
 
     //filter the new array by Price Range
@@ -154,11 +206,38 @@ const Browse = () => {
 
     // Finally set The shown products
     setShownProducts(filteredArray);
-  };
+  }, [
+    browseProducts,
+    priceRange.maxPrice,
+    priceRange.minPrice,
+    selectedBrands,
+    selectedVendors,
+    selectedCategories,
+    sortValue,
+  ]);
 
   const handleAddToCart = async (product_id) => {
+    setCartButtonLoading((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[product_id] = true;
+      return newLoadings;
+    });
     if (!appUser || !appUser.id) {
       message.info("Please login to add products to the cart.");
+      setCartButtonLoading((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[product_id] = false;
+        return newLoadings;
+      });
+      return;
+    }
+    if (appUser.is_admin) {
+      message.info("Admin not Allowed to add to Cart Yet!");
+      setCartButtonLoading((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[product_id] = false;
+        return newLoadings;
+      });
       return;
     }
 
@@ -169,9 +248,15 @@ const Browse = () => {
         quantity: 1,
       });
       message.success("Added to cart");
+      updateNumberOfCartItems();
     } catch (error) {
       console.error("Error adding product to cart:", error);
     }
+    setCartButtonLoading((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[product_id] = false;
+      return newLoadings;
+    });
   };
 
   const showProducts = () => {
@@ -209,16 +294,53 @@ const Browse = () => {
                 className="d-flex flex-column justify-content-center align-items-start"
               >
                 <Link to={`/product/?id=${product.id}`} className="two-lines">
-                  <Title strong level={5}>
-                    {product.name}
-                  </Title>
+                  <Title level={5}>{product.name}</Title>
                 </Link>
               </Row>
-              <Row>
-                <Paragraph>{product.category}</Paragraph>
+              <Row
+                justify="space-between"
+                style={{ paddingRight: 15, marginTop: 10 }}
+              >
+                <Paragraph strong type="secondary" level={5} className="d-flex">
+                  <img
+                    src={brandIcon}
+                    alt="brandIcon"
+                    style={{
+                      height: 25,
+                      width: 25,
+                      marginRight: 5,
+                    }}
+                  />
+                  {product.brand.brand}
+                </Paragraph>
+
+                <Paragraph type="secondary" className="m-0 p-0 d-flex">
+                  <img
+                    src={categoryIcon}
+                    alt="categoryIcon"
+                    style={{
+                      height: 25,
+                      width: 25,
+                      marginRight: 5,
+                    }}
+                  />
+                  {product.category}
+                </Paragraph>
+                <Paragraph type="secondary" className="d-flex">
+                  <img
+                    src={vendorIcon}
+                    alt="vendorIcon"
+                    style={{
+                      height: 25,
+                      width: 25,
+                      marginRight: 5,
+                    }}
+                  />
+                  <strong>{product.vendor.business_name}</strong>
+                </Paragraph>
               </Row>
               <Row>
-                <Paragraph className="productPrice">
+                <Paragraph className="productPrice ">
                   &#8377; {product.price}
                 </Paragraph>
               </Row>
@@ -229,53 +351,18 @@ const Browse = () => {
                   __html: product.description,
                 }}
               />
-
               <Row className="d-flex mt-20">
                 <Button
                   onClick={() => {
                     handleAddToCart(product.id);
                   }}
                   type="primary"
+                  loading={cartButtonLoading[product.id]}
                 >
                   Add to Cart
                 </Button>
               </Row>
             </Card>
-            {/* <div className="productContainer rounded-border ">
-              <div className="productImg">
-                <img src={baseImgUrl + product.image} alt="img" />
-              </div>
-              <div className="productDetails rounded-border-bottom">
-                <Link to={`/product/?id=${product.id}`}>
-                  <Title strong level={5}>
-                    {product.name.length > 80
-                      ? product.name.substr(0, 80) + " ..."
-                      : product.name}
-                  </Title>
-                </Link>
-                <Paragraph>{product.category}</Paragraph>
-
-                <Paragraph className="productPrice">
-                  &#8377; {product.price}
-                </Paragraph>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: product.description.slice(0, 150) + "...",
-                  }}
-                />
-
-                <div className="d-flex productActionButtons">
-                  <Button
-                    onClick={() => {
-                      handleAddToCart(product.id);
-                    }}
-                    type="primary"
-                  >
-                    Add to Cart
-                  </Button>
-                </div>
-              </div>
-            </div> */}
           </Col>
         );
       } else {
@@ -286,11 +373,11 @@ const Browse = () => {
 
   useEffect(() => {
     getSearchResults(searchTerms);
-  }, [searchTerms]);
+  }, [searchTerms, getSearchResults]);
 
   useEffect(() => {
     applyFilters();
-  }, [sortValue, selectedCategories, priceRange]);
+  }, [sortValue, selectedCategories, priceRange, selectedBrands, applyFilters]);
 
   const showDrawer = () => {
     setVisible(!visible);
@@ -316,11 +403,17 @@ const Browse = () => {
               sortValue={sortValue}
               onSortChange={onSortChange}
               categories={categories}
+              brands={brands}
+              vendors={vendors}
               onCategoryChange={onCategoryChange}
+              onBrandChange={onBrandChange}
+              onVendorChange={onVendorChange}
               priceRange={priceRange}
               setPriceRange={setPriceRange}
               sliderRange={sliderRange}
               selectedCategories={selectedCategories}
+              selectedBrands={selectedBrands}
+              selectedVendors={selectedVendors}
               clearAllFilters={clearAllFilters}
             />
           </Sider>
@@ -334,14 +427,20 @@ const Browse = () => {
             style={{ zIndex: 99990 }}
           >
             <BrowseSidebar
-              sortValue={sortValue}
+              ortValue={sortValue}
               onSortChange={onSortChange}
               categories={categories}
+              brands={brands}
+              vendors={vendors}
               onCategoryChange={onCategoryChange}
+              onBrandChange={onBrandChange}
+              onVendorChange={onVendorChange}
               priceRange={priceRange}
               setPriceRange={setPriceRange}
               sliderRange={sliderRange}
               selectedCategories={selectedCategories}
+              selectedBrands={selectedBrands}
+              selectedVendors={selectedVendors}
               clearAllFilters={clearAllFilters}
             />
           </Drawer>

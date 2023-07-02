@@ -1,217 +1,86 @@
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
+import { useNavigate } from "react-router-dom";
+import { Button, Popconfirm, message, Input, Card } from "antd";
 import {
-  Button,
-  Popconfirm,
-  message,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Row,
-  Col,
-  Upload,
-  Alert,
-  Tooltip,
-  Card,
-  Typography,
-} from "antd";
-import {
-  UploadOutlined,
   SearchOutlined,
-  EditOutlined,
   DeleteOutlined,
-  EyeOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
+
 import useAllContext from "../../../../context/useAllContext";
-import TextEditor from "./TextEditor";
 import LoadingScreen from "../../../layout/LoadingScreen";
 
-function AllProducts() {
+function AllVendors() {
   const [search, setSearch] = useState("");
-  const [products, setProducts] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [imageModalVisible, setImageModalVisible] = useState(false);
-  const [descModalVisible, setDescModalVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const { Option } = Select;
-  const [form] = Form.useForm();
-  const [modalDescription, setModalDescription] = useState([]);
-  const [textDesc, setTextDesc] = useState("");
-  const { categories, fetchCategories, appUser } = useAllContext();
-  const [selectedRowData, setSelectedRowData] = useState({});
-  const [selectedRowId, setSelectedRowId] = useState(null);
-  const [selectedImage, setSelectedImage] = useState("");
-  const [refreshPage, setRefreshPage] = useState(false);
+  const [vendors, setVendors] = useState([]);
+  const [filteredVendors, setFilteredVendors] = useState([]);
+  const { appUser } = useAllContext();
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState([]);
-  const [updateButtonLoading, setUpdateButtonLoading] = useState([]);
+  const navigate = useNavigate();
 
-  const { Text } = Typography;
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
-  const getProducts = useCallback(async () => {
+  const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/viewproducts", {
-        vendorId: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      });
-      const allVendors = await axios.get("http://localhost:5000/allvendors");
-      const brands = await axios.get("http://localhost:5000/brands");
-      // console.log("brands.data : ", brands.data);
-      var products = [];
-      response.data.map((product) => {
-        products.push({
-          ...product,
-          brand: brands.data.find((brand) => {
-            if (brand.id === product.brand_id) return true;
-            else return false;
-          }),
-          vendor: allVendors.data.find((vendor) => {
-            if (vendor.id === product.vendor_id) return true;
-            else return false;
-          }),
-        });
-        return null;
-      });
-      // console.log("products : ", products);
-      setProducts(products);
-      setBrands(brands.data);
-      setFilteredProducts(products);
-    } catch (error) {
-      console.log(error);
+      const allVendors = await axios.post(
+        "http://localhost:5000/vendor/allvendors",
+        { is_super_admin: appUser.is_super_admin }
+      );
+      // console.log("allvendors : ", allVendors);
+      setVendors(allVendors.data);
+    } catch (err) {
+      setVendors([]);
     }
     setLoading(false);
-  }, [appUser.id, appUser.is_super_admin]);
+  }, [appUser.is_super_admin]);
   useEffect(() => {
-    // setLoading(true);
-    getProducts();
-    // setLoading(false);
-  }, [refreshPage, getProducts]);
-
-  useEffect(() => {
-    const result = products.filter((product) => {
-      return product.name.toLocaleLowerCase().match(search.toLocaleLowerCase());
-    });
-    setFilteredProducts(result);
-  }, [search, products]);
-
-  const openModal = (rowData) => {
-    // console.log(rowData);
-    setTextDesc(rowData.description);
-    setSelectedRowId(rowData.id);
-    const initialValues = {
-      name: rowData.name,
-      category: rowData.category_id,
-      brand: rowData.brand.id,
-      description: textDesc,
-      price: rowData.price,
-      stock_available: rowData.stock_available,
-    };
-    setSelectedRowData(initialValues);
-    setModalVisible(true);
-
-    form.setFieldsValue(initialValues);
-  };
-
-  const openDescModal = (rowData) => {
-    rowData.description
-      ? setModalDescription(rowData.description)
-      : setModalDescription([]);
-
-    setDescModalVisible(true);
-  };
-
-  useEffect(() => {
-    setSelectedRowData({});
-  }, [modalVisible]);
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-  const onFinish = async (values) => {
-    setUpdateButtonLoading(true);
-    // console.log("Success", values);
-    try {
-      // console.log(selectedRowData.id);
-      const formData = new FormData();
-      formData.append("category", values.category);
-      formData.append("brand_id", values.brand);
-      formData.append("name", values.name);
-      formData.append("description", textDesc);
-      formData.append("price", values.price);
-      formData.append("stock_available", values.stock_available);
-      formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
-      const response = await axios.put(
-        `http://localhost:5000/admin/updateproduct/${selectedRowId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        setRefreshPage(true);
-        //add required navigation
-        // setErrorMessage("Details updated successfullY");
-        message.success("Details Updated Successfully");
-        closeModal();
-        if (refreshPage) {
-          setRefreshPage(false);
-        }
-      } else {
-        setErrorMessage("Something went Wrong");
-      }
-    } catch (error) {
-      form.resetFields();
-      console.log(error);
+    if (!appUser.is_super_admin) {
+      navigate("/admin/dashboard");
     }
-    setUpdateButtonLoading(false);
-  };
-  const onFinishFailed = (errorInfo) => {
-    setErrorMessage("Form submission failed. Please check the fields");
-    console.log("Failed", errorInfo);
-  };
+    fetchVendors();
+  }, [fetchVendors, appUser.is_super_admin]);
 
-  const deleteItemFromProducts = async (itemId, imagePath) => {
+  useEffect(() => {
+    const result = vendors.filter((vendor) => {
+      return vendor.business_name
+        .toLocaleLowerCase()
+        .match(search.toLocaleLowerCase());
+    });
+    setFilteredVendors(result);
+  }, [search, vendors]);
+
+  const deleteItemFromVendors = async (itemId, imagePath) => {
     setButtonLoading((prevLoadings) => {
       const newLoadings = [...prevLoadings];
       newLoadings[itemId] = true;
       return newLoadings;
     });
-    const encodedImagePath = encodeURIComponent(imagePath);
+    // const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
-        axios.delete(`http://localhost:5000/viewproducts/${itemId}`),
-        axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
+        axios.delete(`http://localhost:5000/vendor/editvendor/${itemId}`),
+        // axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
       ];
 
       const results = await axios.all(deleteRequests);
 
       const itemDeletionStatus = results[0].status;
-      const imageDeletionStatus = results[1].status;
+      //   const imageDeletionStatus = results[1].status;
 
-      if (itemDeletionStatus === 200 && imageDeletionStatus === 200) {
-        setProducts((prevData) =>
-          prevData.filter((item) => item.id !== itemId)
-        );
-        message.success("Item deleted from products successfully");
+      if (
+        itemDeletionStatus === 200
+        // && imageDeletionStatus === 200
+      ) {
+        setVendors((prevData) => prevData.filter((item) => item.id !== itemId));
+        message.success("Vendor Deleted successfully");
       } else {
-        throw new Error("Failed to delete item and image");
+        throw new Error("Failed to delete Vendor");
       }
     } catch (error) {
-      console.error(
-        "Error deleting item or image from products/uploads",
-        error
-      );
+      console.error("Error deleting Vendor", error);
       if (error.response) {
         // Request was made and server responded with a non-2xx status code
         message.error(error.response.data.error || "Unknown error occurred");
@@ -228,29 +97,28 @@ function AllProducts() {
   };
 
   const columns = [
-    {
-      name: "Image",
-      width: "10%",
+    // {
+    //   name: "Image",
+    //   width: "10%",
 
-      selector: (row) => (
-        <img
-          // width={50}
-          // height={50}
-          src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
-          alt=""
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            setSelectedImage(row.image);
-            setImageModalVisible(true);
-          }}
-        ></img>
-      ),
-    },
+    //   selector: (row) => (
+    //     <img
+    //       // width={50}
+    //       // height={50}
+    //       src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
+    //       alt=""
+    //       style={{ cursor: "pointer" }}
+    //       onClick={() => {
+    //         setSelectedImage(row.image);
+    //         setImageModalVisible(true);
+    //       }}
+    //     ></img>
+    //   ),
+    // },
     {
-      name: (
-        <div style={{ width: "100%", textAlign: "center" }}>Product Name</div>
-      ),
-      width: "45%",
+      name: "Vendor Business Name",
+
+      width: "30%",
       cell: (row) => (
         <div
           style={{
@@ -261,84 +129,55 @@ function AllProducts() {
           }}
         >
           <strong style={{ marginTop: 10 }} className="two-lines">
-            {row.name}
+            {row.business_name}
           </strong>
-          {appUser.is_super_admin && (
-            <p className="mt-5">
-              Seller : <strong>{row.vendor.business_name}</strong>
-            </p>
-          )}
-
-          <p className="mt-0">Description : </p>
-          <p
-            className="three-lines m-0"
-            dangerouslySetInnerHTML={{ __html: row.description }}
-          ></p>
-          <p style={{ width: "100%" }} className="d-flex mt-0">
-            <Button
-              // style={{ width: "43%" }}
-              type="link"
-              onClick={() => {
-                setTextDesc(row.description);
-                openDescModal(row);
-              }}
-              onClose={() => setModalDescription("")}
-              icon={<EyeOutlined />}
-            >
-              view more
-            </Button>
-          </p>
         </div>
       ),
     },
 
     {
-      name: <div style={{ width: "100%", textAlign: "center" }}>Category</div>,
-      selector: (row) => row.category,
-      width: "8%",
+      name: <div style={{ width: "100%", textAlign: "center" }}>Email</div>,
+      selector: (row) => row.email,
+      width: "20%",
       style: { display: "flex", justifyContent: "center" },
     },
     {
-      name: <div style={{ width: "100%", textAlign: "center" }}>Brand</div>,
-      selector: (row) => row.brand.brand,
-      width: "8%",
+      name: "Phone",
+      selector: (row) => row.phone,
+      width: "10%",
+    },
+    {
+      name: "Approved?",
+      selector: (row) =>
+        row.is_approved ? (
+          <CheckCircleOutlined style={{ color: "green", fontSize: 25 }} />
+        ) : (
+          <CloseCircleOutlined style={{ color: "red", fontSize: 25 }} />
+        ),
+      width: "9%",
       style: { display: "flex", justifyContent: "center" },
     },
     {
-      name: <div style={{ width: "100%", textAlign: "center" }}>Price</div>,
-      selector: (row) => row.price,
-      width: "6%",
-      style: { display: "flex", justifyContent: "center" },
-    },
-    {
-      name: <div style={{ width: "100%", textAlign: "center" }}>Stock</div>,
-      selector: (row) => row.stock_available,
-      width: "6%",
+      name: "Verified Email?",
+      selector: (row) =>
+        row.isemailverified ? (
+          <CheckCircleOutlined style={{ color: "green", fontSize: 25 }} />
+        ) : (
+          <CloseCircleOutlined style={{ color: "red", fontSize: 25 }} />
+        ),
+      width: "12%",
       style: { display: "flex", justifyContent: "center" },
     },
 
     {
       name: <div style={{ width: "100%", textAlign: "center" }}>Actions</div>,
-      width: "200px",
       style: { display: "flex", justifyContent: "center" },
+      width: "200px",
       cell: (row) => (
         <>
-          {!appUser.is_super_admin && (
-            <Button
-              style={{ width: "43%", background: "#4b7ee5", color: "#fff" }}
-              type="primary"
-              onClick={() => {
-                openModal(row);
-              }}
-              icon={<EditOutlined />}
-            >
-              Edit
-            </Button>
-          )}
-
           <Popconfirm
-            title="Are you sure you want to delete this Product?"
-            onConfirm={() => deleteItemFromProducts(row.id, row.image)}
+            title="Are you sure you want to delete this Vendor?"
+            onConfirm={() => deleteItemFromVendors(row.id)}
             okText="Yes"
             cancelText="No"
             okButtonProps={{
@@ -385,7 +224,7 @@ function AllProducts() {
     },
     rows: {
       style: {
-        height: "230px",
+        height: "100px",
         width: "100%",
       },
     },
@@ -393,6 +232,7 @@ function AllProducts() {
       style: {
         height: "100%",
         width: "100%",
+        fontSize: 14,
       },
     },
   };
@@ -403,14 +243,14 @@ function AllProducts() {
         {/* <Header search={search} setSearch={setSearch} /> */}
         <DataTable
           columns={columns}
-          data={filteredProducts}
+          data={filteredVendors}
           customStyles={customStyles}
           // selectableRows
           // selectableRowsHighlight
           highlightOnHover
           title={
             <h2 style={{ color: "#ff8400", fontWeight: "bold" }}>
-              {appUser.is_super_admin ? "All Products" : " Your Products"}
+              All Vendors
             </h2>
           }
           fixedHeader
@@ -419,36 +259,19 @@ function AllProducts() {
           paginationRowsPerPageOptions={[5, 10, 15, 20]}
           subHeader
           subHeaderComponent={
-            <div style={{ width: "20em", marginBottom: 10 }}>
-              <Input
-                prefix={<SearchOutlined />}
-                type="text"
-                placeholder="Search Products "
-                style={{ width: "100%" }}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <p className="productsscrollformore">{"Scroll for More -->"}</p>
-            </div>
+            <Input
+              prefix={<SearchOutlined />}
+              type="text"
+              placeholder="Search Products "
+              style={{ width: "20em", marginBottom: 10 }}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           }
           subHeaderAlign="right"
         />
-        <Modal
-          title="Description Preview"
-          open={descModalVisible}
-          centered
-          onCancel={() => setDescModalVisible(false)}
-          footer={null}
-        >
-          {modalDescription.length > 0 ? (
-            <div dangerouslySetInnerHTML={{ __html: modalDescription }}></div>
-          ) : (
-            " No Description Available"
-          )}
-          {/* {modalDescription} */}
-        </Modal>
 
-        <Modal
+        {/* <Modal
           title="Image Preview"
           open={imageModalVisible}
           onCancel={() => setImageModalVisible(false)}
@@ -459,9 +282,9 @@ function AllProducts() {
             alt=""
             style={{ width: "100%" }}
           />
-        </Modal>
+        </Modal> */}
 
-        <Modal
+        {/* <Modal
           // title="Edit Product"
           open={modalVisible}
           onCancel={closeModal}
@@ -643,37 +466,18 @@ function AllProducts() {
             )}
 
             <Form.Item>
-              {/* <Popconfirm
-              title="Are you sure you want to update this product?"
-              onConfirm={() => onFinish(form.getFieldsValue())}
-              okText="Yes"
-              cancelText="No"
-              okButtonProps={{
-                style: {
-                  height: 40,
-                  width: 45,
-                  // background: "#f53131",
-                  // color: "white",
-                },
-              }}
-              cancelButtonProps={{
-                style: { height: 40, width: 40 },
-                type: "default",
-              }}
-            > */}
               <Button
                 style={{ width: 150 }}
                 type="primary"
                 htmlType="submit"
                 className="float-end"
-                loading={updateButtonLoading}
+                loading={buttonLoading}
               >
                 Update
               </Button>
-              {/* </Popconfirm> */}
             </Form.Item>
           </Form>
-        </Modal>
+        </Modal> */}
       </Card>
     </>
   ) : (
@@ -684,4 +488,4 @@ function AllProducts() {
 
 // );
 
-export default AllProducts;
+export default AllVendors;

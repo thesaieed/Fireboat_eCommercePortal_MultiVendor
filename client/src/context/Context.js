@@ -8,14 +8,35 @@ function Provider({ children }) {
   const [isValidToken, setIsValidToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState([]);
+  const [numberOfProductsInCart, setNumberOfProductsInCart] = useState(0);
 
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
+  const [userTokenIsAdmin, setUserTokenIsAdmin] = useState(
+    localStorage.getItem("isa")
+  );
+
+  const updateNumberOfCartItems = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/numberofcartproducts",
+        {
+          userId: appUser.id,
+        }
+      );
+      setNumberOfProductsInCart(res.data.itemCount);
+      // console.log(res);
+    } catch (err) {
+      console.log(err);
+      // setNumberOfProductsInCart(0);
+    }
+  };
 
   const removeSavedUserToken = async (userToken, id) => {
     try {
       await axios.post("http://localhost:5000/removeusersloggedintokens", {
         userToken,
         id,
+        isvendor: userTokenIsAdmin,
       });
       // console.log("remomve user TOken res :", res);
     } catch (err) {}
@@ -23,9 +44,11 @@ function Provider({ children }) {
 
   async function validateUserToken() {
     try {
+      // console.log("isvendor: ", userTokenIsAdmin);
+      // console.log("isvendorTYPE: ", typeof userTokenIsAdmin);
       const res = await axios.post(
         "http://localhost:5000/checkusersloggedintokens",
-        { userToken }
+        { userToken, isvendor: userTokenIsAdmin }
       );
       // console.log("async res.data : ", res.data);
       // console.log(" is Valid Tokken : ", res.data);
@@ -35,27 +58,47 @@ function Provider({ children }) {
       setIsValidToken(false);
       setIsLoading(false);
     }
+    // console.log(" is Valid Tokken : ", isValidToken);
   }
 
   const fetchUserDetails = useCallback(async () => {
     try {
       const userdata = await axios.post("http://localhost:5000/userdetails", {
         userToken,
+        isvendor: userTokenIsAdmin,
       });
       // console.log("user Data : ", userdata);
       setAppUser(userdata.data);
+      if (!userdata.data.is_admin) {
+        try {
+          const res = await axios.post(
+            "http://localhost:5000/numberofcartproducts",
+            {
+              userId: userdata.data.id,
+            }
+          );
+          setNumberOfProductsInCart(res.data.itemCount);
+          // console.log(res);
+        } catch (err) {
+          // console.log(err);
+          setNumberOfProductsInCart(0);
+        }
+      }
       setIsLoading(false);
     } catch (error) {
       setAppUser({});
       setIsLoading(false);
     }
-  }, [userToken]);
+  }, [userToken, userTokenIsAdmin]);
 
   const logout = () => {
     localStorage.removeItem("userToken");
+    localStorage.removeItem("isa");
     setAppUser({});
     setUserToken("");
-    removeSavedUserToken(userToken, appUser.id);
+    setIsValidToken(false);
+    removeSavedUserToken(userToken, appUser.id, appUser.is_admin);
+    window.location.reload();
   };
   const generateRandomString = (len) => {
     let result = "";
@@ -71,16 +114,29 @@ function Provider({ children }) {
   };
 
   const fetchCategories = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/categories"
-      );
-      // console.log("Categories Responce : ", response.data.categories);
-      setCategories(response.data.categories);
-    } catch (error) {
-      console.error(error);
+    if (appUser.id) {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/admin/categories"
+        );
+        const allVendors = await axios.get("http://localhost:5000/allvendors");
+        var categories = [];
+        response.data.categories.map((category) => {
+          categories.push({
+            ...category,
+            vendor: allVendors.data.find((vendor) => {
+              if (vendor.id === category.vendor_id) return true;
+              else return false;
+            }),
+          });
+          return null;
+        });
+        setCategories(categories);
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }, []);
+  }, [appUser.id]);
 
   useEffect(() => {
     if (isValidToken) {
@@ -101,10 +157,13 @@ function Provider({ children }) {
     setIsLoading,
     userToken,
     setUserToken,
+    setUserTokenIsAdmin,
     removeSavedUserToken,
     logout,
     fetchCategories,
     categories,
+    numberOfProductsInCart,
+    updateNumberOfCartItems,
   };
 
   return (
