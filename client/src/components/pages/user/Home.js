@@ -6,6 +6,8 @@ import FeaturedProduct from "./FeaturedProduct";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import LoadingScreen from "../../layout/LoadingScreen";
+import brandIcon from "../../../assets/images/brandIcon.png";
+import categoryIcon from "../../../assets/images/categoryIcon.png";
 
 const Home = () => {
   const [allProducts, setAllProducts] = useState([]);
@@ -20,9 +22,29 @@ const Home = () => {
 
   const getAllProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/allproducts");
+      const response = await await axios.get(
+        "http://localhost:5000/viewproducts"
+      );
+      const brands = await axios.get("http://localhost:5000/brands");
       // console.log(res);
-      setAllProducts(res.data);
+      const allVendors = await axios.get("http://localhost:5000/allvendors");
+
+      var products = [];
+      response.data.map((product) => {
+        products.push({
+          ...product,
+          brand: brands.data.find((brand) => {
+            if (brand.id === product.brand_id) return true;
+            else return false;
+          }),
+          vendor: allVendors.data.find((vendor) => {
+            if (vendor.id === product.vendor_id) return true;
+            else return false;
+          }),
+        });
+        return null;
+      });
+      setAllProducts(products);
     } catch (err) {
       console.error(err);
     }
@@ -108,8 +130,47 @@ const Home = () => {
                               </Title>
                             </Link>
                           </Row>
-                          <Row>
-                            <Paragraph>{product.category}</Paragraph>
+
+                          <Row
+                            justify="space-between"
+                            style={{ paddingRight: 15, marginTop: 10 }}
+                          >
+                            <Paragraph strong type="secondary" level={5}>
+                              <img
+                                src={brandIcon}
+                                alt="brandIcon"
+                                style={{
+                                  height: 25,
+                                  width: 25,
+                                  marginRight: 5,
+                                }}
+                              />
+                              {product.brand.brand}
+                            </Paragraph>
+                            <Paragraph type="secondary" className="m-0 p-0">
+                              <img
+                                src={categoryIcon}
+                                alt="categoryIcon"
+                                style={{
+                                  height: 25,
+                                  width: 25,
+                                  marginRight: 5,
+                                }}
+                              />{" "}
+                              {product.category}
+                            </Paragraph>
+                            <Paragraph strong type="secondary" level={5}>
+                              <img
+                                src={brandIcon}
+                                alt="brandIcon"
+                                style={{
+                                  height: 25,
+                                  width: 25,
+                                  marginRight: 5,
+                                }}
+                              />
+                              {product.vendor.business_name}
+                            </Paragraph>
                           </Row>
                           <Row>
                             <Paragraph className="productPrice">

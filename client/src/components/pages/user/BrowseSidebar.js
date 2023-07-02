@@ -14,16 +14,30 @@ function BrowseSidebar({
   sortValue,
   onSortChange,
   categories,
+  brands,
+  vendors,
   onCategoryChange,
+  onBrandChange,
+  onVendorChange,
   priceRange,
   setPriceRange,
   sliderRange,
   selectedCategories,
+  selectedBrands,
+  selectedVendors,
   clearAllFilters,
 }) {
-  const categoryOptions = [];
+  let categoryOptions = [];
   for (let category of categories) {
     categoryOptions.push({ value: category });
+  }
+  let brandOptions = [];
+  for (let brand of brands) {
+    brandOptions.push({ value: brand });
+  }
+  let vendorOptions = [];
+  for (let vendor of vendors) {
+    vendorOptions.push({ value: vendor });
   }
   const tagRender = (props) => {
     const { label, closable, onClose } = props;
@@ -49,6 +63,12 @@ function BrowseSidebar({
   const handleCategoryChange = (selectedcategories) => {
     onCategoryChange(selectedcategories);
   };
+  const handleBrandChange = (selectedbrands) => {
+    onBrandChange(selectedbrands);
+  };
+  const handleVendorChange = (selectedvendors) => {
+    onVendorChange(selectedvendors);
+  };
 
   const handlePriceSliderChange = (e) => {
     setPriceRange({ minPrice: e[0], maxPrice: e[1] });
@@ -70,6 +90,60 @@ function BrowseSidebar({
             height: "100%",
           }}
           options={categoryOptions}
+        />
+      ),
+      key: "browseCategory",
+      style: {
+        width: "95%",
+        border: "1px solid lightgrey",
+        height: "max-content",
+        background: "none",
+      },
+    },
+  ];
+  const brandMenuItems = [
+    {
+      label: (
+        <Select
+          placeholder="Select Brands"
+          mode="multiple"
+          showArrow
+          tagRender={tagRender}
+          // defaultValue={[]}
+          value={selectedBrands}
+          onChange={handleBrandChange}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          options={brandOptions}
+        />
+      ),
+      key: "browseCategory",
+      style: {
+        width: "95%",
+        border: "1px solid lightgrey",
+        height: "max-content",
+        background: "none",
+      },
+    },
+  ];
+  const vendorMenuItems = [
+    {
+      label: (
+        <Select
+          placeholder="Select Sellers"
+          mode="multiple"
+          showArrow
+          tagRender={tagRender}
+          // defaultValue={[]}
+          value={selectedVendors}
+          onChange={handleVendorChange}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          options={vendorOptions}
         />
       ),
       key: "browseCategory",
@@ -112,6 +186,30 @@ function BrowseSidebar({
           theme="light"
           mode="inline"
           items={categoryMenuItems}
+          className="categoryMenu"
+        />
+      </div>
+      <div>
+        <hr />
+      </div>
+      <div className="sidebarSubHeading ">
+        <span>Brand</span>
+        <Menu
+          theme="light"
+          mode="inline"
+          items={brandMenuItems}
+          className="categoryMenu"
+        />
+      </div>
+      <div>
+        <hr />
+      </div>
+      <div className="sidebarSubHeading ">
+        <span>Seller</span>
+        <Menu
+          theme="light"
+          mode="inline"
+          items={vendorMenuItems}
           className="categoryMenu"
         />
       </div>

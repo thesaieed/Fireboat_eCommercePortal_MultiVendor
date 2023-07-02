@@ -171,6 +171,7 @@
 
   .ant-drawer-title > .brand-font {
     margin-bottom: 0;
+
     color: #000 !important;
   }
 
@@ -1400,6 +1401,7 @@ span.blue {
 .justify-content-evenly {
   justify-content: space-evenly !important;
 }
+
 .vh-100 {
   height: 100vh !important;
 }
@@ -2084,6 +2086,9 @@ body {
   background: url("../images/bg-signup.jpg") no-repeat center;
   background-size: cover;
 }
+.vendor-sign-up-header {
+  background: url("../images/vendor-bg-signup.jpg") no-repeat center;
+}
 .header-col.header-brand {
   white-space: nowrap;
 }
@@ -2160,6 +2165,15 @@ body {
   margin-top: -250px;
   margin-bottom: auto;
 }
+.card-verify {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+  border-radius: 12px;
+  margin-top: -50px;
+  margin-bottom: auto;
+}
 .card-category {
   width: 100%;
   max-width: 500px;
@@ -2193,6 +2207,11 @@ body {
 .mt-25,
 .my-25 {
   margin-top: 25px;
+}
+.m-5,
+.mt-5,
+.my-5 {
+  margin-top: 5px;
 }
 .m-20,
 .mt-20,
@@ -2427,7 +2446,14 @@ body {
   padding: 0 !important;
   margin-top: 0 !important;
 }
-
+/* .ant-alert-description {
+  background-color: #000;
+  max-width: 100%;
+  height: max-content;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow: scroll;
+} */
 .layout-default .ant-layout-content {
   padding-top: 0px;
 }
@@ -2646,6 +2672,9 @@ section.ant-layout.layout-content .ant-layout-content.content-ant {
 }
 .layout-default .ant-layout-content.p-0 {
   padding: 0px;
+}
+.p-0 {
+  padding: 0 !important;
 }
 .pt {
   padding-top: 0px;
@@ -3487,7 +3516,7 @@ div.ant-upload {
   line-height: 1.5;
 }
 .productShow .ant-card-body {
-  background-color: #fffcf9;
+  background-color: #faf2fc;
 }
 .bg-light {
   background-color: #fafafa;
@@ -3791,6 +3820,7 @@ div.ant-upload {
 .column-spd {
   padding: 50px;
 }
+
 .actionButtons-spd {
   align-self: center;
 }
@@ -3909,6 +3939,7 @@ div.ant-upload {
   text-decoration: underline;
 }
 .categoryCard {
+  min-width: 40%;
   padding: 1.5rem;
 }
 .div-buttons-spd {
@@ -3921,7 +3952,7 @@ div.ant-upload {
 @media (max-width: 960px) {
   .add-to-cart-button,
   .buy-now-button {
-    width: 100%;
+    width: 80%;
   }
   .show-productDetails-card,
   .ant-cart-body {
@@ -3935,7 +3966,7 @@ div.ant-upload {
   }
   .add-to-cart-button,
   .buy-now-button {
-    width: 80%;
+    width: 100%;
   }
 
   .column-spd {
@@ -3985,8 +4016,33 @@ div.ant-upload {
   }
 }
 
+/* Css for data tables */
 .ql-editor {
   min-height: 200px !important;
 }
-
-/* Css for data tables */
+.centered-cell {
+  text-align: center !important;
+  background-color: #00369e;
+}
+.scrollformore,
+.productsscrollformore {
+  display: none;
+}
+@media (max-width: 500px) {
+  .scrollformore {
+    display: block;
+    float: right;
+    text-align: end;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+}
+@media (max-width: 900px) {
+  .productsscrollformore {
+    display: block;
+    float: right;
+    text-align: end;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+}

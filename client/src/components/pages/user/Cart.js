@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import useAllContext from "../../../context/useAllContext";
 import {
@@ -16,10 +16,14 @@ import { ShoppingCartOutlined } from "@ant-design/icons";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import { Content } from "antd/lib/layout/layout";
+import brandIcon from "../../../assets/images/brandIcon.png";
+import categoryIcon from "../../../assets/images/categoryIcon.png";
 function Cart() {
-  const appUser = useAllContext();
+  const { appUser, updateNumberOfCartItems } = useAllContext();
   const [productData, setProductData] = useState([]);
   const [Paragraph] = [Typography];
+  const [productLinks, setProductLinks] = useState([]);
+
   const navigate = useNavigate();
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
@@ -31,15 +35,34 @@ function Cart() {
       try {
         const response = await axios.get("http://localhost:5000/cart", {
           params: {
-            id: appUser.appUser.id,
+            id: appUser.id,
           },
         });
+        const brandsRes = await axios.get("http://localhost:5000/brands");
 
         const data1 = response.data.data1; //id, product_id,quantity from cart table
-        const data2 = response.data.data2; //name, price image,category from products table
+        // console.log(data1);
+
+        let data2 = response.data.data2; //name, price image,category from products table
+        const productLinks = data2.map((prod) => {
+          return `/product/?id=${prod.id}`;
+        });
+        setProductLinks(productLinks);
         // const data3 = response.data.data3;
+        var products = [];
+        data2.map((product) => {
+          products.push({
+            ...product,
+            brand: brandsRes.data.find((brand) => {
+              if (brand.id === product.brand_id) return true;
+              else return false;
+            }),
+          });
+          return null;
+        });
+        data2 = products;
         // console.log(data1)
-        // console.log(data2)
+        // console.log("data2", data2);
         // console.log(data3)
         const mergedData = data2.map((item) => {
           const matchingData1Item = data1.find(
@@ -52,6 +75,7 @@ function Cart() {
             quantity: matchingData1Item?.quantity || 1,
           };
         });
+        // console.log("merged", mergedData);
         setProductData(mergedData);
         // console.log(productData)
       } catch (error) {
@@ -59,10 +83,10 @@ function Cart() {
       }
     };
 
-    if (appUser.appUser.id) {
+    if (appUser.id) {
       fetchData();
     }
-  }, [appUser.appUser.id]);
+  }, [appUser.id]);
 
   const incrementQuantity = (index) => {
     setProductData((prevData) => {
@@ -122,7 +146,8 @@ function Cart() {
     return totalItems;
   };
 
-  const deleteItemFromCart = async (itemId) => {
+  const deleteItemFromCart = async (itemId, index) => {
+    // console.log(index);
     try {
       // Make a DELETE request to your server API endpoint to delete the item from the cart
       await axios.delete(`http://localhost:5000/cart/${itemId}`);
@@ -131,6 +156,10 @@ function Cart() {
       setProductData((prevData) =>
         prevData.filter((item) => item.id !== itemId)
       );
+      setProductLinks((prevData) =>
+        prevData.filter((item, linkIndex) => linkIndex !== index)
+      );
+      updateNumberOfCartItems();
     } catch (error) {
       console.error("Error deleting item from cart:", error);
     }
@@ -182,9 +211,34 @@ function Cart() {
                 <Col xs={24} sm={12} md={8} lg={8} xl={8}>
                   <div className="cart-col">
                     <Paragraph>
-                      <h3>Product: {item.name}</h3>
+                      <Link to={productLinks[index]}>
+                        <h3>{item.name}</h3>
+                      </Link>
                       <p>Price: {item.price}</p>
-                      <p>Category: {item.category}</p>
+                      <p>
+                        <img
+                          src={brandIcon}
+                          alt="brandIcon"
+                          style={{
+                            height: 20,
+                            width: 20,
+                            marginRight: 5,
+                          }}
+                        />
+                        {item.brand.brand}
+                      </p>
+                      <p>
+                        <img
+                          src={categoryIcon}
+                          alt="categoryIcon"
+                          style={{
+                            height: 22,
+                            width: 22,
+                            marginRight: 5,
+                          }}
+                        />
+                        {item.category}
+                      </p>
                       <p>Quantity: </p>
                       <Button onClick={() => decrementQuantity(index)}>
                         -
@@ -200,7 +254,7 @@ function Cart() {
                   <div className="cart-col">
                     <Popconfirm
                       title="Are you sure you want to delete this item from the cart?"
-                      onConfirm={() => deleteItemFromCart(item.id)}
+                      onConfirm={() => deleteItemFromCart(item.id, index)}
                       okText="Yes"
                       cancelText="No"
                       okButtonProps={{

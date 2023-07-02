@@ -19,6 +19,7 @@ import {
   UserOutlined,
   IdcardOutlined,
   LockOutlined,
+  MobileOutlined,
 } from "@ant-design/icons";
 
 // import logo1 from "../assets/images/logos-facebook.svg";
@@ -26,12 +27,12 @@ import {
 // import logo3 from "../assets/images/Google__G__Logo.svg.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useAllContext from "../../context/useAllContext";
+import useAllContext from "../../../context/useAllContext";
 
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
 
-export default function SignUp() {
+export default function AdminSignUp() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -53,7 +54,10 @@ export default function SignUp() {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/signup", values);
+      const response = await axios.post(
+        "http://localhost:5000/vendor/newvendor",
+        values
+      );
       // console.log("Responce : ", response);
       //if signup is successfull
       if (response.data.status === 200) {
@@ -63,7 +67,6 @@ export default function SignUp() {
         // const userToken = generateRandomString(12);
         //set userToken in local Storage
         // localStorage.setItem("userToken", userToken);
-        // localStorage.setItem("isa", false);
         // setUserToken(userToken);
         // setAppUser(response.data.user);
         //add userToken to database
@@ -137,9 +140,9 @@ export default function SignUp() {
         </Header> */}
 
         <Content className="signupContent">
-          <div className="sign-up-header">
+          <div className="sign-up-header vendor-sign-up-header">
             <div className="content">
-              <Title>Sign Up</Title>
+              <Title>Vendor Sign Up</Title>
             </div>
           </div>
 
@@ -171,14 +174,12 @@ export default function SignUp() {
               className="row-col p-15"
             >
               <Form.Item
-                name="fullname"
-                rules={[
-                  { required: true, message: "Please input your username!" },
-                ]}
+                name="businessname"
+                rules={[{ required: true, message: "Business Name Required!" }]}
               >
                 <Input
                   prefix={<IdcardOutlined className="site-form-item-icon" />}
-                  placeholder="Full Name"
+                  placeholder="Business Name"
                 />
               </Form.Item>
               <Form.Item
@@ -199,7 +200,7 @@ export default function SignUp() {
                 />
               </Form.Item>
 
-              {/* <Form.Item
+              <Form.Item
                 name="phone"
                 type="phone"
                 rules={[
@@ -214,17 +215,17 @@ export default function SignUp() {
               >
                 <Input
                   prefix={<MobileOutlined className="site-form-item-icon" />}
-                  placeholder="Phone Number"
+                  placeholder=" Phone Number (10 Digit)"
                 />
-              </Form.Item> */}
+              </Form.Item>
 
               <Form.Item
                 name="password"
                 rules={[
                   {
-                    min: 4,
+                    min: 6,
                     required: true,
-                    message: "Please input password greater than 4 characters",
+                    message: "Please input password greater than 5 characters",
                   },
                 ]}
                 hasFeedback
@@ -320,8 +321,8 @@ export default function SignUp() {
             </Form>
 
             <p className="font-semibold text-muted text-center">
-              Already have an account? {/* add link to signpage */}
-              <Link to="/login" className="font-bold text-dark">
+              Already have a Vendor? {/* add link to signpage */}
+              <Link to="/adminlogin" className="font-bold text-dark">
                 Sign In
               </Link>
             </p>
