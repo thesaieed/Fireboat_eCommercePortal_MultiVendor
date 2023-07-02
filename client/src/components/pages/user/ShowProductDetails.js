@@ -8,10 +8,10 @@ import {
   Col,
   Layout,
   message,
-  Modal,
   Row,
   Typography,
   Descriptions,
+  Image,
 } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import vendorIcon from "../../../assets/images/vendorsIcon.png";
@@ -25,7 +25,7 @@ function ShowProductDetails() {
   const [imageUrl, setImageUrl] = useState("");
   // const [showFullDescription, setShowFullDescription] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [isModalVisible, setIsModalVisible] = useState(false);
   const { appUser, updateNumberOfCartItems } = useAllContext();
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -118,13 +118,13 @@ function ShowProductDetails() {
     setButtonLoading(false);
   };
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
+  // const showModal = () => {
+  //   setIsModalVisible(true);
+  // };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  // const handleCancel = () => {
+  //   setIsModalVisible(false);
+  // };
   // console.log(productDetails);
   if (productDetails === null) {
     return <p>Loading</p>;
@@ -134,23 +134,26 @@ function ShowProductDetails() {
     return (
       <Layout className="layout-default">
         <CommonNavbar handleSearch={handleSearch} />
-        <Card className="show-productDetails-card">
-          <Row className="row-spd" justify="space-around" align="middle">
-            <Col xs={24} sm={24} md={6} lg={7} xl={8} className="column-spd">
-              {/* <div className="image-container"> */}
-              <img src={imageUrl} alt="Product" onClick={showModal} />
-              {/* </div> */}
+        <Card style={{ height: "100%" }}>
+          <Row justify="center" align="middle">
+            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
+              <Image
+                style={{ maxWidth: "250px" }}
+                src={imageUrl}
+                alt="Product" /*onClick={showModal}*/
+              />
             </Col>
-            <Col xs={24} sm={24} md={10} lg={9} xl={8} className="column-spd">
-              <div className="spd">
+
+            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
+              <div>
                 {productDetails ? (
-                  <div className="details-content ">
+                  <div>
                     <h1> {productDetails.name}</h1>
                     <span>Price:</span>
                     <strong> &#8377; {productDetails.price}</strong>
                     <Descriptions column={1} style={{ marginTop: 25 }}>
                       <Descriptions.Item>
-                        <div className="d-flex">
+                        <div>
                           <img
                             src={brandIcon}
                             alt="brandIcon"
@@ -164,7 +167,7 @@ function ShowProductDetails() {
                         </div>
                       </Descriptions.Item>
                       <Descriptions.Item>
-                        <div className="d-flex">
+                        <div>
                           <img
                             src={categoryIcon}
                             alt="categoryIcon"
@@ -178,7 +181,7 @@ function ShowProductDetails() {
                         </div>
                       </Descriptions.Item>
                       <Descriptions.Item>
-                        <div className="d-flex">
+                        <div>
                           <img
                             src={vendorIcon}
                             alt="vendonIcon"
@@ -198,43 +201,44 @@ function ShowProductDetails() {
                 )}
               </div>
             </Col>
-            <Col
-              xs={24}
-              sm={24}
-              md={8}
-              lg={8}
-              xl={8}
-              className="column-spd actionButtons-spd p-0"
-            >
-              <div className="div-buttons-spd w-100 text-center">
-                <div className="quantity-controls-spd d-flex justify-content-start">
-                  <p style={{ marginRight: 10 }}>Quantity </p>
+
+            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
+              <div className="quantity-container">
+                <div className="quantity-section">
+                  <p style={{ fontWeight: "bold", marginRight: "8px" }}>
+                    Quantity{" "}
+                  </p>
                   <Button type="default" onClick={decrementQuantity}>
                     <MinusOutlined />
                   </Button>
-                  <span style={{ marginLeft: 10, marginRight: 10 }}>
-                    {quantity}
-                  </span>
+                  <span style={{ padding: "5px" }}>{quantity}</span>
                   <Button type="default" onClick={incrementQuantity}>
                     <PlusOutlined />
                   </Button>
                 </div>
-                <Button
-                  className="add-to-cart-button"
-                  type="primary"
-                  onClick={handleAddToCart}
-                  loading={buttonLoading}
-                >
-                  Add to Cart
-                </Button>
-
-                <Button type="primary" className="buy-now-button">
-                  Buy Now
-                </Button>
+                <div className="button-section">
+                  <Row>
+                    <Col style={{ marginBottom: "10px" }} span={24}>
+                      <Button
+                        className="add-to-cart-button"
+                        type="primary"
+                        onClick={handleAddToCart}
+                        loading={buttonLoading}
+                      >
+                        Add to Cart
+                      </Button>
+                    </Col>
+                    <Col span={24}>
+                      <Button className="buy-now-button" type="primary">
+                        Buy Now
+                      </Button>
+                    </Col>
+                  </Row>
+                </div>
               </div>
             </Col>
           </Row>
-          <Row className="row-spd" style={{ marginTop: 10 }}>
+          <Row style={{ padding: "20px 40px" }}>
             <Col
               className="column-spd"
               style={{ paddingTop: 0 }}
@@ -248,21 +252,8 @@ function ShowProductDetails() {
               {/* <Collapse items={items} defaultActiveKey={["1"]} /> */}
             </Col>
           </Row>
-          {/* {showFullDescription
-              ? productDetails.description
-              : productDetails.description.slice(0, 150) + "..."}
-            {productDetails.description.length > 150 && (
-              <span
-                className="description-toggle"
-                onClick={() => setShowFullDescription(!showFullDescription)}
-              >
-                {showFullDescription ? " See less" : " Read more"}
-              </span>
-            )} */}
         </Card>
-        <Modal open={isModalVisible} onCancel={handleCancel} footer={null}>
-          <img src={imageUrl} alt="Product" />
-        </Modal>
+
         <Footer />
       </Layout>
     );
