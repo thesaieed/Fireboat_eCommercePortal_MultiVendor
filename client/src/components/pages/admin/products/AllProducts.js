@@ -16,6 +16,7 @@ import {
   Tooltip,
   Card,
   Typography,
+  Image,
 } from "antd";
 import {
   UploadOutlined,
@@ -34,7 +35,7 @@ function AllProducts() {
   const [brands, setBrands] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [imageModalVisible, setImageModalVisible] = useState(false);
+  // const [imageModalVisible, setImageModalVisible] = useState(false);
   const [descModalVisible, setDescModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { Option } = Select;
@@ -233,17 +234,17 @@ function AllProducts() {
       width: "10%",
 
       selector: (row) => (
-        <img
+        <Image
           // width={50}
           // height={50}
           src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
           alt=""
           style={{ cursor: "pointer" }}
-          onClick={() => {
-            setSelectedImage(row.image);
-            setImageModalVisible(true);
-          }}
-        ></img>
+          // onClick={() => {
+          //   setSelectedImage(row.image);
+          //   setImageModalVisible(true);
+          // }}
+        ></Image>
       ),
     },
     {
@@ -448,18 +449,18 @@ function AllProducts() {
           {/* {modalDescription} */}
         </Modal>
 
-        <Modal
+        {/* <Modal
           title="Image Preview"
           open={imageModalVisible}
           onCancel={() => setImageModalVisible(false)}
           footer={null}
-        >
-          <img
-            src={`http://localhost:5000/${selectedImage.replace(/\\/g, "/")}`}
-            alt=""
-            style={{ width: "100%" }}
-          />
-        </Modal>
+        > */}
+        <Image
+          src={`http://localhost:5000/${selectedImage.replace(/\\/g, "/")}`}
+          alt=""
+          style={{ width: "100%" }}
+        />
+        {/* </Modal> */}
 
         <Modal
           // title="Edit Product"
