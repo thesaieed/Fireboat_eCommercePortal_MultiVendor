@@ -29,6 +29,7 @@ import ShowProductDetails from "./components/pages/user/ShowProductDetails";
 import Cart from "./components/pages/user/Cart";
 import Browse from "./components/pages/user/Browse";
 import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
+import CheckOut from "./components/pages/user/CheckOut";
 //User Components End
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
           <Route path="/browse" element={<Browse />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/product" element={<ShowProductDetails />} />
+          <Route path ="/checkout" element = {<CheckOut/>}/>
           {/* user routes end */}
 
           {/* Admin Routes start */}
