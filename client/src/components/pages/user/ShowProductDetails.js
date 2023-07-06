@@ -216,25 +216,18 @@ function ShowProductDetails() {
                     <PlusOutlined />
                   </Button>
                 </div>
-                <div className="button-section">
-                  <Row>
-                    <Col style={{ marginBottom: "10px" }} span={24}>
-                      <Button
-                        className="add-to-cart-button"
-                        type="primary"
-                        onClick={handleAddToCart}
-                        loading={buttonLoading}
-                      >
-                        Add to Cart
-                      </Button>
-                    </Col>
-                    <Col span={24}>
-                      <Button className="buy-now-button" type="primary">
-                        Buy Now
-                      </Button>
-                    </Col>
-                  </Row>
-                </div>
+                <Button
+                  className="add-to-cart-button"
+                  type="default"
+                  onClick={handleAddToCart}
+                  loading={buttonLoading}
+                >
+                  Add to Cart
+                </Button>
+
+                <Button type="primary" className="buy-now-button">
+                  Buy Now
+                </Button>
               </div>
             </Col>
           </Row>

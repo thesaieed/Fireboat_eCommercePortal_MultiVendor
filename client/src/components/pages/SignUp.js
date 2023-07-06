@@ -1,8 +1,8 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 import {
   Layout,
-  Menu,
   Button,
   Typography,
   Card,
@@ -12,14 +12,7 @@ import {
   Alert,
 } from "antd";
 
-import {
-  TwitterOutlined,
-  InstagramOutlined,
-  FacebookOutlined,
-  UserOutlined,
-  IdcardOutlined,
-  LockOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, IdcardOutlined, LockOutlined } from "@ant-design/icons";
 
 // import logo1 from "../assets/images/logos-facebook.svg";
 // import logo2 from "../assets/images/logo-apple.svg";
@@ -34,10 +27,18 @@ const { /*Header,*/ Footer, Content } = Layout;
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  const [errorDescription, setErrorDescription] = useState();
   const [buttonLoading, setButtonLoading] = useState(false);
   const [form] = Form.useForm();
-  const { isValidToken, appUser } = useAllContext();
+  const {
+    isValidToken,
+    setAppUser,
+    appUser,
+    generateRandomString,
+    setIsValidToken,
+    setUserToken,
+    setUserTokenIsAdmin,
+  } = useAllContext();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -107,6 +108,91 @@ export default function SignUp() {
     );
     // console.log("Failed:", errorInfo);
   };
+  const handleGoogleauthCallback = useCallback(
+    async (response) => {
+      // console.log(response);
+      let user = jwt_decode(response.credential);
+      console.log("User:", user);
+      const values = {
+        googlename: user.name,
+        email: user.email,
+        email_verified: user.email_verified,
+      };
+      setButtonLoading(true);
+      const res = await axios.post("http://localhost:5000/googlelogin", values);
+      switch (res.data.loginStatus) {
+        case 200:
+          const userToken = generateRandomString(12);
+          // console.log("Res.data.user : ", res.data.user);
+          // console.log("Login UserToken : ", userToken);
+          localStorage.setItem("userToken", userToken);
+          localStorage.setItem("isa", false);
+          setUserToken(userToken);
+          setUserTokenIsAdmin(false);
+          setAppUser(res.data.user);
+          try {
+            await axios.post("http://localhost:5000/addusersloggedintokens", {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: false,
+            });
+            setIsValidToken(true);
+          } catch (err) {
+            console.error(err);
+          }
+          navigate("/");
+
+          break;
+        case 401:
+          // console.log("Invalid Credentials");
+          setErrorMessage("Invalid Credentials");
+          form.resetFields();
+          break;
+        case 404:
+          // console.log("User doesn't exist");
+          setErrorMessage("User not Found ! Please SignUp.");
+          form.resetFields();
+          break;
+        case 407:
+          // console.log("User doesn't exist");
+          setErrorMessage("Please Verify your Email");
+          setErrorDescription(
+            <code>
+              Verification Link has
+              <br /> been sent to your email.
+            </code>
+          );
+          form.resetFields();
+          break;
+        default:
+          // console.log("Something went wrong!");
+          setErrorMessage("Something went wrong!");
+      }
+      setButtonLoading(false);
+    },
+    [
+      form,
+      generateRandomString,
+      setAppUser,
+      setIsValidToken,
+      setUserToken,
+      setUserTokenIsAdmin,
+      navigate,
+    ]
+  );
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id:
+        "596752826368-2boo2fuobene9ibr1snijhbhgt20i1vc.apps.googleusercontent.com",
+      callback: handleGoogleauthCallback,
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("googleLoginButton"),
+      { theme: "outline", size: "large" }
+    );
+    google.accounts.id.prompt();
+  }, [handleGoogleauthCallback]);
   return (
     <>
       <div className="layout-default ant-layout layout-sign-up">
@@ -148,20 +234,13 @@ export default function SignUp() {
             title={<h5>Register With</h5>}
             bordered="false"
           >
-            {/* <div className="sign-up-gateways">
-              <Button type="false">
-                <img src={logo1} alt="logo 1" />
-              </Button>
-              <Button type="false">
-                <img src={logo2} alt="logo 2" />
-              </Button>
-              <Button type="false">
-                <img src={logo3} alt="logo 3" />
-              </Button>
-            </div>
-            <p className="text-center my-25 font-semibold text-muted">Or</p> */}
-
             {/* Form starts */}
+
+            <div
+              id="googleLoginButton"
+              style={{ width: "100%", textAlign: "center" }}
+            ></div>
+            <p className="text-center my-25 font-semibold text-muted">Or</p>
             <Form
               form={form}
               name="basic"
@@ -287,10 +366,14 @@ export default function SignUp() {
                 <Form.Item>
                   <Alert
                     message={errorMessage}
+                    description={errorDescription}
                     type="error"
                     showIcon
                     closable
-                    onClose={() => setErrorMessage("")}
+                    onClose={() => {
+                      setErrorMessage("");
+                      setErrorDescription();
+                    }}
                   />
                 </Form.Item>
               )}
@@ -328,24 +411,6 @@ export default function SignUp() {
           </Card>
         </Content>
         <Footer className="signupFooter">
-          {/* <Menu mode="horizontal">
-            <Menu.Item key="13">About Us</Menu.Item>
-
-            <Menu.Item key="15">Products</Menu.Item>
-            <Menu.Item key="16">Blogs</Menu.Item>
-            <Menu.Item key="17">Pricing</Menu.Item>
-          </Menu> */}
-          <Menu mode="horizontal" className="menu-nav-social">
-            <Menu.Item key="19">
-              <Link to="#">{<TwitterOutlined />}</Link>
-            </Menu.Item>
-            <Menu.Item key="20">
-              <Link to="#">{<InstagramOutlined />}</Link>
-            </Menu.Item>
-            <Menu.Item key="21">
-              <Link to="#">{<FacebookOutlined />}</Link>
-            </Menu.Item>
-          </Menu>
           <p className="copyright"> Copyright © 2021</p>
         </Footer>
       </div>
