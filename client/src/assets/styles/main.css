@@ -3738,15 +3738,13 @@ div.ant-upload {
 }
 
 .add-to-cart-button {
-
   /* background-color: #bff864; */
   width: 80%;
   margin-bottom: 1rem;
-
 }
 .buy-now-button {
   /* background-color: rgb(252, 197, 95); */
-  width: 200px;
+  width: 80%;
   color: #000;
 }
 
