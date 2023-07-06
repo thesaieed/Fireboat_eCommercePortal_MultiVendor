@@ -12,7 +12,11 @@ import {
   Typography,
   Image,
 } from "antd";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import {
+  MinusOutlined,
+  PlusOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import { Content } from "antd/lib/layout/layout";
@@ -241,11 +245,11 @@ function Cart() {
                       </p>
                       <p>Quantity: </p>
                       <Button onClick={() => decrementQuantity(index)}>
-                        -
+                        <MinusOutlined />
                       </Button>
-                      <span style={{ padding: "2px" }}>{item.quantity}</span>
+                      <span style={{ padding: "5px" }}>{item.quantity}</span>
                       <Button onClick={() => incrementQuantity(index)}>
-                        +
+                        <PlusOutlined />
                       </Button>
                     </Paragraph>
                   </div>
