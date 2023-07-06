@@ -65,11 +65,12 @@ const RightMenu = ({ mode }) => {
     {
       label: (
         <Link to="/login">
-          <UserOutlined />
-          <span style={{ fontWeight: 800 }}> Login</span>
+          <UserOutlined style={{ fontWeight: 600 }} />
+          <span style={{ fontWeight: 600 }}>Login</span>
         </Link>
       ),
       key: "loginLink",
+      style: { background: "transparent" },
     },
   ];
   const navMenuItems = [
@@ -150,12 +151,21 @@ const RightMenu = ({ mode }) => {
   ) : (
     <>
       <Menu mode={mode} className="navMenu" items={loginMenuItem} />
-      <Button type="link" className="Dropdown">
-        <Link to="/login">
-          <UserOutlined />
-          <span style={{ fontWeight: 800 }}> Login</span>
-        </Link>
-      </Button>
+      <Link to="/login">
+        <Button
+          type="link"
+          className="Dropdown"
+          style={{
+            background: "transparent",
+            color: "#000",
+            fontWeight: 600,
+            letterSpacing: 1,
+          }}
+          icon={<UserOutlined style={{ color: "#000" }} />}
+        >
+          Login
+        </Button>
+      </Link>
     </>
   );
 };

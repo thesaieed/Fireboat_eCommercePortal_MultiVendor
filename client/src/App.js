@@ -64,7 +64,7 @@ function App() {
           <Route path="/browse" element={<Browse />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/product" element={<ShowProductDetails />} />
-          <Route path ="/checkout" element = {<CheckOut/>}/>
+          <Route path="/checkout" element={<CheckOut />} />
           {/* user routes end */}
 
           {/* Admin Routes start */}
