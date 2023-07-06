@@ -75,6 +75,7 @@ const Browse = () => {
   const [searchTerms] = useState(
     searchParams.get("search")?.match(/("[^"]+"|[^"\s]+)/g)
   );
+  const [category] = useState(searchParams.get("category"));
   const baseImgUrl = "http://localhost:5000/";
 
   const { Paragraph, Title } = Typography;
@@ -99,51 +100,55 @@ const Browse = () => {
     });
   };
 
-  const getSearchResults = useCallback(async (params) => {
-    setLoading(true);
-    try {
-      const res = await axios.post("http://localhost:5000/search", {
-        searchTerms: params,
-      });
-      const brands = await axios.get("http://localhost:5000/brands");
-      // console.log("brands.data : ", brands.data);
-
-      const allVendors = await axios.get("http://localhost:5000/allvendors");
-
-      // console.log(allVendors);
-
-      if (!res.data.length) {
-        setNoProductMessage(true);
-        setBrowseProducts([]);
-        setShownProducts([]);
-      } else {
-        let products = [];
-        res.data.map((product) => {
-          products.push({
-            ...product,
-            brand: brands.data.find((brand) => {
-              if (brand.id === product.brand_id) return true;
-              else return false;
-            }),
-            vendor: allVendors.data.find((vendor) => {
-              if (vendor.id === product.vendor_id) return true;
-              else return false;
-            }),
-          });
-          return null;
+  const getSearchResults = useCallback(
+    async (params) => {
+      setLoading(true);
+      try {
+        const res = await axios.post("http://localhost:5000/search", {
+          searchTerms: params,
+          category: category,
         });
-        // console.log("prods : ", products);
-        setNoProductMessage(false);
-        setBrowseProducts(products);
-        setShownProducts(products);
-        setCategories([...new Set(products.map((x) => x.category))]);
-        setBrands([...new Set(products.map((x) => x.brand.brand))]);
-        setVendors([...new Set(products.map((x) => x.vendor.business_name))]);
-        priceRangeSet(products);
-      }
-    } catch (error) {}
-    setLoading(false);
-  }, []);
+        const brands = await axios.get("http://localhost:5000/brands");
+        // console.log("brands.data : ", brands.data);
+
+        const allVendors = await axios.get("http://localhost:5000/allvendors");
+
+        // console.log(allVendors);
+
+        if (!res.data.length) {
+          setNoProductMessage(true);
+          setBrowseProducts([]);
+          setShownProducts([]);
+        } else {
+          let products = [];
+          res.data.map((product) => {
+            products.push({
+              ...product,
+              brand: brands.data.find((brand) => {
+                if (brand.id === product.brand_id) return true;
+                else return false;
+              }),
+              vendor: allVendors.data.find((vendor) => {
+                if (vendor.id === product.vendor_id) return true;
+                else return false;
+              }),
+            });
+            return null;
+          });
+          // console.log("prods : ", products);
+          setNoProductMessage(false);
+          setBrowseProducts(products);
+          setShownProducts(products);
+          setCategories([...new Set(products.map((x) => x.category))]);
+          setBrands([...new Set(products.map((x) => x.brand.brand))]);
+          setVendors([...new Set(products.map((x) => x.vendor.business_name))]);
+          priceRangeSet(products);
+        }
+      } catch (error) {}
+      setLoading(false);
+    },
+    [category]
+  );
 
   const applyFilters = useCallback(() => {
     var filteredArray = [];
@@ -427,7 +432,7 @@ const Browse = () => {
             style={{ zIndex: 99990 }}
           >
             <BrowseSidebar
-              ortValue={sortValue}
+              sortValue={sortValue}
               onSortChange={onSortChange}
               categories={categories}
               brands={brands}
@@ -458,13 +463,14 @@ const Browse = () => {
               </Title> */}
             <Row justify="left" style={{ marginTop: 7, marginLeft: 25 }}>
               <Col>
-                <Title level={3}>
-                  Search Results for{" "}
-                  <span style={{ color: "#ff8400" }}>
-                    {" "}
-                    "{searchTerms.join(" ")}"{" "}
-                  </span>
-                </Title>
+                {!category?.length && (
+                  <Title level={3}>
+                    Search Results for{" "}
+                    <span style={{ color: "#689125" }}>
+                      "{searchTerms.join(" ")}"{" "}
+                    </span>
+                  </Title>
+                )}
               </Col>
             </Row>
             <Row

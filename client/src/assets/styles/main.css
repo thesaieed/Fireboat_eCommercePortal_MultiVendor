@@ -58,7 +58,7 @@
 .navbar-menu .rightMenu {
   float: right;
   display: flex;
-
+  margin-left: 10px;
   justify-content: center;
   align-items: center;
 }
@@ -75,12 +75,16 @@
   top: 0px;
   left: 0px;
   height: 32px;
-  padding: 6px;
-  margin-top: 10px;
+  /* padding: 6px; */
+  text-align: center;
+  margin-top: 3px;
   margin-left: 5px;
   display: none;
   background: none;
   margin-right: 10px;
+  /* background-color: #000; */
+  color: #508201;
+  border-color: #508201;
 }
 
 .ant-drawer-body {
@@ -113,6 +117,7 @@
   background: #fafafa !important;
 }
 .navMenu {
+  background: none !important;
   display: none;
 }
 .navLoginMenu {
@@ -123,8 +128,11 @@
 .navLoginBtn {
   background-color: #000 !important;
 }
-
+#searchBtn-searchButton-popup {
+  background: #dafaa7;
+}
 #searchBtn {
+  background: transparent;
   display: none;
 }
 #searchBtn svg {
@@ -164,15 +172,15 @@
   .rightMenu {
     display: none;
   }
-
+  .logo {
+    margin-left: 75px;
+  }
   .logo a {
     margin-left: -10px;
   }
 
-  .ant-drawer-title > .brand-font {
+  #brand-font {
     margin-bottom: 0;
-
-    color: #000 !important;
   }
 
   .username {
@@ -561,7 +569,7 @@ body {
 
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item .icon,
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .icon {
-  background-color: #ff8400 !important;
+  background-color: #8dc433 !important;
 }
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-item svg path,
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu svg path {
@@ -576,7 +584,7 @@ body {
   .ant-menu-submenu.ant-menu-item-selected
   .active,
 .layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .active {
-  border: 1px solid #ff8400;
+  border: 1px solid #689125;
 }
 
 .ant-btn-sm,
@@ -766,9 +774,6 @@ h4 {
   line-height: normal;
 }
 
-.ant-btn svg {
-  margin-right: 5px;
-}
 .header-control svg {
   width: 25px;
   height: 25px;
@@ -1532,7 +1537,7 @@ img {
 }
 
 .gradent {
-  background: url("../images/info-card-2.jpg") no-repeat center top;
+  /* background: url("../images/info-card-2.jpg") no-repeat center top; */
   background-size: cover;
   padding: 15px;
   border-radius: 15px;
@@ -2620,7 +2625,7 @@ section.ant-layout.layout-content .ant-layout-content.content-ant {
 }
 
 .card-credit {
-  background-image: url("../images/info-card-3.jpg");
+  /* background-image: url("../images/info-card-3.jpg"); */
   background-position: 50%;
   background-size: cover;
   border: none;
@@ -3499,6 +3504,18 @@ div.ant-upload {
 .overflow-hidden {
   overflow: hidden;
 }
+.one-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.calculatewidth {
+  /* background-color: #000 !important; */
+  width: calc(98vw - 200px) !important;
+}
 .two-lines {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -3522,7 +3539,7 @@ div.ant-upload {
   background-color: #fafafa;
 }
 .productContainer:hover h5 {
-  color: #f29309;
+  color: #689125;
 }
 .productImg {
   object-fit: scale-down;
@@ -3908,12 +3925,13 @@ div.ant-upload {
   color: #1890ff;
 }
 .add-to-cart-button {
+  /* background-color: #bff864; */
   width: 80%;
   margin-bottom: 1rem;
 }
 
 .buy-now-button {
-  background-color: rgb(252, 197, 95);
+  /* background-color: rgb(252, 197, 95); */
   color: #000;
   width: 80%;
 }
@@ -4045,4 +4063,146 @@ div.ant-upload {
     margin-top: 10px;
     margin-bottom: 0;
   }
+}
+#categoryNameCard {
+  max-width: 200px;
+  min-width: 200px;
+  height: 350px;
+  background: #e7fcc5;
+}
+
+@media (max-width: 1200px) {
+  #categoryNameCard {
+    max-width: 160px;
+    min-width: 160px;
+  }
+}
+@media (max-width: 1000px) {
+  #categoryNameCard {
+    max-width: 140px;
+    min-width: 140px;
+  }
+}
+@media (max-width: 800px) {
+  #categoryNameCard {
+    max-width: 120px;
+    min-width: 120px;
+  }
+}
+@media (max-width: 600px) {
+  #categoryNameCard {
+    max-width: 100px;
+    min-width: 100px;
+  }
+}
+
+#homeMainSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  /* width: 100vw; */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)),
+    url("../images/HomeBg1.jpg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  /* background-attachment: local; */
+  object-fit: cover;
+  background-size: cover;
+}
+#navSearchInput {
+  background: transparent;
+  color: #fff;
+}
+#homeBrowseButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  width: 70%;
+  text-align: end;
+  align-self: center;
+}
+#homeBrowseProductButton {
+  font-family: "Montserat", sans-serif;
+  letter-spacing: 2px;
+  font-weight: lighters;
+  color: #fff;
+  width: 200px;
+  height: 50px;
+  background: transparent;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+}
+#homeDownArrow {
+  margin-bottom: 20px;
+  margin-left: 50%;
+  color: #fff;
+}
+.mainHeading {
+  /* height: 75vh; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#homeMainTitle {
+  /* margin-top: 20vh; */
+  vertical-align: middle;
+  /* line-height: 80vh; */
+  text-align: center;
+  font-size: 15em;
+  font-family: "Barlow Condensed", sans-serif;
+}
+#homeMainText {
+  text-align: center;
+  font-size: 2em;
+  font-family: "Montserat", sans-serif;
+  margin-top: -30px;
+  margin-left: 12.5em;
+}
+@media (max-width: 900px) {
+  #homeMainTitle {
+    font-size: 12em;
+  }
+  #homeMainText {
+    font-size: 1.5em;
+    margin-left: 13em;
+  }
+  #homeBrowseButtonContainer {
+    width: 80%;
+  }
+}
+@media (max-width: 700px) {
+  #homeMainTitle {
+    font-size: 10em;
+  }
+  #homeMainText {
+    margin-left: 9em;
+  }
+  #homeBrowseButtonContainer {
+    width: 85%;
+  }
+}
+@media (max-width: 600px) {
+  #homeMainTitle {
+    font-size: 7em;
+  }
+  #homeMainText {
+    margin-top: -20px;
+    margin-left: 1.5em;
+  }
+}
+@media (max-width: 450px) {
+  #homeMainTitle {
+    font-size: 5em;
+  }
+  #homeMainText {
+    font-size: 1.1em;
+    margin-top: -15px;
+    margin-left: 1.1em;
+  }
+}
+#googleLoginButton iframe {
+  width: 100% !important;
 }

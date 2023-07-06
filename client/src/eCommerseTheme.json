@@ -1,48 +1,62 @@
 {
   "token": {
     "colorWarning": "#00cdaf",
-    "borderRadius": 4,
+    "borderRadius": 2,
     "wireframe": false,
     "sizeStep": 4,
     "sizeUnit": 4,
     "colorTextBase": "#000",
-    "colorPrimaryHover": "#f59d3f",
-    "colorPrimaryBgHover": "#f88f20",
-    "colorPrimaryBorder": "#ff8400",
-    "colorPrimaryBg": "#ff8400",
-    "colorPrimary": "#ff8400",
-    "colorPrimaryText": "#ff8400"
+    "colorPrimaryHover": "#9edd38",
+    "colorPrimaryBgHover": "#9edd38",
+    "colorPrimaryBorder": "#689125",
+    "colorPrimaryBg": "#8dc433",
+    "colorPrimary": "#86c61f",
+    "colorPrimaryText": "#8dc433",
+    "colorPrimaryBorderHover": "#7cad2b",
+    "colorSuccess": "#0ac20e",
+    "colorInfo": "#f78d1c",
+    "fontSize": 14
   },
   "components": {
     "Button": {
       "colorBgContainer": "#ffffff",
       "colorText": "rgba(0, 0, 0, 0.88)",
       "colorTextLightSolid": "#000",
-      "colorPrimaryHover": "#ffb752"
+      "colorPrimaryHover": "#9edd38",
+      "colorError": "#f72a2c",
+      "colorErrorActive": "#b30507",
+      "colorErrorHover": "#fc4749",
+      "colorLink": "#689125",
+      "colorLinkActive": "#496b12",
+      "colorLinkHover": "#9edd38"
     },
     "Divider": {
-      "colorSplit": "#fcd195"
+      "colorSplit": "#9edd38",
+      "colorText": "#7cb028"
     },
     "Breadcrumb": {
       "linkColor": "rgba(0, 0, 0, 0.45)",
       "linkHoverColor": "rgba(0, 0, 0, 0.88)",
-      "colorBgTextHover": "#fcd195"
+      "colorBgTextHover": "#c5fa6e"
     },
     "Dropdown": {
-      "controlItemBgHover": "#ffb752"
+      "controlItemBgHover": "#c5fa6e",
+      "colorPrimary": "#8dc433"
     },
     "Menu": {
       "colorPrimary": "#000",
       "colorFillContent": "rgba(0, 0, 0, 0.06)",
-      "colorBgTextHover": "#ffb752",
+      "colorBgTextHover": "#c5fa6e",
       "colorBgElevated": "#ffffff",
-      "colorBgContainer": "#ffffff"
+      "colorBgContainer": "#ffffff",
+      "controlItemBgActive": "#8ab83e"
     },
     "Pagination": {
-      "colorBgTextHover": "#ffb752"
+      "colorBgTextHover": "#c8fc72",
+      "colorBorder": "#689125"
     },
     "Rate": {
-      "starColor": "#ffb752"
+      "starColor": "#9edd38"
     },
     "Select": {
       "controlItemBgHover": "rgba(0, 0, 0, 0.04)"
@@ -52,22 +66,43 @@
       "colorFillAlter": "rgba(0, 0, 0, 0.02)"
     },
     "Carousel": {
-      "colorBgContainer": "#f88f20"
+      "colorBgContainer": "#8dc433",
+      "controlHeightLG": 50
     },
     "Collapse": {
-      "colorFillAlter": "#fffbf5"
+      "colorFillAlter": "#ebfccf"
     },
     "Descriptions": {
       "colorTextSecondary": "rgba(0, 0, 0, 0.65)",
-      "labelBg": "#fffbf5"
+      "labelBg": "#f3fae6"
     },
     "Segmented": {
-      "itemSelectedBg": "#F88F20",
+      "itemSelectedBg": "#8ab83e",
       "itemHoverBg": "rgba(0, 0, 0, 0.06)"
     },
     "Tooltip": {
-      "colorBgDefault": "#fad198",
+      "colorBgDefault": "#baf55b",
       "colorTextLightSolid": "#000"
+    },
+    "Typography": {
+      "colorLink": "#689125",
+      "colorLinkActive": "#496b12",
+      "colorLinkHover": "#9edd38",
+      "colorSuccess": "#35ad05"
+    },
+    "DatePicker": {
+      "colorIconHover": "#689125"
+    },
+    "Avatar": {
+      "borderRadius": 4,
+      "groupBorderColor": "#fff",
+      "colorTextPlaceholder": "#9edd38"
+    },
+    "Calendar": {
+      "controlItemBgActive": "#c1f768"
+    },
+    "Card": {
+      "colorFillAlter": "#ebfccf"
     }
   }
 }

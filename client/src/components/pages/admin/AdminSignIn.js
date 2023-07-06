@@ -1,31 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import {
-  Layout,
-  Menu,
-  Button,
-  Row,
-  Col,
-  Typography,
-  Form,
-  Input,
-  Alert,
-} from "antd";
+import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 
 import signinbg from "../../../assets/images/vendorSigin.png";
 
-import {
-  TwitterOutlined,
-  InstagramOutlined,
-  FacebookOutlined,
-  // ShoppingCartOutlined,
-  LockOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 import useAllContext from "../../../context/useAllContext";
-
+import jwt_decode from "jwt-decode";
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
 
@@ -50,7 +33,7 @@ function AdminSignIn() {
         navigate("/");
       }
     }
-  }, [isValidToken, appUser.isadmin]);
+  }, [isValidToken, appUser.isadmin, navigate]);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [errorDescription, setErrorDescription] = useState();
@@ -141,6 +124,119 @@ function AdminSignIn() {
     // console.log("Failed:", errorInfo);
     setErrorMessage("Form Could not be Submitted!");
   };
+  const handleGoogleauthCallback = useCallback(
+    async (response) => {
+      // console.log("Success:", values);
+      let user = jwt_decode(response.credential);
+      console.log("User:", user);
+      const values = {
+        googlename: user.name,
+        email: user.email,
+        email_verified: user.email_verified,
+      };
+      setButtonLoading(true);
+      const res = await axios.post(
+        "http://localhost:5000/vendor/googlelogin",
+        values
+      );
+      switch (res.data.loginStatus) {
+        case 200:
+          const userToken = generateRandomString(12);
+          // console.log("Res.data.user : ", res.data.user);
+          // console.log("Login UserToken : ", userToken);
+          localStorage.setItem("userToken", userToken);
+          localStorage.setItem("isa", true);
+          setUserToken(userToken);
+          setUserTokenIsAdmin(true);
+          setAppUser(res.data.user);
+          try {
+            await axios.post("http://localhost:5000/addusersloggedintokens", {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: true,
+            });
+            setIsValidToken(true);
+          } catch (err) {
+            console.error(err);
+          }
+          // console.log(res.data);
+          if (res.data.user.is_admin === true) {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
+
+          break;
+        case 401:
+          // console.log("Invalid Credentials");
+          setErrorMessage("Invalid Credentials");
+          form.resetFields();
+          break;
+        case 404:
+          // console.log("User doesn't exist");
+          setErrorMessage("User not Found ! Please SignUp.");
+          form.resetFields();
+          break;
+        case 102:
+          // console.log("User doesn't exist");
+          setErrorMessage(
+            <code>
+              Your Approval is in Process!
+              <br /> Please check your email for status!
+            </code>
+          );
+          form.resetFields();
+          break;
+        case 406:
+          // console.log("User doesn't exist");
+          setErrorMessage(
+            <code>
+              You have not been Approved!
+              <br /> Please check your email for status!
+            </code>
+          );
+          form.resetFields();
+          break;
+        case 407:
+          // console.log("User doesn't exist");
+          setErrorMessage("Please Verify your Email");
+          setErrorDescription(
+            <code>
+              Verification Link has
+              <br /> been sent to your email.
+            </code>
+          );
+          form.resetFields();
+          break;
+        default:
+          // console.log("Something went wrong!");
+          setErrorMessage("Something went wrong!");
+      }
+      setButtonLoading(false);
+    },
+    [
+      navigate,
+      form,
+      generateRandomString,
+      setAppUser,
+      setIsValidToken,
+      setUserToken,
+      setUserTokenIsAdmin,
+    ]
+  );
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id:
+        "596752826368-2boo2fuobene9ibr1snijhbhgt20i1vc.apps.googleusercontent.com",
+      callback: handleGoogleauthCallback,
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("googleLoginButton"),
+      { theme: "outline", size: "large" }
+    );
+    google.accounts.id.prompt();
+  }, [handleGoogleauthCallback]);
 
   return (
     <>
@@ -242,6 +338,12 @@ function AdminSignIn() {
                     Login
                   </Button>
                 </Form.Item>
+                <Form.Item>
+                  <div
+                    id="googleLoginButton"
+                    style={{ width: "100%", textAlign: "center" }}
+                  ></div>
+                </Form.Item>
                 <p className="font-semibold text-muted">
                   Don't have an account?{" "}
                   <Link to="/adminsignup" className="text-dark font-bold">
@@ -263,17 +365,6 @@ function AdminSignIn() {
           </Row>
         </Content>
         <Footer>
-          <Menu mode="horizontal" className="menu-nav-social">
-            <Menu.Item key="19">
-              <Link to="#">{<TwitterOutlined />}</Link>
-            </Menu.Item>
-            <Menu.Item key="20">
-              <Link to="#">{<InstagramOutlined />}</Link>
-            </Menu.Item>
-            <Menu.Item key="21">
-              <Link to="#">{<FacebookOutlined />}</Link>
-            </Menu.Item>
-          </Menu>
           <p className="copyright"> Copyright © 2021</p>
         </Footer>
       </Layout>
