@@ -221,7 +221,7 @@ function ShowProductDetails() {
                 </div>
                 <Button
                   className="add-to-cart-button"
-                  type="primary"
+                  type="default"
                   onClick={handleAddToCart}
                   loading={buttonLoading}
                 >

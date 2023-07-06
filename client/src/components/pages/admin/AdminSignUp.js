@@ -1,8 +1,7 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Layout,
-  Menu,
   Button,
   Typography,
   Card,
@@ -10,22 +9,18 @@ import {
   Input,
   Checkbox,
   Alert,
+  message,
 } from "antd";
 
 import {
-  TwitterOutlined,
-  InstagramOutlined,
-  FacebookOutlined,
   UserOutlined,
   IdcardOutlined,
   LockOutlined,
   MobileOutlined,
 } from "@ant-design/icons";
 
-// import logo1 from "../assets/images/logos-facebook.svg";
-// import logo2 from "../assets/images/logo-apple.svg";
-// import logo3 from "../assets/images/Google__G__Logo.svg.png";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import useAllContext from "../../../context/useAllContext";
 
@@ -35,10 +30,19 @@ const { /*Header,*/ Footer, Content } = Layout;
 export default function AdminSignUp() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  const [errorDescription, setErrorDescription] = useState();
   const [buttonLoading, setButtonLoading] = useState(false);
   const [form] = Form.useForm();
-  const { isValidToken, appUser } = useAllContext();
+  const {
+    isValidToken,
+    appUser,
+    setAppUser,
+    generateRandomString,
+    setIsValidToken,
+    setUserToken,
+
+    setUserTokenIsAdmin,
+  } = useAllContext();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -63,29 +67,7 @@ export default function AdminSignUp() {
       if (response.data.status === 200) {
         setErrorMessage("");
         setSuccessMessage(response.data.message);
-        //keep a userToken saved locally and in database to keep loggedIn
-        // const userToken = generateRandomString(12);
-        //set userToken in local Storage
-        // localStorage.setItem("userToken", userToken);
-        // setUserToken(userToken);
-        // setAppUser(response.data.user);
-        //add userToken to database
-        // try {
-        //   await axios.post("http://localhost:5000/addusersloggedintokens", {
-        //     token: userToken,
-        //     id: response.data.user.id,
-        //   });
-        //   setIsValidToken(true);
-        // } catch (err) {
-        //   console.error(err);
-        // }
         form.resetFields();
-
-        //   if (response.data.user.isadmin === true) {
-        //     navigate("/admin/dashboard");
-        //   } else {
-        //     navigate("/");
-        //   }
       } else {
         setErrorMessage(response.data.message);
         setSuccessMessage("");
@@ -110,6 +92,125 @@ export default function AdminSignUp() {
     );
     // console.log("Failed:", errorInfo);
   };
+  const handleGoogleauthCallback = useCallback(
+    async (response) => {
+      // console.log("Success:", values);
+      let user = jwt_decode(response.credential);
+      console.log("User:", user);
+      const values = {
+        googlename: user.name,
+        email: user.email,
+        email_verified: user.email_verified,
+      };
+      setButtonLoading(true);
+      const res = await axios.post(
+        "http://localhost:5000/vendor/googlelogin",
+        values
+      );
+      switch (res.data.loginStatus) {
+        case 200:
+          const userToken = generateRandomString(12);
+          // console.log("Res.data.user : ", res.data.user);
+          // console.log("Login UserToken : ", userToken);
+          localStorage.setItem("userToken", userToken);
+          localStorage.setItem("isa", true);
+          setUserToken(userToken);
+          setUserTokenIsAdmin(true);
+          setAppUser(res.data.user);
+          try {
+            await axios.post("http://localhost:5000/addusersloggedintokens", {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: true,
+            });
+            setIsValidToken(true);
+          } catch (err) {
+            console.error(err);
+          }
+          // console.log(res.data);
+          if (res.data.user.is_admin === true) {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
+
+          break;
+        case 401:
+          // console.log("Invalid Credentials");
+          setErrorMessage("Invalid Credentials");
+          form.resetFields();
+          break;
+        case 404:
+          // console.log("User doesn't exist");
+          setErrorMessage("User not Found ! Please SignUp.");
+          form.resetFields();
+          break;
+        case 102:
+          // console.log("User doesn't exist");
+          message.success(
+            <code>
+              Your Approval is in Process!
+              <br /> Please check your email for status!
+            </code>
+          );
+          setErrorMessage(
+            <code>
+              Your Approval is in Process!
+              <br /> Please check your email for status!
+            </code>
+          );
+          form.resetFields();
+          break;
+        case 406:
+          // console.log("User doesn't exist");
+          setErrorMessage(
+            <code>
+              You have not been Approved!
+              <br /> Please check your email for status!
+            </code>
+          );
+          form.resetFields();
+          break;
+        case 407:
+          // console.log("User doesn't exist");
+          setErrorMessage("Please Verify your Email");
+          setErrorDescription(
+            <code>
+              Verification Link has
+              <br /> been sent to your email.
+            </code>
+          );
+          form.resetFields();
+          break;
+        default:
+          // console.log("Something went wrong!");
+          setErrorMessage("Something went wrong!");
+      }
+      setButtonLoading(false);
+    },
+    [
+      form,
+      generateRandomString,
+      setAppUser,
+      setIsValidToken,
+      setUserToken,
+      setUserTokenIsAdmin,
+      navigate,
+    ]
+  );
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id:
+        "596752826368-2boo2fuobene9ibr1snijhbhgt20i1vc.apps.googleusercontent.com",
+      callback: handleGoogleauthCallback,
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("googleLoginButton"),
+      { theme: "outline", size: "large" }
+    );
+    google.accounts.id.prompt();
+  }, [handleGoogleauthCallback]);
   return (
     <>
       <div className="layout-default ant-layout layout-sign-up">
@@ -163,7 +264,11 @@ export default function AdminSignUp() {
               </Button>
             </div>
             <p className="text-center my-25 font-semibold text-muted">Or</p> */}
-
+            <div
+              id="googleLoginButton"
+              style={{ width: "100%", textAlign: "center" }}
+            ></div>
+            <p className="text-center my-25 font-semibold text-muted">Or</p>
             {/* Form starts */}
             <Form
               form={form}
@@ -288,10 +393,14 @@ export default function AdminSignUp() {
                 <Form.Item>
                   <Alert
                     message={errorMessage}
+                    description={errorDescription}
                     type="error"
                     showIcon
                     closable
-                    onClose={() => setErrorMessage("")}
+                    onClose={() => {
+                      setErrorMessage("");
+                      setErrorDescription();
+                    }}
                   />
                 </Form.Item>
               )}
@@ -329,24 +438,6 @@ export default function AdminSignUp() {
           </Card>
         </Content>
         <Footer className="signupFooter">
-          {/* <Menu mode="horizontal">
-            <Menu.Item key="13">About Us</Menu.Item>
-
-            <Menu.Item key="15">Products</Menu.Item>
-            <Menu.Item key="16">Blogs</Menu.Item>
-            <Menu.Item key="17">Pricing</Menu.Item>
-          </Menu> */}
-          <Menu mode="horizontal" className="menu-nav-social">
-            <Menu.Item key="19">
-              <Link to="#">{<TwitterOutlined />}</Link>
-            </Menu.Item>
-            <Menu.Item key="20">
-              <Link to="#">{<InstagramOutlined />}</Link>
-            </Menu.Item>
-            <Menu.Item key="21">
-              <Link to="#">{<FacebookOutlined />}</Link>
-            </Menu.Item>
-          </Menu>
           <p className="copyright"> Copyright © 2021</p>
         </Footer>
       </div>
