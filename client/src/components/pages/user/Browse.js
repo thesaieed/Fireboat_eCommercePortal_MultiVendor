@@ -14,7 +14,7 @@ import LoadingScreen from "../../layout/LoadingScreen";
 import { useState, useEffect, useCallback } from "react";
 import useAllContext from "../../../context/useAllContext";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-
+import StarRatings from "react-star-ratings";
 import axios from "axios";
 import BrowseSidebar from "./BrowseSidebar";
 import { FilterOutlined } from "@ant-design/icons";
@@ -51,6 +51,9 @@ const Browse = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedVendors, setSelectedVendors] = useState([]);
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  };
   const onSortChange = (e) => {
     setSortValue(e.target.value);
   };
@@ -83,6 +86,7 @@ const Browse = () => {
   const { Content, Sider } = Layout;
 
   const onPageChange = (page) => {
+    scrollToTop();
     setCurrentPage(page);
   };
 
@@ -104,9 +108,10 @@ const Browse = () => {
     async (params) => {
       setLoading(true);
       try {
+        // console.log(params);
         const res = await axios.post("http://localhost:5000/search", {
           searchTerms: params,
-          category: category,
+          category: category?.length ? category : null,
         });
         const brands = await axios.get("http://localhost:5000/brands");
         // console.log("brands.data : ", brands.data);
@@ -144,7 +149,9 @@ const Browse = () => {
           setVendors([...new Set(products.map((x) => x.vendor.business_name))]);
           priceRangeSet(products);
         }
-      } catch (error) {}
+      } catch (error) {
+        // console.log(error);
+      }
       setLoading(false);
     },
     [category]
@@ -349,6 +356,20 @@ const Browse = () => {
                   &#8377; {product.price}
                 </Paragraph>
               </Row>
+              <Row>
+                <div>
+                  <StarRatings
+                    rating={product.avg_rating}
+                    starRatedColor="#86c61f"
+                    numberOfStars={5}
+                    name="mainAvgRating"
+                    starDimension="25px"
+                    starSpacing="1px"
+                  />
+                  <strong> ({product.avg_rating.toFixed(1)}) </strong>
+                </div>
+              </Row>
+
               <Row
                 style={{ height: 41 }}
                 className="two-lines"

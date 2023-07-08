@@ -1388,6 +1388,9 @@ span.blue {
 .align-items-end {
   align-items: end !important;
 }
+.align-items-baseline {
+  align-items: baseline !important;
+}
 .align-items-start {
   align-items: start !important;
 }
@@ -3826,7 +3829,7 @@ div.ant-upload {
 }
 #navSearchInput {
   background: transparent;
-  color: #fff;
+  color: #000;
 }
 #homeBrowseButtonContainer {
   display: flex;
@@ -3919,4 +3922,11 @@ div.ant-upload {
 }
 #googleLoginButton iframe {
   width: 100% !important;
+}
+.ratingModal {
+  max-width: 100%;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  /* display: flex; */
 }
