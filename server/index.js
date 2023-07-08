@@ -10,7 +10,8 @@ const { verifyEmail } = require("./utils/verifyEmail");
 var jwt = require("jsonwebtoken");
 const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
 const vendorRoutes = require("./routes/vendor");
-const { error } = require("console");
+const reviewRoutes = require("./routes/review");
+const { error, log } = require("console");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -29,6 +30,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use("/vendor", vendorRoutes);
+app.use("/review", reviewRoutes);
 
 //login route
 app.post("/login", async (req, res) => {
@@ -542,7 +544,7 @@ app.post("/userdetails", async (req, res) => {
 
 //route to handle get product details for a specific product
 app.get("/admin/productdetails", async (req, res) => {
-  const productId = req.query.id;
+  const { productId, userId } = req.query;
   // console.log(productId)
   try {
     let productDetails = await pool.query(
@@ -560,9 +562,21 @@ app.get("/admin/productdetails", async (req, res) => {
         "select business_name from vendors where id =$1",
         [productDetails.rows[0].vendor_id]
       );
+
       productDetails.rows[0].brand = brandDetails.rows[0].brand;
       productDetails.rows[0].vendor = vendorDetails.rows[0].business_name;
       // console.log("prod : ", productDetails.rows[0]);
+      var userReviewforProduct;
+      const usersreview = await pool.query(
+        "select rating,review from reviews where user_id=$1 AND product_id=$2",
+        [userId, productId]
+      );
+      if (usersreview.rowCount > 0) {
+        userReviewforProduct = usersreview.rows[0];
+      } else {
+        userReviewforProduct = [];
+      }
+      productDetails.rows[0].userReviewforProduct = userReviewforProduct;
       res.send(productDetails.rows[0]);
     }
   } catch (error) {

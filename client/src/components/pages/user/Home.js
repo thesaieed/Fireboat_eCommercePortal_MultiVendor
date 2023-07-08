@@ -4,7 +4,7 @@ import { Row, Col, Typography, Layout, Card, Button } from "antd";
 
 import { DownOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-
+import StarRatings from "react-star-ratings";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import LoadingScreen from "../../layout/LoadingScreen";
@@ -181,6 +181,19 @@ const Home = () => {
                   />
                   <strong>Product vendor</strong>
                 </Paragraph> */}
+                    </Row>{" "}
+                    <Row>
+                      <div>
+                        <StarRatings
+                          rating={product.avg_rating}
+                          starRatedColor="#86c61f"
+                          numberOfStars={5}
+                          name="mainAvgRating"
+                          starDimension="20px"
+                          starSpacing="1px"
+                        />
+                        <strong> ({product.avg_rating.toFixed(1)}) </strong>
+                      </div>
                     </Row>
                     <Row>
                       <Paragraph className="productPrice ">
