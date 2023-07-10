@@ -170,7 +170,7 @@ function SignIn() {
     /* global google */
     google.accounts.id.initialize({
       client_id:
-        "596752826368-2boo2fuobene9ibr1snijhbhgt20i1vc.apps.googleusercontent.com",
+        "402186760945-tk052016gctjgnh0cj8ido7elii6uuur.apps.googleusercontent.com",
       callback: handleGoogleauthCallback,
     });
     google.accounts.id.renderButton(
