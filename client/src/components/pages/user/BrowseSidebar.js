@@ -9,10 +9,12 @@ import {
   Space,
   Button,
 } from "antd";
-
+import { StarFilled } from "@ant-design/icons";
 function BrowseSidebar({
   sortValue,
+  sortAvgRating,
   onSortChange,
+  onsortAvgRatingChange,
   categories,
   brands,
   vendors,
@@ -249,6 +251,31 @@ function BrowseSidebar({
       </div>
       <div>
         <hr />
+      </div>
+
+      <div className="sidebarSubHeading">
+        <div>Customer Ratings</div>
+        <div>
+          <Radio.Group value={sortAvgRating} onChange={onsortAvgRatingChange}>
+            <Space direction="vertical">
+              <Radio value={4}>
+                4 <StarFilled /> & above
+              </Radio>
+              <Radio value={3}>
+                3 <StarFilled /> & above
+              </Radio>
+              <Radio value={2}>
+                2 <StarFilled /> & above
+              </Radio>
+              <Radio value={1}>
+                1 <StarFilled /> & above
+              </Radio>
+              <Radio value={0}>
+                0 <StarFilled /> & above
+              </Radio>
+            </Space>
+          </Radio.Group>
+        </div>
       </div>
       <div>
         <Button type="link" onClick={clearAllFilters}>

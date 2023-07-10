@@ -28,6 +28,7 @@ import {
 import useAllContext from "../../../../context/useAllContext";
 import TextEditor from "./TextEditor";
 import LoadingScreen from "../../../layout/LoadingScreen";
+import StarRatings from "react-star-ratings";
 
 function AllProducts() {
   const [search, setSearch] = useState("");
@@ -35,7 +36,6 @@ function AllProducts() {
   const [brands, setBrands] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  // const [imageModalVisible, setImageModalVisible] = useState(false);
   const [descModalVisible, setDescModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { Option } = Select;
@@ -45,7 +45,7 @@ function AllProducts() {
   const { categories, fetchCategories, appUser } = useAllContext();
   const [selectedRowData, setSelectedRowData] = useState({});
   const [selectedRowId, setSelectedRowId] = useState(null);
-  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedImage] = useState("");
   const [refreshPage, setRefreshPage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState([]);
@@ -239,7 +239,7 @@ function AllProducts() {
           // height={50}
           src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
           alt=""
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", padding: 7, height: "80%" }}
           // onClick={() => {
           //   setSelectedImage(row.image);
           //   setImageModalVisible(true);
@@ -269,9 +269,20 @@ function AllProducts() {
               Seller : <strong>{row.vendor.business_name}</strong>
             </p>
           )}
-
+          <div>
+            <StarRatings
+              rating={row.avg_rating}
+              starRatedColor="#86c61f"
+              numberOfStars={5}
+              name="mainAvgRating"
+              starDimension="15px"
+              starSpacing="1px"
+            />
+            <strong> ({row.avg_rating.toFixed(1)}) </strong>
+          </div>
           <p className="mt-0">Description : </p>
           <p
+            style={{ marginLeft: 10 }}
             className="three-lines m-0"
             dangerouslySetInnerHTML={{ __html: row.description }}
           ></p>
@@ -386,7 +397,7 @@ function AllProducts() {
     },
     rows: {
       style: {
-        height: "230px",
+        height: "250px",
         width: "100%",
       },
     },
@@ -612,10 +623,7 @@ function AllProducts() {
             </Row>
             <Row>
               <Text>Description </Text>
-              <Text italic disabled>
-                (* if styling doesn't appear in the box properly, close and open
-                the edit window again!)
-              </Text>
+
               <Col
                 style={{
                   padding: ".5rem",

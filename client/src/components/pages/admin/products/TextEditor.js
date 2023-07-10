@@ -1,56 +1,56 @@
-import React from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import React, { useRef } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 
-const modules = {
-  toolbar: [
-    [{ header: [false, 2, 3, false] }],
-    [{ font: [] }],
-    [{ align: [] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
-    ],
-    [{ script: "sub" }, { script: "super" }],
-    ["link", "code"],
-    ["clean"],
-  ],
-};
+function TextEditor({ textDesc, setTextDesc }) {
+  const editorRef = useRef(null);
+  const log = () => {
+    if (editorRef.current) {
+      console.log(editorRef.current.getContent());
+    }
+  };
+  const oninitialise = (evt, editor) => {
+    editorRef.current = editor;
+  };
 
-// const formats = [
-//   "header",
-//   "bold",
-//   "italic",
-//   "underline",
-//   "strike",
-//   "blockquote",
-//   "list",
-//   "bullet",
-//   "indent",
-//   "link",
-//   "code",
-//   "clean",
-// ];
-
-function TextEditor({
-  textDesc,
-  setTextDesc,
-  placeholder = "Product Description",
-}) {
   return (
-    <ReactQuill
-      placeholder={placeholder}
-      theme="snow"
-      defaultValue={textDesc}
+    <Editor
+      apiKey="ql6pvhv4un718nay28ae85cjkpt88yo9r1m7flexpn68ndnj"
+      onInit={oninitialise}
       value={textDesc}
-      onChange={setTextDesc}
-      // formats={formats}
-      modules={modules}
+      onEditorChange={(e) => setTextDesc(e)}
+      init={{
+        height: 300,
+        menubar: false,
+        plugins: [
+          "advlist",
+          "autolink",
+          "lists",
+          "link",
+          "charmap",
+          "preview",
+          "anchor",
+          "searchreplace",
+          "visualblocks",
+          "code",
+          "fullscreen",
+          "insertdatetime",
+          "table",
+          "code",
+          "help",
+          // "wordcount",
+        ],
+
+        branding: false,
+        statusbar: false,
+        toolbar:
+          "undo redo | t " +
+          "bold italic | alignleft aligncenter alignright alignjustify |" +
+          "bullist numlist | outdent indent | " +
+          "removeformat | help",
+        content_style:
+          "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+      }}
     />
   );
 }
-
 export default TextEditor;

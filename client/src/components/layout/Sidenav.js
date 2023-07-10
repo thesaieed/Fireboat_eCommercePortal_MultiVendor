@@ -272,9 +272,18 @@ function Sidenav({ color }) {
 
   return (
     <>
-      <div className="brand">
+      <div className="brand d-flex justify-content-start align-items-center">
         <img src={logo} alt="" />
-        <span>AlSaleels</span>
+        <span
+          style={{
+            fontSize: 35,
+            fontFamily: "poppins",
+            fontWeight: 400,
+            marginTop: 2,
+          }}
+        >
+          NILE
+        </span>
       </div>
       <hr />
 
