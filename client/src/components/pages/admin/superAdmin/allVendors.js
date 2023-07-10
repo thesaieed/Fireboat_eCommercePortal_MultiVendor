@@ -41,7 +41,7 @@ function AllVendors() {
       navigate("/admin/dashboard");
     }
     fetchVendors();
-  }, [fetchVendors, appUser.is_super_admin]);
+  }, [fetchVendors, appUser.is_super_admin, navigate]);
 
   useEffect(() => {
     const result = vendors.filter((vendor) => {
@@ -259,14 +259,17 @@ function AllVendors() {
           paginationRowsPerPageOptions={[5, 10, 15, 20]}
           subHeader
           subHeaderComponent={
-            <Input
-              prefix={<SearchOutlined />}
-              type="text"
-              placeholder="Search Products "
-              style={{ width: "20em", marginBottom: 10 }}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div style={{ width: "20em", marginBottom: 10 }}>
+              <Input
+                prefix={<SearchOutlined />}
+                type="text"
+                placeholder="Search Vendors "
+                style={{ width: "100%" }}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <p className="productsscrollformore">{"Scroll for More -->"}</p>
+            </div>
           }
           subHeaderAlign="right"
         />

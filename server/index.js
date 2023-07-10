@@ -10,6 +10,8 @@ const { verifyEmail } = require("./utils/verifyEmail");
 var jwt = require("jsonwebtoken");
 const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
 const vendorRoutes = require("./routes/vendor");
+const reviewRoutes = require("./routes/review");
+const { error, log } = require("console");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -28,6 +30,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use("/vendor", vendorRoutes);
+app.use("/review", reviewRoutes);
 
 //login route
 app.post("/login", async (req, res) => {
@@ -43,10 +46,13 @@ app.post("/login", async (req, res) => {
 
     if (foundUser.rows.length > 0) {
       // if email exists, a row array is sent back in foundUser obj
-      const passwordMatched = await bcrypt.compare(
-        password,
-        foundUser.rows[0].password
-      ); //checking if body password === db.password
+      let passwordMatched = false;
+      if (foundUser.rows[0].password != null) {
+        passwordMatched = await bcrypt.compare(
+          password,
+          foundUser.rows[0].password
+        ); //checking if body password === db.password}
+      }
       // console.log("result login hashCheck : ", passwordMatched);
       if (passwordMatched) {
         const { id, name, isadmin, isemailverified } = foundUser.rows[0];
@@ -62,6 +68,44 @@ app.post("/login", async (req, res) => {
       }
     } else {
       data = { loginStatus: 404 }; //if no user found, that means user entered wrong info
+    }
+
+    res.send(data); //finaly send the data variable(obj)
+  } catch (error) {
+    console.log("Error : ", error.message);
+  }
+});
+app.post("/googlelogin", async (req, res) => {
+  // console.log("body: ", req.body);
+  try {
+    // console.log(req.body);
+    const { email, googlename, email_verified } = req.body; //geting data from body
+    let data = {}; // defing data obj to be sent back based on diffent conditions below
+
+    const foundUser = await pool.query(
+      `select * from users where email='${email}'`
+    ); //checking if the email exists in db
+
+    if (foundUser.rows.length > 0) {
+      // if email exists, a row array is sent back in foundUser obj
+
+      // console.log("result login hashCheck : ", passwordMatched);
+      const { id, name, isadmin, isemailverified } = foundUser.rows[0];
+      if (!isemailverified) {
+        await generateTokenAndSendMail(id, email);
+        data = { loginStatus: 407 };
+      } else {
+        data = { loginStatus: 200, user: { id, name, isadmin } };
+      }
+    } else {
+      const newUser = await pool.query(
+        // `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
+        "INSERT INTO users(name, email, isemailverified) VALUES ($1, $2, $3) RETURNING *",
+        [googlename, email, email_verified]
+      );
+      const { id, name, isadmin } = newUser.rows[0];
+      // console.log("Invalid Credentials");
+      data = { loginStatus: 200, user: { id, name, isadmin } }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
     }
 
     res.send(data); //finaly send the data variable(obj)
@@ -500,7 +544,7 @@ app.post("/userdetails", async (req, res) => {
 
 //route to handle get product details for a specific product
 app.get("/admin/productdetails", async (req, res) => {
-  const productId = req.query.id;
+  const { productId, userId } = req.query;
   // console.log(productId)
   try {
     let productDetails = await pool.query(
@@ -518,9 +562,21 @@ app.get("/admin/productdetails", async (req, res) => {
         "select business_name from vendors where id =$1",
         [productDetails.rows[0].vendor_id]
       );
+
       productDetails.rows[0].brand = brandDetails.rows[0].brand;
       productDetails.rows[0].vendor = vendorDetails.rows[0].business_name;
       // console.log("prod : ", productDetails.rows[0]);
+      var userReviewforProduct;
+      const usersreview = await pool.query(
+        "select rating,review from reviews where user_id=$1 AND product_id=$2",
+        [userId, productId]
+      );
+      if (usersreview.rowCount > 0) {
+        userReviewforProduct = usersreview.rows[0];
+      } else {
+        userReviewforProduct = [];
+      }
+      productDetails.rows[0].userReviewforProduct = userReviewforProduct;
       res.send(productDetails.rows[0]);
     }
   } catch (error) {
@@ -531,10 +587,22 @@ app.get("/admin/productdetails", async (req, res) => {
 
 //searchProducts
 app.post("/search", async (req, res) => {
-  const { searchTerms } = req.body;
+  // console.log(req.body);
+  const { searchTerms, category } = req.body;
   let queryTerm = "";
+
   //send all Products if searchTerm = allProducts.. else search the database
-  if ("allProducts".includes(searchTerms)) {
+  if ("categoryProducts".includes(searchTerms)) {
+    try {
+      const searchResult = await pool.query(
+        `SELECT * FROM products where category='${category}'`
+      );
+      res.send(searchResult.rows);
+    } catch (err) {
+      console.error(err);
+      res.send([]);
+    }
+  } else if ("allProducts".includes(searchTerms)) {
     try {
       const searchResult = await pool.query(`SELECT * FROM products`);
       res.send(searchResult.rows);
@@ -924,6 +992,37 @@ app.get("/allvendors", async (req, res) => {
     console.error(err);
     res.send([]);
   }
+});
+
+//HomePage Routes
+app.get("/homedata", async (req, res) => {
+  let homeData = [];
+  try {
+    //get all categories
+    var categories = await pool.query("select id,name from categories");
+    // categories = categories.rows.map((categoryObject) => {
+    //   return categoryObject.name;
+    // });
+    categories = categories.rows;
+
+    for (category of categories) {
+      const categoryName = category.name;
+      try {
+        var categoryProducts = await pool.query(
+          `select * from products where category_id=${category.id}`
+        );
+        // console.log(categoryProducts);
+        // homeData[`${categoryName}`] = categoryProducts.rows;
+        homeData.push({ [categoryName]: categoryProducts.rows });
+        // console.log("homeData: ", homeData);
+      } catch (categoryWiseError) {
+        console.error(categoryWiseError);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  res.send({ homeData: homeData });
 });
 //route to handle get request for shipping addresses
 app.get("/shippingaddress", async (req, res) => {

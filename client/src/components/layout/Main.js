@@ -25,7 +25,7 @@ const { Header: AntHeader, Content, Sider } = Layout;
 function Main() {
   const [visible, setVisible] = useState(false);
   const [placement] = useState("right");
-  const [sidenavColor, setSidenavColor] = useState("#f59d3f");
+  const [sidenavColor, setSidenavColor] = useState("#86c61f");
   const [sidenavType, setSidenavType] = useState("transparent");
   const [fixed, setFixed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +60,7 @@ function Main() {
 
       // console.log("isLoading :", isLoading);
     }
-  }, [userToken, isValidToken, fetchUserDetails, isLoading]);
+  }, [userToken, isValidToken, fetchUserDetails, isLoading, navigate]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -76,7 +76,7 @@ function Main() {
     } else if (appUser.is_admin) {
       setIsLoading(false);
     }
-  }, [appUser]);
+  }, [appUser, navigate]);
 
   return isLoading ? (
     <LoadingScreen />
