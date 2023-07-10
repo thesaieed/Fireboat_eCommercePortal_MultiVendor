@@ -1,16 +1,16 @@
 const { sendMail } = require("./sendMail");
 
 module.exports.sendApprovalMail = async (name, email) => {
-  const subject = "Your Registration has been Approved with AlSaleels!";
+  const subject = "Your Registration has been Approved with NILE!";
   const body = `<div
   class="container"
   style="max-width: 90%; margin: auto; padding-top: 20px"
 >
   <h1> Hi ${name}, </h1> 
-  <h2>Welcome to AlSaleels.</h2>
+  <h2>Welcome to NILE.</h2>
   <p style="margin-bottom: 30px;">Congratulations! Your Registration has been Approved! You can now access your Admin Panel by Loggin in as Vendor in the Vendor Login Page.  </p>
 
-  <a href="http://localhost:3000/adminlogin" style="background-color: #f59d3f; border: none;
+  <a href="http://localhost:3000/adminlogin" style="background-color: #86c61f; border: none;
   color: #000000;
   padding: 15px 32px;
   text-align: center;
