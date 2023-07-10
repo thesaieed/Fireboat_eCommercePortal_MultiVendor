@@ -72,7 +72,16 @@ const CommonNavbar = ({ handleSearch }) => {
             alt="logo"
             style={{ marginBottom: 19, marginLeft: -10, marginRight: 3 }}
           />
-          <h3 id="brand-font">AlSaleels</h3>
+          <h3
+            id="brand-font"
+            style={{
+              fontSize: 35,
+              fontFamily: "poppins",
+              fontWeight: 400,
+            }}
+          >
+            NILE
+          </h3>
         </Link>
       </div>
       <div className="navbar-menu">

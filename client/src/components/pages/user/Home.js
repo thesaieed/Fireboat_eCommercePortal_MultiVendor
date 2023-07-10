@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Row, Col, Typography, Layout, Card, Button } from "antd";
 
-import { DownOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { DownOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { useNavigate, Link } from "react-router-dom";
 import StarRatings from "react-star-ratings";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import LoadingScreen from "../../layout/LoadingScreen";
 
-import Carousel from "react-grid-carousel";
-
+// import Carousel from "react-grid-carousel";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import "@splidejs/react-splide/css";
 import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
 
@@ -56,155 +57,188 @@ const Home = () => {
       return (
         <Row
           key={`RowMain${key}`}
-          // gutter={[24, 0]}
-          justify="start"
-          align="middle"
           style={{
-            marginBottom: 20,
-            maxWidth: "100%",
-            flexWrap: "nowrap",
-            padding: 5,
-            // background: "lightblue",
+            background: "#fff",
+            marginTop: 20,
+            marginRight: 0,
+            padding: 0,
           }}
         >
-          <Card
-            key={`CardMain${key}`}
-            className="d-flex align-items-center justify-content-center"
-            hoverable
-            id="categoryNameCard"
-            onClick={() =>
-              navigate(`/browse/?search=categoryProducts&category=${key}`)
-            }
+          <Col
+            xs={24}
+            sm={6}
+            md={4}
+            lg={3}
+            style={{
+              display: "flex",
+              alignItems: "stretch",
+              justifyContent: "center",
+              margin: 0,
+              padding: 0,
+            }}
+            className="homeRowColumn categoryColHome"
           >
-            <Row className="d-flex  justify-content-center align-items-center">
-              <Title
+            <div
+              key={`CardMain${key}`}
+              className="d-flex flex-column align-items-center justify-content-center"
+              // hoverable
+              id="categoryNameCard"
+              onClick={() =>
+                navigate(`/browse/?search=categoryProducts&category=${key}`)
+              }
+              style={{
+                margin: 10,
+                marginRight: 0,
+                minWidth: "100%",
+              }}
+            >
+              <img src={categoryIcon} alt="categoryIcon"></img>
+              <span
+                id="categoryName"
                 className="one-line"
-                level={5}
                 style={{
-                  height: "100%",
+                  fontWeight: 500,
+                  color: "#000",
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  marginRight: 0,
                 }}
               >
                 {key}
-              </Title>
-            </Row>
-          </Card>
-
-          <Carousel
-            key={`CarouselMain${key}`}
-            cols={5}
-            rows={1}
-            gap={10}
-            mobileBreakpoint={500}
-            responsiveLayout={[
-              { breakpoint: 1380, cols: 4 },
-              { breakpoint: 1150, cols: 3 },
-              { breakpoint: 850, cols: 2 },
-              { breakpoint: 650, cols: 1 },
-            ]}
+              </span>
+            </div>
+          </Col>
+          <Col
+            xs={24}
+            sm={18}
+            md={20}
+            lg={21}
+            className="homeRowColumn"
+            style={{ marginRight: 0, padding: 0 }}
           >
-            {products.map((product, index) => {
-              if (index > 5) return null;
-              return (
-                <Carousel.Item key={`Carousel${key}${index}`}>
-                  <Card
-                    key={`Card${key}${index}`}
-                    // className="productContainer"
-
-                    onClick={() => navigate(`/product/?id=${product.id}`)}
-                    hoverable
-                    cover={
+            <Splide
+              key={`CarouselMain${key}`}
+              aria-label="CategoryProducts"
+              options={{
+                rewind: true,
+                autoWidth: true,
+                gap: 4,
+                pagination: false,
+              }}
+              className="splide"
+            >
+              {products.map((product, index) => {
+                if (index > 4) return null;
+                return (
+                  <SplideSlide key={`Carousel${key}${index}`}>
+                    <Card
+                      key={`Card${key}${index}`}
+                      className="productContainer"
+                      // onClick={() => {
+                      //   navigate(`/product/?id=${product.id}`);
+                      //   window.scroll(0, 0);
+                      // }}
+                      style={{ width: 300, margin: 10, marginRight: 0 }}
+                    >
                       <img
                         // width="100%"
                         className="productImg"
-                        height={200}
-                        alt="example"
+                        style={{ minWidth: 200, height: 200, maxWidth: 200 }}
+                        alt="productImage"
                         src={baseImgUrl + product.image}
                       />
-                    }
-                  >
-                    <Row style={{ height: 30 }}>
-                      <Title className="one-line" level={5}>
-                        {product.name}
-                      </Title>
-                    </Row>
-                    <Row
-                      justify="space-between"
-                      // align="middle"
-                      style={{ paddingRight: 0, marginTop: 2 }}
-                    >
-                      <Paragraph
-                        strong
-                        type="secondary"
-                        // level={5}
-                        className="d-flex one-line"
-                      >
-                        <img
-                          src={brandIcon}
-                          alt="brandIcon"
-                          style={{
-                            height: 17,
-                            width: 17,
-                            marginRight: 2,
-                          }}
-                        />
-                        {brands.map((brand) => {
-                          return brand.id === product.brand_id
-                            ? brand.brand
-                            : null;
-                        })}
-                      </Paragraph>
+                      <Row>
+                        <Link to={`/product/?id=${product.id}`}>
+                          <Title className="one-line" level={5}>
+                            {product.name}
+                          </Title>
+                        </Link>
+                      </Row>
+                      <Row>
+                        <Paragraph
+                          strong
+                          type="secondary"
+                          // level={5}
+                          className="d-flex one-line"
+                          style={{ margin: 0, padding: 2 }}
+                        >
+                          <img
+                            src={brandIcon}
+                            alt="brandIcon"
+                            style={{
+                              height: 20,
+                              width: 20,
+                              marginRight: 3,
+                            }}
+                          />
+                          {brands.map((brand) => {
+                            return brand.id === product.brand_id
+                              ? brand.brand
+                              : null;
+                          })}
+                        </Paragraph>
+                      </Row>
+                      <Row style={{ marginTop: 2 }}>
+                        <Paragraph
+                          style={{ margin: 0, padding: 2 }}
+                          type="secondary"
+                          className="m-0 p-0 d-flex one-line"
+                        >
+                          <img
+                            src={categoryIcon}
+                            alt="categoryIcon"
+                            style={{
+                              height: 24,
+                              width: 24,
+                              marginRight: 3,
+                            }}
+                          />
+                          {product.category}
+                        </Paragraph>
+                      </Row>
 
-                      <Paragraph
-                        type="secondary"
-                        className="m-0 p-0 d-flex one-line"
+                      <Row style={{ marginTop: 14 }}>
+                        <div>
+                          <StarRatings
+                            rating={product.avg_rating}
+                            starRatedColor="#86c61f"
+                            numberOfStars={5}
+                            name="mainAvgRating"
+                            starDimension="20px"
+                            starSpacing="1px"
+                          />
+                          <strong> ({product.avg_rating.toFixed(1)}) </strong>
+                        </div>
+                      </Row>
+                      <Row
+                        style={{ marginTop: 6 }}
+                        align="middle"
+                        justify="space-between"
                       >
-                        <img
-                          src={categoryIcon}
-                          alt="categoryIcon"
-                          style={{
-                            height: 17,
-                            width: 17,
-                            marginRight: 2,
-                          }}
-                        />
-                        {product.category}
-                      </Paragraph>
-                      {/* <Paragraph type="secondary" className="d-flex">
-                  <img
-                    src={vendorIcon}
-                    alt="vendorIcon"
-                    style={{
-                      height: 25,
-                      width: 25,
-                      marginRight: 5,
-                    }}
-                  />
-                  <strong>Product vendor</strong>
-                </Paragraph> */}
-                    </Row>{" "}
-                    <Row>
-                      <div>
-                        <StarRatings
-                          rating={product.avg_rating}
-                          starRatedColor="#86c61f"
-                          numberOfStars={5}
-                          name="mainAvgRating"
-                          starDimension="20px"
-                          starSpacing="1px"
-                        />
-                        <strong> ({product.avg_rating.toFixed(1)}) </strong>
-                      </div>
-                    </Row>
-                    <Row>
-                      <Paragraph className="productPrice ">
-                        &#8377; {product.price}
-                      </Paragraph>
-                    </Row>
-                  </Card>
-                </Carousel.Item>
-              );
-            })}
-          </Carousel>
+                        <Col>
+                          <Paragraph
+                            className="productPrice"
+                            style={{ margin: 0, padding: 0 }}
+                          >
+                            &#8377; {product.price}
+                          </Paragraph>
+                        </Col>
+                        <Col>
+                          <Button
+                            type="primary"
+                            shape="round"
+                            icon={<ThunderboltOutlined />}
+                          >
+                            Quick Buy
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Card>
+                  </SplideSlide>
+                );
+              })}
+            </Splide>
+          </Col>
         </Row>
       );
     }
@@ -221,9 +255,9 @@ const Home = () => {
               <Title
                 level={1}
                 id="homeMainTitle"
-                style={{ margin: 0, padding: 0 }}
+                style={{ margin: 0, padding: 0, letterSpacing: 35 }}
               >
-                ALSALEELS
+                NILE
               </Title>
               <Text id="homeMainText">ONE STOP FOR YOUR STATIONARY</Text>
             </div>
@@ -240,14 +274,11 @@ const Home = () => {
               <DownOutlined id="homeDownArrow" />
             </div>
           </section>
-          <Row>
-            <Col>
-              {allProducts.map((categoryObject) => {
-                //{Pencil: Array[...]}
-                return categoryRow(categoryObject);
-              })}
-            </Col>
-          </Row>
+
+          {allProducts.map((categoryObject) => {
+            //{Pencil: Array[...]}
+            return categoryRow(categoryObject);
+          })}
         </Content>
       )}
 

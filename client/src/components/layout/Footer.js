@@ -20,7 +20,7 @@ function Footer() {
     <AntFooter style={{ background: "#fafafa" }}>
       <Row className="justify-content-center">
         <Col>
-          <div className="copyright">©AlSaleels 2023</div>
+          <div className="copyright">© NILE 2023</div>
         </Col>
       </Row>
     </AntFooter>

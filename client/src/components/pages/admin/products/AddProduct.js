@@ -27,7 +27,7 @@ function AddProduct() {
   const [brands, setBrands] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   // const navigate = useNavigate();
-  const [textDesc, setTextDesc] = useState("");
+  const [textDesc, setTextDesc] = useState();
 
   //get request to get the categories available stored in db
   const { Option } = Select;

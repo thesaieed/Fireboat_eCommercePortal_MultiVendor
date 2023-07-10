@@ -37,6 +37,7 @@ const Browse = () => {
 
   //Filter States and functions
   const [sortValue, setSortValue] = useState(0);
+  const [sortAvgRating, setSortAvgRating] = useState(-1);
   const [priceRange, setPriceRange] = useState({
     minPrice: 0,
     maxPrice: 10000,
@@ -57,6 +58,9 @@ const Browse = () => {
   const onSortChange = (e) => {
     setSortValue(e.target.value);
   };
+  const onsortAvgRatingChange = (e) => {
+    setSortAvgRating(e.target.value);
+  };
 
   const onCategoryChange = (selectedOptions) => {
     setSelectedCategories(selectedOptions);
@@ -73,6 +77,7 @@ const Browse = () => {
     setSelectedVendors([]);
     setSortValue(0);
     priceRangeSet(browseProducts);
+    setSortAvgRating(-1);
   };
 
   const [searchTerms] = useState(
@@ -181,6 +186,11 @@ const Browse = () => {
       });
     }
 
+    //filter by ratings
+    filteredArray = filteredArray.filter(
+      (product) => product.avg_rating >= sortAvgRating
+    );
+
     //filter the new array by Price Range
     filteredArray = filteredArray.filter(
       (product) =>
@@ -226,6 +236,7 @@ const Browse = () => {
     selectedVendors,
     selectedCategories,
     sortValue,
+    sortAvgRating,
   ]);
 
   const handleAddToCart = async (product_id) => {
@@ -403,7 +414,14 @@ const Browse = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [sortValue, selectedCategories, priceRange, selectedBrands, applyFilters]);
+  }, [
+    sortAvgRating,
+    sortValue,
+    selectedCategories,
+    priceRange,
+    selectedBrands,
+    applyFilters,
+  ]);
 
   const showDrawer = () => {
     setVisible(!visible);
@@ -426,7 +444,9 @@ const Browse = () => {
             className="homeSidebar"
           >
             <BrowseSidebar
+              sortAvgRating={sortAvgRating}
               sortValue={sortValue}
+              onsortAvgRatingChange={onsortAvgRatingChange}
               onSortChange={onSortChange}
               categories={categories}
               brands={brands}
@@ -453,7 +473,9 @@ const Browse = () => {
             style={{ zIndex: 99990 }}
           >
             <BrowseSidebar
+              sortAvgRating={sortAvgRating}
               sortValue={sortValue}
+              onsortAvgRatingChange={onsortAvgRatingChange}
               onSortChange={onSortChange}
               categories={categories}
               brands={brands}

@@ -11,7 +11,6 @@ var jwt = require("jsonwebtoken");
 const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
 const vendorRoutes = require("./routes/vendor");
 const reviewRoutes = require("./routes/review");
-const { error, log } = require("console");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -800,7 +799,9 @@ app.post("/viewproducts", async (req, res) => {
   const { is_super_admin, vendorId } = req.body;
   if (is_super_admin) {
     try {
-      const getProducts = await pool.query("select * from products");
+      const getProducts = await pool.query(
+        "select * from products order by modified_at DESC"
+      );
       // console.log(getProducts.rows);
       res.send(getProducts.rows);
     } catch (error) {
@@ -809,7 +810,7 @@ app.post("/viewproducts", async (req, res) => {
   } else if (!is_super_admin) {
     try {
       const getProducts = await pool.query(
-        "select * from products where vendor_id=$1",
+        "select * from products where vendor_id=$1 order by modified_at DESC",
         [vendorId]
       );
       // console.log(getProducts.rows);

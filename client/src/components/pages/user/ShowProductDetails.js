@@ -94,7 +94,7 @@ function ShowProductDetails() {
       console.error("review Error : ", reviewError);
     }
     setScreenLoading(false);
-  }, [appUser.id]);
+  }, [appUser.id, navigate, productId]);
   const handleNewReviewSubmit = async () => {
     // console.log(newReview);
     setReviewButtonLoading(true);
@@ -137,6 +137,7 @@ function ShowProductDetails() {
   };
   // Fetch product details
   useEffect(() => {
+    window.scroll(0, 0);
     fetchProductDetails();
   }, [navigate, productId, fetchProductDetails]);
 
@@ -331,7 +332,7 @@ function ShowProductDetails() {
               // style={{ background: "#f5f5f5", padding: 10 }}
             >
               {appUser.id &&
-                productDetails.userReviewforProduct?.length != 0 && (
+                productDetails.userReviewforProduct?.length !== 0 && (
                   <div>
                     <Title level={3}>Your Rating </Title>
                     <hr />
@@ -450,7 +451,7 @@ function ShowProductDetails() {
                 <Col xs={18} sm={18}>
                   <Progress
                     strokeColor="#86c61f"
-                    size={[, 15]}
+                    size={["100%", 15]}
                     percent={Math.round(
                       (allReviews.noOfRatings?.five / allReviews.totalRating) *
                         100
@@ -465,7 +466,7 @@ function ShowProductDetails() {
                 <Col xs={18} sm={18}>
                   <Progress
                     strokeColor="#86c61f"
-                    size={[, 15]}
+                    size={["100%", 15]}
                     percent={Math.round(
                       (allReviews.noOfRatings?.four / allReviews?.totalRating) *
                         100
@@ -480,7 +481,7 @@ function ShowProductDetails() {
                 <Col xs={18} sm={18}>
                   <Progress
                     strokeColor="#86c61f"
-                    size={[, 15]}
+                    size={["100%", 15]}
                     percent={Math.round(
                       (allReviews.noOfRatings?.three /
                         allReviews?.totalRating) *
@@ -496,7 +497,7 @@ function ShowProductDetails() {
                 <Col xs={18} sm={18}>
                   <Progress
                     strokeColor="#86c61f"
-                    size={[, 15]}
+                    size={["100%", 15]}
                     percent={Math.round(
                       (allReviews.noOfRatings?.two / allReviews?.totalRating) *
                         100
@@ -511,7 +512,7 @@ function ShowProductDetails() {
                 <Col xs={18} sm={18}>
                   <Progress
                     strokeColor="#86c61f"
-                    size={[, 15]}
+                    size={["100%", 15]}
                     percent={Math.round(
                       (allReviews.noOfRatings?.one / allReviews?.totalRating) *
                         100
