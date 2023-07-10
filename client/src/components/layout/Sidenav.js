@@ -10,7 +10,7 @@
   * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { Menu } from "antd";
+import { Menu, Divider } from "antd";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import {
@@ -103,7 +103,11 @@ function Sidenav({ color }) {
       key: "adminDashboard",
     },
     appUser.is_super_admin && {
-      label: <span className="label menu-item-header">Vendors</span>,
+      label: (
+        <Divider plain style={{ margin: 0, padding: 0 }}>
+          Vendors
+        </Divider>
+      ),
       key: "vendorHeading",
       type: "group",
     },
@@ -141,7 +145,11 @@ function Sidenav({ color }) {
     },
 
     {
-      label: <span className="label menu-item-header">Products</span>,
+      label: (
+        <Divider plain style={{ margin: 0, padding: 0 }}>
+          Products
+        </Divider>
+      ),
       key: "productHeading",
       type: "group",
     },
@@ -179,7 +187,9 @@ function Sidenav({ color }) {
     },
     {
       label: (
-        <span className="label menu-item-header">Additional Information</span>
+        <Divider plain style={{ margin: 0, padding: 0 }}>
+          Additional Info
+        </Divider>
       ),
       key: "additionalInfo",
       type: "group",
@@ -217,7 +227,11 @@ function Sidenav({ color }) {
       key: "allcategories",
     },
     {
-      label: <span className="label menu-item-header">Accounts</span>,
+      label: (
+        <Divider plain style={{ margin: 0, padding: 0 }}>
+          Accounts
+        </Divider>
+      ),
       key: "accountHeading",
       type: "group",
     },

@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Layout, Typography, Card, Button, Spin, message } from "antd";
 import {
   LoadingOutlined,
@@ -34,7 +34,7 @@ export const VerifyEmail = () => {
     />
   );
 
-  const verifyToken = async () => {
+  const verifyToken = useCallback(async () => {
     setIsVerifying(true);
     const res = await axios.post("http://localhost:5000/verifyEmail", {
       token: token,
@@ -66,7 +66,7 @@ export const VerifyEmail = () => {
       setIsVerified(false);
     }
     setIsVerifying(false);
-  };
+  }, [email, isVendor, token]);
   const handleReVerify = async () => {
     setIsLoading(true);
     try {
@@ -94,7 +94,7 @@ export const VerifyEmail = () => {
 
   useEffect(() => {
     verifyToken();
-  }, []);
+  }, [verifyToken]);
 
   return (
     <>

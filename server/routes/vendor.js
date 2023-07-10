@@ -191,6 +191,67 @@ router.post("/login", async (req, res) => {
     console.log("Error : ", error.message);
   }
 });
+router.post("/googlelogin", async (req, res) => {
+  // console.log("vendor Login");
+  try {
+    // console.log(req.body);
+    const { email, googlename, email_verified } = req.body; //geting data from body
+    let data = {}; // defing data obj to be sent back based on diffent conditions below
+
+    const foundUser = await pool.query(
+      `select * from vendors where email='${email}'`
+    ); //checking if the email exists in db
+    // console.log(foundUser);
+    if (foundUser.rows.length > 0) {
+      // if email exists, a row array is sent back in foundUser obj
+
+      const {
+        id,
+        business_name,
+        is_admin,
+        isemailverified,
+        is_super_admin,
+        is_approved,
+        is_under_approval,
+      } = foundUser.rows[0];
+      if (!isemailverified) {
+        await generateTokenAndSendMail(id, email);
+        data = { loginStatus: 407 }; //not email verified
+      } else if (is_under_approval) {
+        data = { loginStatus: 102 }; //approval under process
+      } else if (is_approved === false) {
+        data = { loginStatus: 406 }; //not approved
+      } else {
+        data = {
+          loginStatus: 200,
+          user: {
+            id,
+            name: business_name,
+            is_admin: is_admin,
+            is_super_admin,
+          },
+        };
+      }
+
+      res.send(data); //finaly send the data variable(obj)
+    } else {
+      //if no user found,
+
+      const newVendor = await pool.query(
+        // `insert into users(name,email,password,phone) values ('${fullname}','${email}','${password}','${phone}') returning *`
+        "INSERT INTO vendors(business_name, email, is_under_approval, isemailverified, is_admin) VALUES ($1, $2, $3,$4,$5) RETURNING *",
+        [googlename, email, true, email_verified, true]
+      );
+      await pool.query(
+        `INSERT INTO newvendorsapproval(vendor_id) VALUES (${newVendor.rows[0].id})`
+      );
+      data = { loginStatus: 102 }; //approval under process
+      res.send(data);
+    }
+  } catch (error) {
+    console.log("Error : ", error.message);
+  }
+});
 
 router.delete("/editvendor/:itemId", async (req, res) => {
   const vendorId = req.params.itemId;

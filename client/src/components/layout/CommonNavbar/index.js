@@ -14,7 +14,7 @@ import useAllContext from "../../../context/useAllContext";
 const CommonNavbar = ({ handleSearch }) => {
   const [visible, setVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { numberOfProductsInCart } = useAllContext();
+  const { numberOfProductsInCart, appUser } = useAllContext();
   const showDrawer = () => {
     setVisible(!visible);
   };
@@ -27,6 +27,8 @@ const CommonNavbar = ({ handleSearch }) => {
         {
           label: (
             <Input
+              id="searchBtn"
+              style={{ background: "transparent", borderColor: "#86c61f" }}
               autoFocus
               placeholder="Search Products..."
               value={searchTerm}
@@ -38,9 +40,11 @@ const CommonNavbar = ({ handleSearch }) => {
             />
           ),
           key: "searchInput",
-          style: { height: 60, background: "none" },
+          id: "searchMenuItem",
+          style: { height: 60, background: "transparent" },
         },
       ],
+      style: { background: "transparent" },
     },
   ];
 
@@ -54,12 +58,11 @@ const CommonNavbar = ({ handleSearch }) => {
   // Upto here
 
   return (
-    <Layout.Header className="nav-header bg-none">
+    <Layout.Header id="commonNavbar" className="nav-header bg-none">
       <Button className="menuButton" type="text" onClick={showDrawer}>
         <MenuOutlined />
       </Button>
-
-      <div className="logo ">
+      <div className="logo">
         <Link
           to="/"
           className="d-flex justify-content-start align-items-center"
@@ -69,15 +72,15 @@ const CommonNavbar = ({ handleSearch }) => {
             alt="logo"
             style={{ marginBottom: 19, marginLeft: -10, marginRight: 3 }}
           />
-          <h3 className="brand-font">AlSaleels</h3>
+          <h3 id="brand-font">AlSaleels</h3>
         </Link>
       </div>
-
       <div className="navbar-menu">
         <div className="leftMenu">{/* <LeftMenu mode={"horizontal"} /> */}</div>
 
-        <div className="rightMenu ">
+        <div className="rightMenu">
           <Menu
+            style={{ background: "transparent", borderColor: "#86c61f" }}
             mode="horizontal"
             // className="navMenu
             id="searchBtn"
@@ -86,8 +89,10 @@ const CommonNavbar = ({ handleSearch }) => {
             items={searchMenuItem}
           />
 
-          <div className="navSearch">
+          <div className="navSearch bg-none ">
             <Input
+              style={{ background: "transparent", borderColor: "#86c61f" }}
+              id="navSearchInput"
               key="search"
               placeholder="Search Products..."
               value={searchTerm}
@@ -113,22 +118,23 @@ const CommonNavbar = ({ handleSearch }) => {
           <RightMenu mode={"inline"} />
         </Drawer>
       </div>
-
-      <div className="header-col header-btn">
-        <Link to="/cart">
-          <Badge
-            count={numberOfProductsInCart}
-            color="blue"
-            title="Number of Items in Cart"
-            offset={[-5, 5]}
-          >
-            <Button type="primary">
-              <ShoppingCartOutlined />
-              Cart
-            </Button>
-          </Badge>
-        </Link>
-      </div>
+      {appUser.id && (
+        <div style={{ marginLeft: 10, marginRight: 15 }}>
+          <Link to="/cart">
+            <Badge
+              count={numberOfProductsInCart}
+              color="#689125"
+              title="Number of Items in Cart"
+              offset={[-5, 5]}
+            >
+              <Button type="primary" shape="round">
+                <ShoppingCartOutlined />
+                Cart
+              </Button>
+            </Badge>
+          </Link>
+        </div>
+      )}
     </Layout.Header>
   );
 };
