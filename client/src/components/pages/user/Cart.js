@@ -180,7 +180,7 @@ function Cart() {
   //   setModalVisible(false);
   // };
   const handleClick = () => {
-    navigate("/checkout");
+    navigate("/checkout", { state: { productData } });
   };
 
   return (
