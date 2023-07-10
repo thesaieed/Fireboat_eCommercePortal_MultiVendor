@@ -925,7 +925,65 @@ app.get("/allvendors", async (req, res) => {
     res.send([]);
   }
 });
+//route to handle get request for shipping addresses
+app.get("/shippingaddress", async (req, res) => {
+  // console.log(req.query.id);
+  const user_id = req.query.id;
+  try {
+    const addresses = await pool.query(
+      "select * from shippingaddress where user_id=$1 ",
+      [user_id]
+    );
+    // console.log(addresses.rows);
+    res.send(addresses.rows);
+  } catch (error) {
+    console.log(error);
+  }
+});
+//route to handle post request to add new address to shipping address
+app.post("/addshippingaddress", async (req, res) => {
+  const data = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO shippingaddress(user_id, full_name,country,phone_number,pincode,house_no_company,area_street_village,landmark,town_city,state) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) RETURNING *",
+      [
+        data.id,
+        data.full_name,
+        data.country,
+        data.phone_number,
+        data.pincode,
+        data.house_no_company,
+        data.area_street_village,
+        data.landmark,
+        data.town_city,
+        data.state,
+      ]
+    );
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
+//get request from checkout
+app.get("/checkout", async (req, res) => {
+  const ids = req.query.ids;
+  const intIds = ids.map(Number);
+  // console.log(intIds);
+  try {
+    const query = `
+      SELECT id, quantity
+      FROM cart
+      WHERE id = ANY($1::int[])
+    `;
+    const values = [intIds];
+    const { rows } = await pool.query(query, values);
+    // console.log("data", rows);
+    res.send(rows);
+  } catch (error) {
+    console.log(error);
+  }
+});
 //listen
 app.listen(5000, () => {
   console.log("Listening on Port 5000");

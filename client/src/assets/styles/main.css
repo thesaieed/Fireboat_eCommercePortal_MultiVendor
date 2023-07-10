@@ -3759,3 +3759,11 @@ div.ant-upload {
     margin-bottom: 0;
   }
 }
+
+/* just checking*/
+
+.custom-modal {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("https://1.bp.blogspot.com/-iDTaY6MfvF8/WDxVjqnl-7I/AAAAAAAABlw/ufAH0E0AVgIitRPJlrBpmHWGei5Qp5GWwCLcB/s1600/LLLL.jpg");
+}
