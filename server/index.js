@@ -371,7 +371,7 @@ app.get("/brands", async (req, res) => {
 
 //Modified addProduct handle to handle image upload also
 
-app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
+app.post("/admin/addproduct", upload.array("image", 5), async (req, res) => {
   const {
     category,
     name,
@@ -382,9 +382,9 @@ app.post("/admin/addproduct", upload.single("image"), async (req, res) => {
     vendor_id,
   } = req.body;
   // console.log(req.body)
-  // console.log(req.file)
+  // console.log(req.files);
   // console.log("description: ", description);
-  const imagePath = req.file.path;
+  const imagePath = req.files[0].path;
 
   try {
     const newProduct = await pool.query(
@@ -860,14 +860,17 @@ app.delete("/deleteImage/:imagePath", (req, res) => {
 
 app.put(
   "/admin/updateproduct/:productId",
-  upload.single("image"),
+  upload.array("image", 5),
   async (req, res) => {
     const { productId } = req.params;
     const { category, name, description, price, stock_available, brand_id } =
       req.body;
-    const imagePath = req.file ? req.file.path : null; // Check if image file is present
+    const imagePath =
+      req.files && req.files.length > 0 ? req.files[0].path : null;
+    // const imagePath = req.files ? req.files[0].path : null; // Check if image file is present
     // console.log(productId, category, price, stock_available, name, description);
     // console.log(req.body)
+    console.log(req.files);
 
     try {
       let query;

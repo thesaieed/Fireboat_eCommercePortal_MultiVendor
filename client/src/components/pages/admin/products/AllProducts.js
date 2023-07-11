@@ -17,6 +17,7 @@ import {
   Card,
   Typography,
   Image,
+  Spin,
 } from "antd";
 import {
   UploadOutlined,
@@ -148,7 +149,12 @@ function AllProducts() {
       formData.append("description", textDesc);
       formData.append("price", values.price);
       formData.append("stock_available", values.stock_available);
-      formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
+      if (values.image) {
+        values.image.forEach((file) => {
+          formData.append("image", file.originFileObj);
+        });
+      }
+
       const response = await axios.put(
         `http://localhost:5000/admin/updateproduct/${selectedRowId}`,
         formData,
@@ -601,22 +607,32 @@ function AllProducts() {
                   hasFeedback
                 >
                   <Tooltip title="Do not fill this field if you want to keep previous Image">
-                    <Upload
+                    <Upload.Dragger
+                      listType="picture"
+                      multiple
                       name="image"
                       accept="image/*"
                       beforeUpload={() => false}
                       onChange={(info) => {
                         const { fileList } = info;
-                        // Remove the file from the fileList that is being uploaded
-                        // and keep only the last selected file
-                        const updatedFileList = fileList.slice(-1);
-                        form.setFieldsValue({ image: updatedFileList });
+                        form.setFieldsValue({ image: fileList });
+                      }}
+                      iconRender={() => {
+                        return <Spin></Spin>;
+                      }}
+                      progress={{
+                        strokeWidth: 3,
+                        strokeColor: {
+                          "0%": "#f0f",
+                          100: "#ff0",
+                        },
+                        style: { top: 15 },
                       }}
                     >
                       <Button icon={<UploadOutlined />} className="w-100">
-                        Upload image
+                        Drag and drop images
                       </Button>
-                    </Upload>
+                    </Upload.Dragger>
                   </Tooltip>
                 </Form.Item>
               </Col>
