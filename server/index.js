@@ -371,6 +371,43 @@ app.get("/brands", async (req, res) => {
 
 //Modified addProduct handle to handle image upload also
 
+// app.post("/admin/addproduct", upload.array("image", 5), async (req, res) => {
+//   const {
+//     category,
+//     name,
+//     description,
+//     price,
+//     stock_available,
+//     brand,
+//     vendor_id,
+//   } = req.body;
+//   // console.log(req.body)
+//   // console.log(req.files);
+//   // console.log("description: ", description);
+//   const imagePath = req.files[0].path;
+
+//   try {
+//     const newProduct = await pool.query(
+//       "insert into products(category_id,name,description,price,stock_available,image,brand_id,vendor_id ) values ($1,$2,$3,$4,$5,$6,$7,$8) returning *",
+//       [
+//         category,
+//         name,
+//         description,
+//         price,
+//         stock_available,
+//         imagePath,
+//         brand,
+//         vendor_id,
+//       ]
+//     );
+//     // console.log("newProduct", newProduct);
+//     const data = { product: newProduct.rows[0] };
+
+//     res.send(data);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// });
 app.post("/admin/addproduct", upload.array("image", 5), async (req, res) => {
   const {
     category,
@@ -381,31 +418,30 @@ app.post("/admin/addproduct", upload.array("image", 5), async (req, res) => {
     brand,
     vendor_id,
   } = req.body;
-  // console.log(req.body)
-  // console.log(req.files);
-  // console.log("description: ", description);
-  const imagePath = req.files[0].path;
 
   try {
+    const imagePaths = req.files.map((file) => file.path); // Get an array of image paths
+
     const newProduct = await pool.query(
-      "insert into products(category_id,name,description,price,stock_available,image,brand_id,vendor_id ) values ($1,$2,$3,$4,$5,$6,$7,$8) returning *",
+      "INSERT INTO products(category_id, name, description, price, stock_available, image, brand_id, vendor_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
         category,
         name,
         description,
         price,
         stock_available,
-        imagePath,
+        imagePaths,
         brand,
         vendor_id,
       ]
     );
-    // console.log("newProduct", newProduct);
+
     const data = { product: newProduct.rows[0] };
 
     res.send(data);
   } catch (error) {
     console.error(error);
+    res.sendStatus(500); // Send status code 500 for internal server error
   }
 });
 
@@ -845,17 +881,18 @@ app.delete("/viewproducts/:itemId", async (req, res) => {
   }
 });
 
-//Route to delete image of product from server
-app.delete("/deleteImage/:imagePath", (req, res) => {
-  const imagePath = req.params.imagePath;
-  fs.unlink(`${imagePath}`, (err) => {
-    if (err) {
-      console.error("Error deleting image:", err);
-      res.status(500).json({ error: "Failed to delete image" });
-    } else {
-      res.sendStatus(200);
-    }
+app.delete("/deleteImage/:imagePaths", (req, res) => {
+  const imagePaths = req.params.imagePaths.split(","); // Split the image paths into an array
+
+  imagePaths.forEach((imagePath) => {
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Error deleting image:", err);
+      }
+    });
   });
+
+  res.sendStatus(200);
 });
 
 app.put(
@@ -865,17 +902,13 @@ app.put(
     const { productId } = req.params;
     const { category, name, description, price, stock_available, brand_id } =
       req.body;
-    const imagePath =
-      req.files && req.files.length > 0 ? req.files[0].path : null;
-    // const imagePath = req.files ? req.files[0].path : null; // Check if image file is present
-    // console.log(productId, category, price, stock_available, name, description);
-    // console.log(req.body)
-    console.log(req.files);
+    const imagePaths = req.files.map((file) => file.path); // Get an array of image paths
 
     try {
       let query;
       let queryValues;
-      if (imagePath) {
+
+      if (imagePaths.length > 0) {
         // Update the image field along with other details
         query =
           "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5, image = $6, brand_id =$7 WHERE id = $8";
@@ -885,15 +918,14 @@ app.put(
           description,
           price,
           stock_available,
-          imagePath,
+          imagePaths,
           brand_id,
           productId,
         ];
       } else {
         // Keep the existing image value in the database
-
         query =
-          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5,brand_id =$6 WHERE id = $7";
+          "UPDATE products SET category_id = $1, name = $2, description = $3, price = $4, stock_available = $5, brand_id =$6 WHERE id = $7";
         queryValues = [
           category,
           name,
@@ -904,12 +936,11 @@ app.put(
           productId,
         ];
       }
-      const updatedProduct = await pool.query(query, queryValues);
 
+      const updatedProduct = await pool.query(query, queryValues);
       res.sendStatus(200); // Send status code 200 to indicate successful update
     } catch (error) {
       console.error(error);
-
       res.sendStatus(500); // Send status code 500 for internal server error
     }
   }
