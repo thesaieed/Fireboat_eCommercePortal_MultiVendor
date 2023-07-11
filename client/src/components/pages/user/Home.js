@@ -145,7 +145,7 @@ const Home = () => {
                         className="productImg"
                         style={{ minWidth: 200, height: 200, maxWidth: 200 }}
                         alt="productImage"
-                        src={baseImgUrl + product.image}
+                        src={baseImgUrl + product.image[0]}
                       />
                       <Row>
                         <Link to={`/product/?id=${product.id}`}>

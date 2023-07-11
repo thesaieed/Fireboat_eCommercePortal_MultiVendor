@@ -145,7 +145,7 @@ function ShowProductDetails() {
   useEffect(() => {
     if (productDetails) {
       const imageSrc =
-        "http://localhost:5000/" + productDetails.image.replace(/\\/g, "/");
+        "http://localhost:5000/" + productDetails.image[0].replace(/\\/g, "/");
       setImageUrl(imageSrc);
     }
   }, [productDetails]);
