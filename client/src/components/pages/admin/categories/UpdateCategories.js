@@ -228,7 +228,7 @@ function Updatecategories() {
             //   fixedHeaderScrollHeight="500px"
             title={
               <>
-                <h2 style={{ color: "orange", fontWeight: "bold" }}>
+                <h2 style={{ color: "#7cb028", fontWeight: "bold" }}>
                   {appUser.is_super_admin
                     ? "All Categories"
                     : " Your Categories"}
