@@ -10,6 +10,7 @@ import {
   Row,
   Col,
   message,
+  Spin,
 } from "antd";
 
 import axios from "axios";
@@ -55,9 +56,10 @@ function AddProduct() {
       formData.append("price", values.price);
       formData.append("brand", values.brand);
       formData.append("vendor_id", appUser.id);
-      formData.append("stock_available", values.stock_available);
-      formData.append("image", values.image?.[0]?.originFileObj); // ?. to prevent any errors from being thrown and simply accessing the actual file from fileList we use values.image[0].originFileObj
 
+      values.image.forEach((file) => {
+        formData.append("image", file.originFileObj);
+      });
       // console.log("formData : ", formData);
       const response = await axios.post(
         "http://localhost:5000/admin/addproduct",
@@ -81,6 +83,7 @@ function AddProduct() {
     } catch (error) {
       form.resetFields();
       console.log(error);
+      message.error("server error");
     }
     setTextDesc("");
     setButtonLoading(false);
@@ -105,33 +108,33 @@ function AddProduct() {
           </h5>
         }
         bordered="false"
-        cover={
-          <Form.Item
-            name="image"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
-            rules={[{ required: true, message: "Image is required!" }]}
-            hasFeedback
-          >
-            <Upload
-              // className="d-flex flex-column justify-content-center align-items-center"
-              name="image"
-              showUploadList={false}
-              accept="image/*"
-              beforeUpload={(event) => {
-                setProdImgPreview(URL.createObjectURL(event));
-                return false;
-              }}
-            >
-              <img
-                style={{ width: "100%", margin: "auto", padding: 5 }}
-                id="prod_img_preview"
-                alt="example"
-                src={prodImgPreview}
-              />
-            </Upload>
-          </Form.Item>
-        }
+        // cover={
+        //   <Form.Item
+        //     name="image"
+        //     valuePropName="fileList"
+        //     getValueFromEvent={(e) => e.fileList}
+        //     rules={[{ required: true, message: "Image is required!" }]}
+        //     hasFeedback
+        //   >
+        //     <Upload
+        //       // className="d-flex flex-column justify-content-center align-items-center"
+        //       name="image"
+        //       showUploadList={false}
+        //       accept="image/*"
+        //       beforeUpload={(event) => {
+        //         setProdImgPreview(URL.createObjectURL(event));
+        //         return false;
+        //       }}
+        //     >
+        //       <img
+        //         style={{ width: "100%", margin: "auto", padding: 5 }}
+        //         id="prod_img_preview"
+        //         alt="example"
+        //         src={prodImgPreview}
+        //       />
+        //     </Upload>
+        //   </Form.Item>
+        // }
       >
         <Form
           form={form}
@@ -238,18 +241,31 @@ function AddProduct() {
                 rules={[{ required: true, message: "Image is required!" }]}
                 hasFeedback
               >
-                <Upload
+                <Upload.Dragger
+                  listType="picture"
+                  multiple
                   name="image"
                   accept="image/*"
                   beforeUpload={(event) => {
                     setProdImgPreview(URL.createObjectURL(event));
                     return false;
                   }}
+                  iconRender={() => {
+                    return <Spin></Spin>;
+                  }}
+                  progress={{
+                    strokeWidth: 3,
+                    strokeColor: {
+                      "0%": "#f0f",
+                      100: "#ff0",
+                    },
+                    style: { top: 15 },
+                  }}
                 >
                   <Button icon={<UploadOutlined />} className="w-100">
-                    Product Image
+                    Drag and drop images
                   </Button>
-                </Upload>
+                </Upload.Dragger>
               </Form.Item>
             </Col>
           </Row>
