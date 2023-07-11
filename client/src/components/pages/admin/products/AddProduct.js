@@ -102,6 +102,7 @@ function AddProduct() {
             style={{
               fontWeight: "bold",
               fontSize: "1.3rem",
+              color: "#7cb028",
             }}
           >
             Add Product

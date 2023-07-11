@@ -15,6 +15,7 @@ import {
   Input,
   Avatar,
   Progress,
+  Carousel,
 } from "antd";
 
 import StarRatings from "react-star-ratings";
@@ -141,12 +142,12 @@ function ShowProductDetails() {
     fetchProductDetails();
   }, [navigate, productId, fetchProductDetails]);
 
-  // Set image URL
   useEffect(() => {
     if (productDetails) {
-      const imageSrc =
-        "http://localhost:5000/" + productDetails.image[0].replace(/\\/g, "/");
-      setImageUrl(imageSrc);
+      const imageUrls = productDetails.image.map((path) => {
+        return "http://localhost:5000/" + path.replace(/\\/g, "/");
+      });
+      setImageUrl(imageUrls);
     }
   }, [productDetails]);
 
@@ -201,12 +202,27 @@ function ShowProductDetails() {
           }}
         >
           <Row justify="center" align="middle">
-            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
+            {/* <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
               <Image
                 style={{ maxWidth: "250px" }}
-                src={imageUrl}
+                src={imageUrl[0]}
                 alt="Product"
               />
+            </Col> */}
+            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
+              <Carousel>
+                {Array.isArray(imageUrl) ? (
+                  imageUrl.map((imagePath) => (
+                    <div key={imagePath}>
+                      <Image src={imagePath} alt="Product" />
+                    </div>
+                  ))
+                ) : (
+                  <div>
+                    <Image src={imageUrl} alt="Product" />
+                  </div>
+                )}
+              </Carousel>
             </Col>
 
             <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>

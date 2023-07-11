@@ -18,6 +18,7 @@ import {
   Typography,
   Image,
   Spin,
+  Carousel,
 } from "antd";
 import {
   UploadOutlined,
@@ -234,22 +235,52 @@ function AllProducts() {
   };
 
   const columns = [
+    // {
+    //   name: "Image",
+    //   width: "10%",
+
+    //   selector: (row) => (
+    //     <Image
+    //       // width={50}
+    //       // height={50}
+    //       src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
+    //       alt=""
+    //       style={{ cursor: "pointer", padding: 7, height: "80%" }}
+    //       // onClick={() => {
+    //       //   setSelectedImage(row.image);
+    //       //   setImageModalVisible(true);
+    //       // }}
+    //     ></Image>
+    //   ),
+    // },
     {
       name: "Image",
       width: "10%",
-
       selector: (row) => (
-        <Image
-          // width={50}
-          // height={50}
-          src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
-          alt=""
-          style={{ cursor: "pointer", padding: 7, height: "80%" }}
-          // onClick={() => {
-          //   setSelectedImage(row.image);
-          //   setImageModalVisible(true);
-          // }}
-        ></Image>
+        <>
+          {Array.isArray(row.image) ? (
+            <Carousel dots arrows>
+              {row.image.map((imagePath, index) => (
+                <div key={index}>
+                  <Image
+                    src={`http://localhost:5000/${imagePath.replace(
+                      /\\/g,
+                      "/"
+                    )}`}
+                    alt=""
+                    style={{ cursor: "pointer", padding: 7, height: "80%" }}
+                  />
+                </div>
+              ))}
+            </Carousel>
+          ) : (
+            <Image
+              src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
+              alt=""
+              style={{ cursor: "pointer", padding: 7, height: "80%" }}
+            />
+          )}
+        </>
       ),
     },
     {
@@ -427,7 +458,7 @@ function AllProducts() {
           // selectableRowsHighlight
           highlightOnHover
           title={
-            <h2 style={{ color: "#ff8400", fontWeight: "bold" }}>
+            <h2 style={{ color: "#7cb028", fontWeight: "bold" }}>
               {appUser.is_super_admin ? "All Products" : " Your Products"}
             </h2>
           }
@@ -472,11 +503,11 @@ function AllProducts() {
           onCancel={() => setImageModalVisible(false)}
           footer={null}
         > */}
-        <Image
+        {/* <Image
           src={`http://localhost:5000/${selectedImage.replace(/\\/g, "/")}`}
           alt=""
           style={{ width: "100%" }}
-        />
+        /> */}
         {/* </Modal> */}
 
         <Modal
