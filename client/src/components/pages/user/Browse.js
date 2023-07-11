@@ -308,7 +308,7 @@ const Browse = () => {
                   className="productImg"
                   height={300}
                   alt="example"
-                  src={baseImgUrl + product.image}
+                  src={baseImgUrl + product.image[0]}
                 />
               }
             >

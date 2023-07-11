@@ -130,7 +130,6 @@ function AllProducts() {
 
     setDescModalVisible(true);
   };
-
   useEffect(() => {
     setSelectedRowData({});
   }, [modalVisible]);
@@ -243,7 +242,7 @@ function AllProducts() {
         <Image
           // width={50}
           // height={50}
-          src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
+          src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
           alt=""
           style={{ cursor: "pointer", padding: 7, height: "80%" }}
           // onClick={() => {
@@ -372,6 +371,7 @@ function AllProducts() {
               type: "default",
             }}
           >
+            {/* {console.log(row)} */}
             <Button
               id={row.id}
               style={{
@@ -606,7 +606,7 @@ function AllProducts() {
                   rules={[{ required: false, message: "Image is required!" }]}
                   hasFeedback
                 >
-                  <Tooltip title="Do not fill this field if you want to keep previous Image">
+                  <Tooltip title="Do not fill this field if you want to keep previous Images">
                     <Upload.Dragger
                       listType="picture"
                       multiple
