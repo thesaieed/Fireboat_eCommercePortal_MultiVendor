@@ -1118,6 +1118,89 @@ app.get("/checkout", async (req, res) => {
     console.log(error);
   }
 });
+
+app.post(
+  "/admin/addproductimage/:productId",
+  upload.array("image", 5),
+  async (req, res) => {
+    const { productId } = req.params;
+    const imagePaths = req.files.map((file) => file.path); // Get an array of image paths
+    // console.log(productId, "imagepath", imagePaths);
+    try {
+      const existingProduct = await pool.query(
+        "SELECT image FROM products WHERE id = $1",
+        [productId]
+      );
+      const currentImagePaths = existingProduct.rows[0].image || []; // Get the current image paths or initialize as an empty array
+
+      const updatedImagePaths = [...currentImagePaths, ...imagePaths]; // Concatenate the current and new image paths
+
+      await pool.query("UPDATE products SET image = $1 WHERE id = $2", [
+        updatedImagePaths,
+        productId,
+      ]);
+
+      res.sendStatus(200); // Send status code 200 for success
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500); // Send status code 500 for internal server error
+    }
+  }
+);
+// app.post("/admin/deleteproductimage", (req, res) => {
+//   const data = req.body;
+//   console.log(data);
+//   res.sendStatus(200);
+// });
+app.post("/admin/deleteproductimage", async (req, res) => {
+  const { selectedRowId, selectedImagePaths } = req.body;
+
+  try {
+    // Get the current image paths for the product
+    const existingProduct = await pool.query(
+      "SELECT image FROM products WHERE id = $1",
+      [selectedRowId]
+    );
+    const currentImagePaths = existingProduct.rows[0].image || [];
+
+    // Remove the selected image paths from the current image paths
+    const updatedImagePaths = currentImagePaths.filter(
+      (path) => !selectedImagePaths.includes(path)
+    );
+    const filteredImagePaths = selectedImagePaths.filter(
+      (path) => path !== null
+    );
+
+    // Format the updated image paths with escaped backslashes
+    const formattedImagePaths = updatedImagePaths.map(
+      (path) => `"${path.replace(/\\/g, "\\\\")}"`
+    );
+
+    // Update the image column with the formatted image paths
+    await pool.query("UPDATE products SET image = $1 WHERE id = $2", [
+      `{${formattedImagePaths.join(",")}}`, // Enclose the array of paths in curly braces {}
+      selectedRowId,
+    ]);
+
+    // console.log(selectedImagePaths);
+    filteredImagePaths.forEach((imagePath) => {
+      fs.unlink(imagePath, (error) => {
+        if (error) {
+          console.error("Error deleting image:", imagePath, error);
+        } // } else {
+        //   console.log("Image deleted successfully:", imagePath);
+        // }
+      });
+    });
+
+    // console.log("Image paths deleted successfully");
+    res.sendStatus(200); // Send status code 200 for success
+  } catch (error) {
+    console.error("Error deleting image paths:", error);
+    res.sendStatus(500); // Send status code 500 for internal server error
+  }
+});
+
 //listen
 app.listen(5000, () => {
   console.log("Listening on Port 5000");

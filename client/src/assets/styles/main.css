@@ -3979,3 +3979,6 @@ div.ant-upload {
 }
 
 /* Carousel styling*/
+div.slick-tracker {
+  width: 200px;
+}
