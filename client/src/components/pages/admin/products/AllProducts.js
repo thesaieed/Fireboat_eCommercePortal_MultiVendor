@@ -19,6 +19,7 @@ import {
   Image,
   Spin,
   Carousel,
+  Checkbox,
 } from "antd";
 import {
   UploadOutlined,
@@ -26,6 +27,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import useAllContext from "../../../../context/useAllContext";
 import TextEditor from "./TextEditor";
@@ -149,20 +151,20 @@ function AllProducts() {
       formData.append("description", textDesc);
       formData.append("price", values.price);
       formData.append("stock_available", values.stock_available);
-      if (values.image) {
-        values.image.forEach((file) => {
-          formData.append("image", file.originFileObj);
-        });
-      }
+      // if (values.image) {
+      //   values.image.forEach((file) => {
+      //     formData.append("image", file.originFileObj);
+      //   });
+      // }
 
       const response = await axios.put(
         `http://localhost:5000/admin/updateproduct/${selectedRowId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        formData
+        // {
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //   },
+        // }
       );
 
       if (response.status === 200) {
@@ -253,33 +255,66 @@ function AllProducts() {
     //     ></Image>
     //   ),
     // },
+    // {
+    //   name: "Image",
+    //   width: "10%",
+    //   selector: (row) => (
+    //     <>
+    //       {Array.isArray(row.image) ? (
+    //         <Carousel dots arrows>
+    //           {row.image.map((imagePath, index) => (
+    //             <div key={index}>
+    //               <Image
+    //                 src={`http://localhost:5000/${imagePath.replace(
+    //                   /\\/g,
+    //                   "/"
+    //                 )}`}
+    //                 alt=""
+    //                 style={{ cursor: "pointer", padding: 7, maxWidth: "100px" }}
+    //               />
+    //             </div>
+    //           ))}
+    //         </Carousel>
+    //       ) : (
+    //         <Image
+    //           src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
+    //           alt=""
+    //           style={{ cursor: "pointer", padding: 7, height: "80%" }}
+    //         />
+    //       )}
+    //     </>
+    //   ),
+    // }  ,
     {
       name: "Image",
-      width: "10%",
+      width: "11%",
       selector: (row) => (
         <>
-          {Array.isArray(row.image) ? (
-            <Carousel dots arrows>
-              {row.image.map((imagePath, index) => (
-                <div key={index}>
+          <Row>
+            <Col span={18}>
+              {Array.isArray(row.image) && row.image.length > 1 ? (
+                <Carousel>
+                  {row.image.map((imagePath, index) => (
+                    <div key={index}>
+                      <Image
+                        src={`http://localhost:5000/${imagePath}`}
+                        alt=""
+                        style={{ cursor: "pointer", padding: 7, height: "80%" }}
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              ) : (
+                row.image && (
                   <Image
-                    src={`http://localhost:5000/${imagePath.replace(
-                      /\\/g,
-                      "/"
-                    )}`}
+                    src={`http://localhost:5000/${row.image[0]}`}
                     alt=""
-                    style={{ cursor: "pointer", padding: 7, height: "80%" }}
+                    style={{ cursor: "pointer", padding: 7, height: "50%" }}
                   />
-                </div>
-              ))}
-            </Carousel>
-          ) : (
-            <Image
-              src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
-              alt=""
-              style={{ cursor: "pointer", padding: 7, height: "80%" }}
-            />
-          )}
+                )
+              )}
+            </Col>
+          </Row>
         </>
       ),
     },
@@ -445,6 +480,102 @@ function AllProducts() {
       },
     },
   };
+  const [addImageModalVisible, setAddImageModalVisible] = useState(false);
+  const [deleteImageModalVisible, setDeleteImageModalVisible] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
+  //delete image
+  const handleImageSelection = (index) => {
+    setSelectedImages((prevSelectedImages) => {
+      if (prevSelectedImages.includes(index)) {
+        // Image is already selected, so remove it from the selected images array
+        return prevSelectedImages.filter((item) => item !== index);
+      } else {
+        // Image is not selected, so add it to the selected images array
+        return [...prevSelectedImages, index];
+      }
+    });
+  };
+
+  const handleDeleteImages = async () => {
+    const selectedImagePaths = selectedImages.map(
+      (index) => productImages[index]
+    );
+    const data = {
+      selectedRowId: selectedRowId, // Replace with the actual value
+      selectedImagePaths: selectedImagePaths,
+    };
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/admin/deleteproductimage",
+        data
+      );
+      if (response.status === 200) {
+        setRefreshPage(true);
+        message.success("Image deleted successfully");
+        closeDeleteImageModal();
+        if (refreshPage) {
+          setRefreshPage(false);
+        }
+      } else {
+        setErrorMessage("Something went wrong");
+        message.error("server error");
+      }
+    } catch (error) {
+      console.log("server error", error);
+    }
+  };
+
+  const openDeleteImageModal = () => {
+    setDeleteImageModalVisible(true);
+  };
+  const closeDeleteImageModal = () => {
+    setDeleteImageModalVisible(false);
+  };
+
+  //add image
+  const openAddImageModal = () => {
+    setAddImageModalVisible(true);
+  };
+
+  const closeAddImageModal = () => {
+    setAddImageModalVisible(false);
+  };
+  const handleImageUpload = async (values) => {
+    try {
+      const formData = new FormData();
+      values.image.forEach((file) => {
+        formData.append("image", file.originFileObj);
+      });
+
+      const response = await axios.post(
+        `http://localhost:5000/admin/addproductimage/${selectedRowId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setRefreshPage(true);
+        message.success("Image added successfully");
+        closeAddImageModal();
+        if (refreshPage) {
+          setRefreshPage(false);
+        }
+      } else {
+        setErrorMessage("Something went wrong");
+        message.error("server error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const selectedProduct = products.find(
+    (product) => product.id === selectedRowId
+  );
+  const productImages = selectedProduct ? selectedProduct.image : [];
 
   return !loading ? (
     <>
@@ -629,15 +760,15 @@ function AllProducts() {
             </Row>
             <Row>
               <Col span={24}>
-                <Form.Item
+                {/* <Form.Item
                   name="image"
                   label="Image"
                   valuePropName="fileList"
                   getValueFromEvent={(e) => e.fileList}
                   rules={[{ required: false, message: "Image is required!" }]}
                   hasFeedback
-                >
-                  <Tooltip title="Do not fill this field if you want to keep previous Images">
+                > */}
+                {/* <Tooltip title="Do not fill this field if you want to keep previous Images">
                     <Upload.Dragger
                       listType="picture"
                       multiple
@@ -659,13 +790,46 @@ function AllProducts() {
                         },
                         style: { top: 15 },
                       }}
-                    >
-                      <Button icon={<UploadOutlined />} className="w-100">
+                    > */}
+                {/* <Button icon={<UploadOutlined />} className="w-100">
                         Drag and drop images
                       </Button>
                     </Upload.Dragger>
-                  </Tooltip>
-                </Form.Item>
+                  </Tooltip> */}
+                {/* </Form.Item> */}
+                <Row>
+                  <Col span={12} style={{ paddingRight: ".5rem" }}>
+                    <Button
+                      style={{
+                        width: "100%",
+                        background: "#52c41a",
+                        color: "#fff",
+                        marginBottom: "10px",
+                      }}
+                      type="primary"
+                      onClick={openAddImageModal}
+                      icon={<PlusOutlined />}
+                    >
+                      Add Image/s
+                    </Button>
+                  </Col>
+                  <Col span={12} style={{ paddingLeft: ".5rem" }}>
+                    <Button
+                      style={{
+                        width: "100%",
+                        background: "#52c41a",
+                        color: "#fff",
+                        marginBottom: "10px",
+                        backgroundColor: "#f72a2c",
+                      }}
+                      type="primary"
+                      onClick={openDeleteImageModal}
+                      icon={<DeleteOutlined />}
+                    >
+                      Delete image/s
+                    </Button>
+                  </Col>
+                </Row>
               </Col>
             </Row>
             <Row>
@@ -729,6 +893,130 @@ function AllProducts() {
               {/* </Popconfirm> */}
             </Form.Item>
           </Form>
+        </Modal>
+        <Modal
+          title="current product images"
+          open={addImageModalVisible}
+          onCancel={closeAddImageModal}
+          footer={null}
+        >
+          <Row>
+            <Col span={8} style={{ paddingRight: ".5rem" }}>
+              {productImages.length > 0 ? (
+                <Carousel dots arrows>
+                  {productImages.map((imagePath, index) => (
+                    <div key={index}>
+                      <Image
+                        src={`http://localhost:5000/${imagePath.replace(
+                          /\\/g,
+                          "/"
+                        )}`}
+                        alt=""
+                        style={{
+                          cursor: "pointer",
+                          maxWidth: "200px",
+                          maxHeight: "200px",
+                        }}
+                      />
+                      {/* {console.log(productImages)} */}
+                    </div>
+                  ))}
+                </Carousel>
+              ) : (
+                <p>No images available for this product.</p>
+              )}
+            </Col>
+            <Col span={16} style={{ paddingLeft: ".5rem" }}>
+              <Form
+                name="addImageForm"
+                onFinish={handleImageUpload}
+                onFinishFailed={onFinishFailed}
+              >
+                <Form.Item
+                  name="image"
+                  // label="Upload Image"
+                  valuePropName="fileList"
+                  getValueFromEvent={(e) => e.fileList}
+                  rules={[{ required: true, message: "no new image selected" }]}
+                  hasFeedback
+                >
+                  <Upload.Dragger
+                    listType="picture"
+                    multiple
+                    name="image"
+                    accept="image/*"
+                    beforeUpload={() => false}
+                    iconRender={() => <Spin />}
+                    progress={{
+                      strokeWidth: 3,
+                      strokeColor: {
+                        "0%": "#f0f",
+                        100: "#ff0",
+                      },
+                      style: { top: 15 },
+                    }}
+                  >
+                    <p className="ant-upload-drag-icon">
+                      <PlusOutlined />
+                    </p>
+                    <p className="ant-upload-text">
+                      Click or drag image to upload
+                    </p>
+                  </Upload.Dragger>
+                </Form.Item>
+                <Row>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "200px", marginTop: "2rem" }}
+                    >
+                      Upload
+                    </Button>
+                  </Form.Item>
+                </Row>
+              </Form>
+            </Col>
+          </Row>
+        </Modal>
+        <Modal
+          title="Current Product Images"
+          open={deleteImageModalVisible}
+          onCancel={closeDeleteImageModal}
+          footer={null}
+        >
+          {productImages.length > 0 ? (
+            <div>
+              {productImages.map((imagePath, index) => (
+                <Checkbox
+                  style={{ padding: "10px" }}
+                  key={index}
+                  onChange={() => handleImageSelection(index)}
+                  checked={selectedImages.includes(index)}
+                >
+                  <Image
+                    src={`http://localhost:5000/${imagePath.replace(
+                      /\\/g,
+                      "/"
+                    )}`}
+                    alt=""
+                    style={{
+                      cursor: "pointer",
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                    }}
+                  />
+                </Checkbox>
+              ))}
+              <Row style={{ marginTop: "2rem" }}>
+                <Button onClick={handleDeleteImages}>
+                  Delete Selected Images
+                </Button>
+              </Row>
+            </div>
+          ) : (
+            <p>No images available for this product.</p>
+          )}
         </Modal>
       </Card>
     </>
