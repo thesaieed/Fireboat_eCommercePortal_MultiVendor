@@ -11,6 +11,7 @@ var jwt = require("jsonwebtoken");
 const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
 const vendorRoutes = require("./routes/vendor");
 const reviewRoutes = require("./routes/review");
+const paymentRoutes = require("./routes/payments");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -30,7 +31,7 @@ const upload = multer({ storage: storage });
 
 app.use("/vendor", vendorRoutes);
 app.use("/review", reviewRoutes);
-
+app.use("/payments", paymentRoutes);
 //login route
 app.post("/login", async (req, res) => {
   // console.log("body: ", req.body);
@@ -758,7 +759,7 @@ app.get("/cart", async (req, res) => {
       const productIds = data1.map((item) => item.product_id); //get array of productIds
       // console.log(productIds)
       const query = {
-        text: "SELECT id, name, price, image, category,brand_id FROM products WHERE  id= ANY($1::int[])",
+        text: "SELECT id, name, price, image, category,brand_id, vendor_id FROM products WHERE  id= ANY($1::int[])",
         values: [productIds],
       };
       const cartDetails2 = await pool.query(query);

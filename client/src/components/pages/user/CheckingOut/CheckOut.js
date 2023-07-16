@@ -1,97 +1,70 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import Footer from "../../../layout/Footer";
+import CommonNavbar from "../../../layout/CommonNavbar";
 import {
   Card,
   Col,
   Form,
   Input,
   Row,
-  Tooltip,
+  List,
   Modal,
   Select,
   Alert,
   Button,
+  theme,
+  Layout,
+  Steps,
   message,
 } from "antd";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import DeliveryAddressDropdown from "./DeliveryAddressDropdown";
 import PaymentModeDropdown from "./PaymentModeDropdown";
 import ReviewItemsDropdown from "./ReviewItemsDropdown";
 import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
+
+import payIcon from "../../../../assets/images/paymentIcon.png";
+
 const isValidIndianPincode = (pincode) => {
   // Regular expression to match Indian PIN code format (6 digits)
   const pincodePattern = /^[1-9][0-9]{5}$/;
   return pincode === "" || pincodePattern.test(pincode);
 };
-function CheckOut() {
+const Checkout = () => {
+  const [loading, setLoading] = useState(false);
+  const [payLoading, setPayLoading] = useState(false);
+  const { token } = theme.useToken();
+  const [current, setCurrent] = useState(0);
   const [itemDetails, setItemDetails] = useState([]);
-  const [discountPercentage, setDiscountPercentage] = useState(10);
-  const [deliveryCharge, setDeliveryCharge] = useState(100); //for time being static
+  const [discountPercentage] = useState(0);
+  const [deliveryCharge] = useState(0); //for time being static
   const [totalPrice, setTotalPrice] = useState("");
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [selectedPaymentMode, setSelectedPaymentMode] = useState(null);
-  const [paymentDetails, setPaymentDetails] = useState("");
-  const paymentOptions = ["Credit or Debit Card", "UPI", "Cash on Delivery"];
-  const [showCardDetailsModal, setShowCardDetailsModal] = useState(false);
   const [address, setAddress] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [showUpiModal, setShowUpiModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showDeliveryDropdown, setShowDeliveryDropdown] = useState(true);
-  const [showPaymentDropdown, setShowPaymentDropdown] = useState(false);
-  const [showReviewItems, setShowReviewItems] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [paymentFormData, setPaymentFormData] = useState();
+
+  //
+  // after Payment
+  const [searchParams] = useSearchParams();
+  const paymentdone = JSON.parse(searchParams.get("paymentdone"));
+  const status = searchParams.get("status");
+  const txnid = searchParams.get("t");
 
   //order summary for cart items
   const location = useLocation();
-  const productData = location.state?.productData || [];
+
+  const productData = useMemo(
+    () => location.state?.productData || [],
+    [location.state?.productData]
+  );
+
   // console.log(productData);
 
-  //end for cart summary
-  useEffect(() => {
-    if (productData) {
-      setItemDetails(productData);
-    }
-  }, [productData]);
-
-  // console.log(itemDetails);
-
-  useEffect(() => {
-    const fetchQuantity = async () => {
-      try {
-        const ids = productData.map((item) => item.id);
-        const response = await axios.get("http://localhost:5000/checkout", {
-          params: { ids },
-        });
-        const updatedQuantity = response.data;
-
-        const updatedItemDetails = itemDetails.map((item) => {
-          const matchingItem = updatedQuantity.find(
-            (updatedItem) => updatedItem.id === item.id
-          );
-          if (matchingItem) {
-            return { ...item, quantity: matchingItem.quantity };
-          }
-          return item;
-        });
-        // console.log(updatedItemDetails);
-        setItemDetails(updatedItemDetails);
-      } catch (error) {
-        console.error("server error", error);
-      }
-    };
-
-    if (itemDetails.length > 0) {
-      fetchQuantity();
-    }
-  }, [itemDetails.length]);
-
-  useEffect(() => {
-    const totalCost = itemDetails.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-    setTotalPrice(totalCost);
-  }, [itemDetails]);
   const states = [
     "Andhra Pradesh",
     "Arunachal Pradesh",
@@ -133,9 +106,10 @@ function CheckOut() {
 
   const { Option } = Select;
   const [form] = Form.useForm();
-  const { appUser } = useAllContext();
+  const { appUser, generateRandomString } = useAllContext();
 
-  const fetchAddress = async () => {
+  const fetchAddress = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         "http://localhost:5000/shippingaddress",
@@ -151,13 +125,40 @@ function CheckOut() {
     } catch (error) {
       console.error(error);
     }
-  };
+    setLoading(false);
+  }, [appUser.id]);
+  const fetchQuantity = useCallback(async () => {
+    try {
+      const ids = productData.map((item) => item.id);
+      const response = await axios.get("http://localhost:5000/checkout", {
+        params: { ids },
+      });
+      const updatedQuantity = response.data;
 
-  useEffect(() => {
-    if (appUser.id) {
-      fetchAddress();
+      const updatedItemDetails = itemDetails.map((item) => {
+        const matchingItem = updatedQuantity.find(
+          (updatedItem) => updatedItem.id === item.id
+        );
+        if (matchingItem) {
+          return { ...item, quantity: matchingItem.quantity };
+        }
+        return item;
+      });
+      // console.log(updatedItemDetails);
+      setItemDetails(updatedItemDetails);
+    } catch (error) {
+      console.error("server error", error);
     }
-  }, [appUser]);
+  }, [itemDetails, productData]);
+  const handleUseAddress = () => {
+    const userselectedaddress = address.find(
+      (address) => address.id === selectedAddressId
+    );
+    if (address) {
+      // Call the parent's handleSelectAddress only when the button is clicked
+      handleSelectAddress(userselectedaddress);
+    }
+  };
 
   const updateQuantityInDatabase = async (itemId, quantity) => {
     try {
@@ -165,6 +166,7 @@ function CheckOut() {
     } catch (error) {
       console.error("server error", error);
     }
+    fetchQuantity();
   };
   const handleIncrement = (index) => {
     setItemDetails((prevItemDetails) => {
@@ -194,12 +196,6 @@ function CheckOut() {
   };
 
   //finalising order checkout
-  const handlePlaceOrder = async () => {
-    console.log("Order placed");
-    console.log("productDetails", itemDetails);
-    console.log("addressDetails", selectedAddress);
-    console.log("paymentDetils", paymentDetails);
-  };
 
   const handleAddNewAddress = () => {
     setShowModal(true);
@@ -239,512 +235,547 @@ function CheckOut() {
   const handleSelectAddress = (address) => {
     setSelectedAddress(address);
     // console.log(address);
-    setShowDeliveryDropdown(false);
-    setShowPaymentDropdown(true);
+    // setShowDeliveryDropdown(false);
+    // setShowPaymentDropdown(true)
   };
 
-  const handleSelectPaymentMode = (mode) => {
-    setSelectedPaymentMode(mode);
-    // console.log(mode);
-    if (mode === "Credit or Debit Card") {
-      setShowCardDetailsModal(true);
-    } else if (mode === "UPI") {
-      setShowUpiModal(true);
-    } else {
-      handleCOD(mode);
-      // console.log(mode);
+  //end for cart summary
+  useEffect(() => {
+    if (paymentdone === true) setCurrent(2);
+    if (productData) {
+      setItemDetails(productData);
+    }
+  }, [productData, paymentdone, status]);
+
+  // console.log(itemDetails);
+
+  useEffect(() => {
+    if (itemDetails.length > 0) {
+      fetchQuantity();
+    }
+  }, [itemDetails.length]);
+
+  useEffect(() => {
+    const totalCost = itemDetails.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    setTotalPrice(totalCost);
+  }, [itemDetails]);
+  useEffect(() => {
+    if (appUser.id) {
+      fetchAddress();
+    }
+  }, [appUser.id, fetchAddress]);
+  const next = () => {
+    setCurrent(current + 1);
+  };
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+
+  const steps = [
+    {
+      title: "Delivery Address",
+      content: (
+        <DeliveryAddressDropdown
+          addresses={address}
+          onAddNewAddress={handleAddNewAddress}
+          onSelectAddress={handleSelectAddress}
+          selectedAddress={selectedAddress}
+          setSelectedAddressId={setSelectedAddressId}
+          selectedAddressId={selectedAddressId}
+        />
+      ),
+    },
+    {
+      title: "Review Order",
+      content: (
+        <ReviewItemsDropdown
+          itemDetails={itemDetails}
+          onIncrement={handleIncrement}
+          onDecrement={handleDecrement}
+        />
+      ),
+    },
+    {
+      title: "Payment",
+      content: (
+        <PaymentModeDropdown
+          status={status}
+          paymentdone={paymentdone}
+          address={address}
+          itemDetails={itemDetails}
+          txnid={txnid}
+          appUser={appUser}
+        />
+      ),
+    },
+  ];
+  const items = steps.map((item) => ({
+    key: item.title,
+    title: item.title,
+  }));
+  const contentStyle = {
+    // lineHeight: "260px",
+    // textAlign: "center",
+    color: token.colorTextTertiary,
+    backgroundColor: token.colorFillAlter,
+    borderRadius: token.borderRadiusLG,
+    border: `1px dashed ${token.colorSuccess}`,
+    marginTop: 16,
+  };
+  const navigate = useNavigate();
+  const { Content } = Layout;
+
+  const handleSearch = (e) => {
+    navigate(`/browse/?search=${e.target.value}`);
+    window.location.reload();
+  };
+  const data = [
+    <>
+      Items <span style={{ float: "right" }}>&#8377;{totalPrice}</span>
+    </>,
+    <>
+      Delivery <span style={{ float: "right" }}>&#8377;{deliveryCharge}</span>
+    </>,
+    <>
+      Total
+      <span style={{ float: "right" }}>
+        &#8377;{totalPrice + deliveryCharge}
+      </span>
+    </>,
+    <>
+      Discount
+      <strong style={{ float: "right" }}>
+        -&#8377;
+        {Math.floor((totalPrice + deliveryCharge) * (discountPercentage / 100))}
+      </strong>
+    </>,
+    <>
+      <h3 style={{ color: token.colorPrimaryBorder, width: "100%" }}>
+        Order Total{" "}
+        <span style={{ float: "right" }}>
+          &#8377;
+          {totalPrice +
+            deliveryCharge -
+            Math.floor(
+              (totalPrice + deliveryCharge) * (discountPercentage / 100)
+            )}
+        </span>
+      </h3>
+    </>,
+  ];
+
+  const getPaymentData = async () => {
+    setLoading(true);
+    const products = itemDetails.map((item) => {
+      return {
+        productID: item.id,
+        quantity: item.quantity,
+        amount: item.price * item.quantity,
+        vendor_id: item.vendor_id,
+      };
+    });
+    var transactionID = generateRandomString(10);
+    var orderID = generateRandomString(7);
+    transactionID = `${transactionID}${Date.now()}`;
+    // const productinfo = `OrderID3`;
+    var { id, name, email, phone } = appUser;
+    phone = "8082588960";
+    try {
+      const getdata = await axios.post(
+        "http://localhost:5000/payments/initpayment",
+        {
+          user_id: id,
+          products,
+          transactionID,
+          orderID,
+          fullname: name,
+          address_id: selectedAddress.id,
+          email,
+          phone,
+          amount: 1,
+          // totalPrice +
+          // deliveryCharge -
+          // Math.floor(
+          //   (totalPrice + deliveryCharge) * (discountPercentage / 100)
+          // ),
+        }
+      );
+      if (getdata.data?.url?.length) {
+        setPaymentFormData({
+          url: getdata.data.url,
+          data: getdata.data.data,
+        });
+        setLoading(false);
+
+        return true;
+      } else {
+        setPaymentFormData({});
+        setLoading(false);
+        return false;
+      }
+
+      // console.log(paymentRes);
+    } catch (error) {
+      console.log(error);
+      setPaymentFormData({});
+      setLoading(false);
+      return false;
     }
   };
-  const handleCOD = async (mode) => {
-    // console.log(mode);
-    setPaymentDetails(mode);
-    setShowPaymentDropdown(false);
-    setShowReviewItems(true);
-  };
-
-  const handleCreditCardDetails = async () => {
-    const values = form.getFieldValue();
-    // console.log(values);
-    setPaymentDetails(values);
-    setShowCardDetailsModal(false);
-    form.resetFields();
-    setShowPaymentDropdown(false);
-    setShowReviewItems(true);
-  };
-  const handleVerifyUpi = async () => {
-    const values = await form.validateFields(["upiId"]);
-    // console.log(values);
-    setPaymentDetails(values);
-    form.resetFields();
-    setShowUpiModal(false);
-    setShowPaymentDropdown(false);
-    setShowReviewItems(true);
-    message.success("upi verified");
-  };
-  // const handleUseAddress = () => {
-  //   // Implement the logic to use the selected address
-  //   console.log("Selected Address:", selectedAddress);
-  //   console.log("selected Payment Method", selectedPaymentMethod);
-  // };
   return (
-    <>
-      <Row gutter={5}>
-        <Col xs={24} sm={24} xl={5} lg={5}>
-          <h2>Alsaleels.in</h2>
-        </Col>
-        <Col xs={24} sm={24} xl={10} lg={10}>
-          <h1 style={{ textAlign: "center" }}>CheckOut</h1>
-        </Col>
-      </Row>
-      <Card style={{ padding: "20px" }}>
-        <Row>
-          <Col xs={24} sm={24} xl={16} lg={16}>
-            <h2>
-              <ol>
-                {/* Delivery Address section */}
-                <li
-                  onClick={() => setShowDeliveryDropdown(!showDeliveryDropdown)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <Tooltip>
-                    Delivery Address{" "}
-                    {selectedAddress && (
-                      <p>
-                        <span>{selectedAddress.full_name}</span>
-                        <br />
-                        <span>
-                          {selectedAddress.house_no_company},
-                          <span>{selectedAddress.area_street_village}</span>
-                        </span>
-                        <br />
-                        <span>
-                          {selectedAddress.town_city}, {selectedAddress.state}
-                        </span>
-                        <br />
-                        <span>{selectedAddress.pincode}</span>
-                      </p>
-                    )}{" "}
-                  </Tooltip>
-                </li>
-                <hr />
-                {/* Conditional rendering of DeliveryAddressDropdown */}
-                {showDeliveryDropdown && (
-                  <DeliveryAddressDropdown
-                    addresses={address}
-                    onAddNewAddress={handleAddNewAddress}
-                    onSelectAddress={handleSelectAddress}
-                    selectedAddress={selectedAddress}
-                  />
-                )}
+    <Layout className="layout-default ">
+      <CommonNavbar handleSearch={handleSearch} />
 
-                <li
-                  onClick={() =>
-                    selectedAddress &&
-                    setShowPaymentDropdown(!showPaymentDropdown)
-                  }
-                  style={{ cursor: "pointer" }}
-                >
-                  <Tooltip>
-                    Payment Mode <br />
-                    <p>
-                      {paymentDetails && (
-                        <>
-                          {paymentDetails.cardNumber && (
-                            <>
-                              <span>{paymentDetails.cardNumber}</span>
-                              <br />
-                            </>
-                          )}
-                          {paymentDetails.cardHolder && (
-                            <>
-                              <span>{paymentDetails.cardHolder}</span>
-                              <br />
-                            </>
-                          )}
-                          {paymentDetails.expiryDate && (
-                            <>
-                              <span>{paymentDetails.expiryDate}</span>
-                              <br />
-                            </>
-                          )}
-                          {paymentDetails.upiId && (
-                            <>
-                              <span> {paymentDetails.upiId}</span>
-                              <br />
-                            </>
-                          )}
-                          {paymentDetails === "Cash on Delivery" && (
-                            <>
-                              <span>{paymentDetails}</span>
-                              <br />
-                            </>
-                          )}
-                        </>
-                      )}
-                    </p>
-                  </Tooltip>
-                </li>
-                <hr />
-                {/* Conditional rendering of PaymentModeDropdown */}
-                {showPaymentDropdown && (
-                  <PaymentModeDropdown
-                    paymentOptions={paymentOptions}
-                    onSelectPaymentMode={handleSelectPaymentMode}
-                    selectedPaymentMode={selectedPaymentMode}
-                  />
-                )}
-                <li
-                  onClick={() =>
-                    paymentDetails && setShowReviewItems(!showReviewItems)
-                  }
-                  style={{ cursor: "pointer" }}
-                >
-                  <Tooltip>Review Items and Delivery</Tooltip>
-                </li>
-                <hr />
-                {/* conditional rendering of ReviewitemsDropdown*/}
-                {showReviewItems && (
-                  <ReviewItemsDropdown
-                    itemDetails={itemDetails}
-                    onIncrement={handleIncrement}
-                    onDecrement={handleDecrement}
-                    placeOrder={handlePlaceOrder}
-                  />
-                )}
-              </ol>
-            </h2>
-          </Col>
-
-          <Col
-            xs={24}
-            sm={24}
-            xl={8}
-            lg={8}
-            style={{ position: "sticky", top: "20px" }}
-          >
-            <div
-              style={{ position: "sticky", top: "20px", marginLeft: "20px" }}
-            >
+      <Layout className="layout-default ">
+        <Content style={{ padding: 16, overflow: "auto" }}>
+          <Row justify="space-evenly" align="top">
+            <Col xs={23} sm={23} md={15}>
               <Card
-                style={{ margin: "0px 15px", backgroundColor: "whitesmoke" }}
+                loading={loading}
+                title="Checkout"
+                headStyle={{ textAlign: "center", fontSize: 22 }}
               >
-                <h2> Order Summary</h2>
-                <hr />
-                <ul style={{ padding: "5px" }}>
-                  <li>
-                    items:{" "}
-                    <span style={{ float: "right" }}>&#8377;{totalPrice}</span>
-                  </li>
-                  <li>
-                    Delivery:{" "}
-                    <span style={{ float: "right" }}>
-                      &#8377;{deliveryCharge}
-                    </span>{" "}
-                  </li>
-                  <li>
-                    Total:{" "}
-                    <span style={{ float: "right" }}>
-                      &#8377;{totalPrice + deliveryCharge}
-                    </span>{" "}
-                  </li>
-                  <li>
-                    Discount:{" "}
-                    <span style={{ float: "right" }}>
-                      -&#8377;
-                      {Math.floor(
-                        (totalPrice + deliveryCharge) *
-                          (discountPercentage / 100)
-                      )}
-                    </span>
-                  </li>
-                </ul>
-                <hr />
-                <h2 style={{ color: "red" }}>
-                  Order Total{" "}
-                  <span style={{ float: "right" }}>
-                    &#8377;
-                    {totalPrice +
-                      deliveryCharge -
-                      Math.floor(
-                        (totalPrice + deliveryCharge) *
-                          (discountPercentage / 100)
-                      )}
-                  </span>
-                </h2>
-                <hr />
-              </Card>
-            </div>
-          </Col>
-        </Row>
-      </Card>
-      {/* modal for adding new address */}
-      <Modal
-        title="Add New Address"
-        open={showModal}
-        onOk={handleModalOk}
-        onCancel={handleModalCancel}
-      >
-        <Form
-          form={form}
-          name="basic"
-          labelCol={{ span: 24 }}
-          className="row-col"
-          layout="verticle"
-        >
-          <Form.Item
-            label="Country"
-            name="country"
-            rules={[{ required: true, message: "Please select a country!" }]}
-          >
-            <Select placeholder="Select a Country" className="ant-input">
-              {countries.map((country) => (
-                <Option key={country} value={country}>
-                  {country}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Full Name"
-            name="full_name"
-            rules={[
-              { required: true, message: "Please input your full name!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Phone Number"
-            name="phone_number"
-            rules={[
-              { required: true, message: "Please input your phone number" },
-              {
-                min: 10,
-                max: 10,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Row>
-            <Col span={12} style={{ paddingRight: "2px" }}>
-              <Form.Item
-                label="Pincode"
-                name="pincode"
-                rules={[
-                  { required: true, message: "Please enter correct pincode" },
+                <Steps current={current} items={items} />
+                <div style={contentStyle}>{steps[current].content}</div>
+                <div
+                  style={{
+                    marginTop: 24,
+                    textAlign: "end",
+                  }}
+                >
+                  {/* {current < steps.length - 1 && current > 0 && (
+                      <Button type="primary" onClick={() => next()}>
+                        Next
+                      </Button>
+                    )} */}
+                  {current === 0 && (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        handleUseAddress();
+                        next();
+                      }}
+                      disabled={!selectedAddressId}
+                      style={{ marginTop: "10px" }}
+                    >
+                      Use this Address
+                    </Button>
+                  )}
 
-                  {
-                    validator: (_, value) =>
-                      isValidIndianPincode(value)
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            "Enter a Valid 6 digit Indian Zip or postal code"
-                          ),
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+                  {/* {current === steps.length - 1 && (
+                      <Button
+                        type="primary"
+                        onClick={() => message.success("Processing complete!")}
+                      >
+                        Done
+                      </Button>
+                    )} */}
+                  {current > 0 && (
+                    <Button
+                      style={{
+                        margin: "0 8px",
+                      }}
+                      onClick={() => prev()}
+                    >
+                      Go Back
+                    </Button>
+                  )}
+                </div>
+              </Card>
             </Col>
-            <Col span={12} style={{ paddingLeft: "2px" }}>
-              <Form.Item
-                label="Flat/House No./Company"
-                name="house_no_company"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Flat/House No./Company name",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            {!paymentdone && (
+              <Col xs={23} sm={23} md={8}>
+                <List
+                  loading={loading}
+                  style={{
+                    background: "#fff",
+                    borderRadius: 4,
+                    border: "1px solid #ededed",
+                  }}
+                  header={
+                    <div
+                      style={{
+                        margin: "14px 0",
+                        fontWeight: 700,
+                        fontSize: 20,
+                        fontFamily: "Nunito",
+                        textAlign: "center",
+                      }}
+                    >
+                      Order Summary
+                    </div>
+                  }
+                  footer={null}
+                  bordered
+                  dataSource={data}
+                  renderItem={(item) => <List.Item>{item}</List.Item>}
+                />
+                {current === 1 && (
+                  <Button
+                    loading={loading}
+                    block
+                    style={{ marginTop: 10, height: 55 }}
+                    onClick={async () => {
+                      const gotData = await getPaymentData();
+                      if (gotData) next();
+                      else
+                        message.error(
+                          "Couldn't Complete rhe request, please try again!"
+                        );
+                    }}
+                    type="primary"
+                    icon={<img src={payIcon} alt="icon" height={35} />}
+                  >
+                    Continue to Payment
+                  </Button>
+                )}
+                {current === 2 && !paymentdone && (
+                  <form action={paymentFormData?.url} method="post">
+                    <input
+                      type="hidden"
+                      name="key"
+                      value={paymentFormData?.data.key}
+                    />
+                    <input
+                      type="hidden"
+                      name="txnid"
+                      value={paymentFormData?.data.txnid}
+                    />
+                    <input
+                      type="hidden"
+                      name="productinfo"
+                      value={paymentFormData?.data.productinfo}
+                    />
+                    <input
+                      type="hidden"
+                      name="amount"
+                      value={paymentFormData?.data.amount}
+                    />
+                    <input
+                      type="hidden"
+                      name="email"
+                      value={paymentFormData?.data.email}
+                    />
+                    <input
+                      type="hidden"
+                      name="firstname"
+                      value={paymentFormData?.data.firstname}
+                    />
+                    <input
+                      type="hidden"
+                      name="surl"
+                      value={paymentFormData?.data.surl}
+                    />
+                    <input
+                      type="hidden"
+                      name="furl"
+                      value={paymentFormData?.data.furl}
+                    />
+                    <input
+                      type="hidden"
+                      name="phone"
+                      value={paymentFormData?.data.phone}
+                    />
+                    <input
+                      type="hidden"
+                      name="hash"
+                      value={paymentFormData?.data.hash}
+                    />
+                    {paymentFormData.url?.length && (
+                      <Button
+                        loading={payLoading}
+                        block
+                        style={{ marginTop: 10, height: 55 }}
+                        type="primary"
+                        htmlType="submit"
+                        onClick={() => {
+                          setPayLoading(true);
+                        }}
+                        icon={<img src={payIcon} alt="icon" height={35} />}
+                      >
+                        Pay Now
+                      </Button>
+                    )}
+                  </form>
+                )}
+              </Col>
+            )}
           </Row>
-          <Row>
-            <Col span={12} style={{ paddingRight: "2px" }}>
+
+          {/* modal for adding new address */}
+          <Modal
+            title="Add New Address"
+            open={showModal}
+            onOk={handleModalOk}
+            onCancel={handleModalCancel}
+          >
+            <Form
+              form={form}
+              name="basic"
+              labelCol={{ span: 24 }}
+              className="row-col"
+              layout="verticle"
+            >
               <Form.Item
-                label="Area/Street/Village"
-                name="area_street_village"
+                label="Country"
+                name="country"
                 rules={[
-                  {
-                    required: true,
-                    message: "Please input Area/Street/Village address",
-                  },
+                  { required: true, message: "Please select a country!" },
                 ]}
               >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12} style={{ paddingLeft: "2px" }}>
-              <Form.Item
-                label="Landmark"
-                name="landmark"
-                rules={[{ required: true, message: "Please input a landmark" }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col style={{ paddingRight: "2px" }} span={12}>
-              <Form.Item
-                label="Town/City"
-                name="town_city"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your town/city name!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col style={{ paddingLeft: "2px" }} span={12}>
-              <Form.Item
-                label="State"
-                name="state"
-                rules={[{ required: true, message: "Please select a state" }]}
-              >
-                <Select className="ant-input" placeholder="Select a state">
-                  {states.map((state) => (
-                    <Option key={state} value={state}>
-                      {state}
+                <Select placeholder="Select a Country" className="ant-input">
+                  {countries.map((country) => (
+                    <Option key={country} value={country}>
+                      {country}
                     </Option>
                   ))}
                 </Select>
               </Form.Item>
-            </Col>
-          </Row>
-          {errorMessage && (
-            <Form.Item>
-              <Alert
-                message={errorMessage}
-                type="error"
-                showIcon
-                closable
-                onClose={() => setErrorMessage("")}
-              />
-            </Form.Item>
-          )}
-        </Form>
-      </Modal>
+              <Form.Item
+                label="Full Name"
+                name="full_name"
+                rules={[
+                  { required: true, message: "Please input your full name!" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Phone Number"
+                name="phone_number"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your phone number",
+                  },
+                  {
+                    min: 10,
+                    max: 10,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Row>
+                <Col span={12} style={{ paddingRight: "2px" }}>
+                  <Form.Item
+                    label="Pincode"
+                    name="pincode"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter correct pincode",
+                      },
 
-      <Modal
-        title={<div className="custom-modal">Credit or Debit Card Details</div>}
-        open={showCardDetailsModal}
-        onCancel={() => setShowCardDetailsModal(false)}
-        onOk={handleCreditCardDetails}
-        width="700px"
-      >
-        <hr></hr>
-        <Row style={{ marginLeft: "16px" }}>
-          <Col span={20}>
-            <Form
-              labelCol={{ span: 6 }}
-              labelAlign="left"
-              form={form}
-              name="cardDetails"
-            >
-              <Form.Item
-                name="cardNumber"
-                label="Card Number"
-                rules={[
-                  { required: true, message: "Please enter your card number" },
-                  {
-                    pattern: /^\d{16}$/,
-                    message: "Card number must be 16 digits",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter your 16-digit card number" />
-              </Form.Item>
-              <Form.Item
-                name="cardHolder"
-                label="Card Holder"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the card holder's name",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter the card holder's name" />
-              </Form.Item>
-              <Form.Item
-                name="expiryDate"
-                label="Expiry Date"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the card's expiry date",
-                  },
-                  {
-                    pattern: /^(0[1-9]|1[0-2])\/\d{2}$/,
-                    message: "Expiry date must be in the format MM/YY",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter expiry date in the format MM/YY" />
-              </Form.Item>
-              <Form.Item
-                name="cvv"
-                label="CVV"
-                rules={[
-                  { required: true, message: "Please enter the CVV code" },
-                  { len: 3, message: "CVV must be 3 digits" },
-                ]}
-              >
-                <Input.Password placeholder="Enter the 3-digit CVV" />
-              </Form.Item>
+                      {
+                        validator: (_, value) =>
+                          isValidIndianPincode(value)
+                            ? Promise.resolve()
+                            : Promise.reject(
+                                "Enter a Valid 6 digit Indian Zip or postal code"
+                              ),
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12} style={{ paddingLeft: "2px" }}>
+                  <Form.Item
+                    label="Flat/House No./Company"
+                    name="house_no_company"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input Flat/House No./Company name",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12} style={{ paddingRight: "2px" }}>
+                  <Form.Item
+                    label="Area/Street/Village"
+                    name="area_street_village"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input Area/Street/Village address",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12} style={{ paddingLeft: "2px" }}>
+                  <Form.Item
+                    label="Landmark"
+                    name="landmark"
+                    rules={[
+                      { required: true, message: "Please input a landmark" },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row>
+                <Col style={{ paddingRight: "2px" }} span={12}>
+                  <Form.Item
+                    label="Town/City"
+                    name="town_city"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your town/city name!",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col style={{ paddingLeft: "2px" }} span={12}>
+                  <Form.Item
+                    label="State"
+                    name="state"
+                    rules={[
+                      { required: true, message: "Please select a state" },
+                    ]}
+                  >
+                    <Select className="ant-input" placeholder="Select a state">
+                      {states.map((state) => (
+                        <Option key={state} value={state}>
+                          {state}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              {errorMessage && (
+                <Form.Item>
+                  <Alert
+                    message={errorMessage}
+                    type="error"
+                    showIcon
+                    closable
+                    onClose={() => setErrorMessage("")}
+                  />
+                </Form.Item>
+              )}
             </Form>
-          </Col>
-        </Row>
-        <hr></hr>
-      </Modal>
-      <Modal
-        title="Enter your Upi id"
-        open={showUpiModal}
-        onCancel={() => setShowUpiModal(false)}
-        // onOk={handleVerifyUpi}
-        width="500px"
-        footer={null}
-      >
-        <hr></hr>
-        <Form labelCol={{ span: "7" }} form={form} name="upi id">
-          <Row>
-            <Col span={15}>
-              <Form.Item
-                name="upiId"
-                label="UPI ID"
-                rules={[
-                  { required: true, message: "Please enter your UPI ID" },
-                  {
-                    /* Add any additional validation rules if needed */
-                  },
-                ]}
-              >
-                <Input placeholder="Enter your UPI ID" />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item>
-                <Button
-                  style={{ marginLeft: "30px" }}
-                  type="primary"
-                  onClick={handleVerifyUpi}
-                >
-                  Verify
-                </Button>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-    </>
+          </Modal>
+        </Content>
+      </Layout>
+      <Footer />
+    </Layout>
   );
-}
+};
 
-export default CheckOut;
+export default Checkout;

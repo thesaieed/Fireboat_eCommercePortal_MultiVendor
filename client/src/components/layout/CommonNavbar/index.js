@@ -66,6 +66,7 @@ const CommonNavbar = ({ handleSearch }) => {
         <Link
           to="/"
           className="d-flex justify-content-start align-items-center"
+          style={{ margin: 0, padding: 0 }}
         >
           <img
             src={logo}

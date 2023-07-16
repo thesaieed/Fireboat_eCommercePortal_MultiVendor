@@ -166,6 +166,7 @@
   .menuButton {
     display: block;
     margin-right: 10px;
+    margin-top: 15px;
   }
 
   .leftMenu,
@@ -174,9 +175,15 @@
   }
   .logo {
     margin-left: 75px;
+    /* margin-top: -10px; */
   }
   .logo a {
+    margin-top: 0px;
+    padding: 0;
     margin-left: -10px;
+  }
+  .logo a img {
+    margin-top: 20px;
   }
 
   #brand-font {
@@ -3653,14 +3660,6 @@ div.ant-upload {
 
 /* Css for cart page */
 
-.cart-col {
-  background-color: white;
-  padding: 20px 40px;
-}
-
-.cart-container {
-  border-bottom: 1.5px solid #ddd;
-}
 .cart-delete-button {
   font-size: 16px;
   background-color: #c01414;
@@ -3674,7 +3673,7 @@ div.ant-upload {
 .cart-header {
   border-bottom: 1.5px solid #ddd;
   padding: 20px 0;
-  text-align: center;
+  /* text-align: end; */
 }
 
 .cart-summary {
@@ -3981,4 +3980,15 @@ div.ant-upload {
 /* Carousel styling*/
 div.slick-tracker {
   width: 200px;
+}
+#nonStickyAmount {
+  display: none;
+}
+@media (max-width: 576px) {
+  #stickyAmount {
+    display: none !important;
+  }
+  #nonStickyAmount {
+    display: block;
+  }
 }
