@@ -39,8 +39,15 @@ function SignIn() {
     // console.log("Success:", values);
     setButtonLoading(true);
     const res = await axios.post("http://localhost:5000/login", values);
+    // console.log(res.data);
     switch (res.data.loginStatus) {
       case 200:
+        //check if the user has been disabled
+        if (!res.data.user.isactive) {
+          setErrorMessage("user has been disabled, contact admin");
+          setButtonLoading(false);
+          return; // Stop the execution here
+        }
         const userToken = generateRandomString(12);
         // console.log("Res.data.user : ", res.data.user);
         // console.log("Login UserToken : ", userToken);
