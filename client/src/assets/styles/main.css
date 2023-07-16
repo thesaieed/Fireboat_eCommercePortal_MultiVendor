@@ -3432,7 +3432,7 @@ section.ant-layout.ant-layout-has-sider.layout-dashboard.layout-profile
 
 .cardAddProduct {
   width: 100%;
-  max-width: 600px;
+  max-width: 1000px;
   margin: auto;
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
   border-radius: 12px;
@@ -3771,7 +3771,7 @@ div.ant-upload {
     margin-bottom: 0;
   }
 }
-@media (max-width: 900px) {
+@media (max-width: 1350px) {
   .productsscrollformore {
     display: block;
     float: right;
@@ -3991,4 +3991,16 @@ div.slick-tracker {
   #nonStickyAmount {
     display: block;
   }
+}
+.splide:not(.is-overflow) .splide__arrows {
+  display: none;
+}
+.splide:not(.is-overflow) .splide__list {
+  justify-content: center;
+}
+.splide__arrow--prev,
+.splide__arrow--next {
+  background: lime !important;
+  margin-left: -5px !important;
+  margin-right: -5px !important;
 }

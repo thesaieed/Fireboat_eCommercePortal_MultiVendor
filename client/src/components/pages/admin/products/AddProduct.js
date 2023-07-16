@@ -245,6 +245,7 @@ function AddProduct() {
                 <Upload.Dragger
                   listType="picture"
                   multiple
+                  maxCount={5}
                   name="image"
                   accept="image/*"
                   beforeUpload={(event) => {
@@ -264,7 +265,7 @@ function AddProduct() {
                   }}
                 >
                   <Button icon={<UploadOutlined />} className="w-100">
-                    Drag and drop images
+                    Drag and drop images (max 5)
                   </Button>
                 </Upload.Dragger>
               </Form.Item>
