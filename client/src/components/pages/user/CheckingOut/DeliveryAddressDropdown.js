@@ -6,49 +6,41 @@ function DeliveryAddressDropdown({
   onAddNewAddress,
   onSelectAddress,
   selectedAddress,
+  setSelectedAddressId,
+  selectedAddressId,
 }) {
-  const [selectedAddressId, setSelectedAddressId] = useState(
-    addresses.length > 0 ? addresses[0].id : null
-  );
-
   const handleAddressChange = (event) => {
     setSelectedAddressId(event.target.value);
   };
 
-  const handleUseAddress = () => {
-    const address = addresses.find(
-      (address) => address.id === selectedAddressId
-    );
-    if (address) {
-      // Call the parent's handleSelectAddress only when the button is clicked
-      onSelectAddress(address);
-    }
-  };
-
   return (
     <div>
-      <Card title="Select Delivery Address">
+      <Card>
         <Radio.Group onChange={handleAddressChange} value={selectedAddressId}>
           {addresses.map((address) => (
             <Row
               key={address.id}
               style={{
                 marginBottom: 10,
-                backgroundColor:
-                  selectedAddressId === address.id ? "orange" : "transparent", // Highlight the card if selected
+                backgroundColor: "transparent", // Highlight the card if selected
               }}
             >
               <Col span={24}>
                 <Card style={{ borderRadius: "15px" }}>
                   <Radio value={address.id}>
                     {/* Radio button's value will be the address ID */}
+                    <div className="">
+                      <span>{address.full_name}, </span>
+                      <span>{address.house_no_company}, </span>
+                      <span>Near- {address.landmark}, </span>
+                      <span>{address.area_street_village}, </span>
+                      <span> {address.town_city},</span>
+                      <span> {address.state}, </span>
+                      <span> {address.pincode}, </span>
+                      <span> {address.phone_number}, </span>
+                      <span> {address.country}</span>
+                    </div>
                   </Radio>
-                  <p>
-                    {address.full_name}, {address.house_no_company},
-                    {address.area_street_village}, {address.landmark},
-                    {address.town_city}, {address.state}, {address.pincode},
-                    {address.phone_number}, {address.country}
-                  </p>
                 </Card>
               </Col>
             </Row>
@@ -56,16 +48,12 @@ function DeliveryAddressDropdown({
         </Radio.Group>
         <Row>
           <Col span={24}>
-            <Button onClick={onAddNewAddress} style={{ marginRight: 10 }}>
-              Add New Address
-            </Button>
             <Button
-              style={{ marginTop: "10px" }}
-              onClick={handleUseAddress} // Call handleUseAddress on button click
-              type="primary"
-              disabled={!selectedAddressId}
+              onClick={onAddNewAddress}
+              type="default"
+              style={{ marginRight: 10 }}
             >
-              Use this Address
+              Add New Address
             </Button>
           </Col>
         </Row>

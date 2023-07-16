@@ -44,7 +44,10 @@ function ReviewItemsDropdown({
             <Col span={8}>
               <Image
                 style={{ maxWidth: "180px" }}
-                src={`http://localhost:5000/${item.image.replace(/\\/g, "/")}`}
+                src={`http://localhost:5000/${item.image[0].replace(
+                  /\\/g,
+                  "/"
+                )}`}
                 alt="ProductImg"
               />
             </Col>
@@ -75,13 +78,6 @@ function ReviewItemsDropdown({
             </Col>
           </Row>
         ))}
-        <hr />
-        <Card>
-          {" "}
-          <Button onClick={placeOrder} type="primary">
-            Place Your order
-          </Button>
-        </Card>
       </Card>
     </>
   );
