@@ -210,13 +210,25 @@ function Updatecategories() {
         fontSize: "1rem",
       },
     },
+    rows: {
+      style: {
+        height: "60px",
+        width: "100%",
+      },
+    },
+    cells: {
+      style: {
+        height: "100%",
+        // width: "100%",
+      },
+    },
   };
 
   return (
     // <div className="d-flex justify-content-center mt-20">
     <Row justify="center" align="middle">
-      <Col className="mt-20">
-        <Card className="categoryCard mt-20">
+      <Col className="cardAddProduct mt-20">
+        <Card className=" mt-20">
           <DataTable
             columns={columns}
             data={filteredCategories}

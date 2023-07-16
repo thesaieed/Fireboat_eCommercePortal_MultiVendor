@@ -61,7 +61,7 @@ const Brands = () => {
         </Col>
       </Row>
       <Row justify="center" align="middle">
-        <Col className="mt-20">
+        <Col className="mt-20 cardAddProduct">
           <UpdateBrands
             brands={brands}
             setBrands={setBrands}

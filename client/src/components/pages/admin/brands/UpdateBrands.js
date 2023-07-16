@@ -126,7 +126,6 @@ function UpdateBrands({
   const columns = [
     {
       name: "Brand",
-      width: "100px",
       selector: (row) => row.brand,
     },
     appUser.is_super_admin && {
@@ -211,7 +210,7 @@ function UpdateBrands({
 
   return (
     // <div className="d-flex justify-content-center">
-    <Card className="categoryCard">
+    <Card className="">
       <DataTable
         columns={columns}
         data={filteredBrands}
