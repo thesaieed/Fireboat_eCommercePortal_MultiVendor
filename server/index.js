@@ -1229,7 +1229,6 @@ app.delete("/deleteuser/:userId", async (req, res) => {
 app.put("/disableuser/:userId", async (req, res) => {
   const userId = req.params.userId;
   // console.log(userId);
-  res.sendStatus(200);
   try {
     await pool.query("update  users  set isActive=false where id=$1", [userId]);
     // Send a success response
@@ -1241,7 +1240,6 @@ app.put("/disableuser/:userId", async (req, res) => {
 app.put("/enableuser/:userId", async (req, res) => {
   const userId = req.params.userId;
   // console.log(userId);
-  res.sendStatus(200);
   try {
     await pool.query("update  users  set isActive=true where id=$1", [userId]);
     // Send a success response
@@ -1250,7 +1248,7 @@ app.put("/enableuser/:userId", async (req, res) => {
     console.error(error);
   }
 });
-//listen
+//listen to the radio
 app.listen(5000, () => {
   console.log("Listening on Port 5000");
 });

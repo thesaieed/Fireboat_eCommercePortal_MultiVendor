@@ -117,7 +117,7 @@ function AllUsers() {
       newLoadings[userId] = true;
       return newLoadings;
     });
-    console.log(userId);
+    // console.log(userId);
     try {
       const results = await axios.put(
         `http://localhost:5000/enableuser/${userId}`
