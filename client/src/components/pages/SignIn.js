@@ -6,6 +6,7 @@ import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 import signinbg from "../../assets/images/1.png";
 
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import vendorIcon from "../../assets/images/vendorsIcon.png";
 import axios from "axios";
 import useAllContext from "../../context/useAllContext";
 const { Title } = Typography;
@@ -298,11 +299,15 @@ function SignIn() {
                     Sign Up
                   </Link>
                 </p>
-                <p className="font-semibold text-muted">
-                  <Link
-                    to="/adminlogin"
-                    className="text-dark font-bold float-end"
-                  >
+                <p className="font-semibold text-muted ">
+                  <span style={{ marginRight: 5 }}>Are you Vendor?</span>
+                  <Link to="/adminlogin" className="text-dark font-bold ">
+                    <img
+                      src={vendorIcon}
+                      height={25}
+                      width={25}
+                      alt="vendorIcon"
+                    />{" "}
                     Vendor Login
                   </Link>
                 </p>

@@ -345,9 +345,15 @@ function AdminSignIn() {
                   ></div>
                 </Form.Item>
                 <p className="font-semibold text-muted">
-                  Don't have an account?{" "}
+                  Don't have a Vendor Account?{" "}
                   <Link to="/adminsignup" className="text-dark font-bold">
-                    Sign Up
+                    Register as Vendor
+                  </Link>
+                </p>
+                <p className="font-semibold text-muted">
+                  Not a Vendor?{" "}
+                  <Link to="/login" className="text-dark font-bold">
+                    Login as User
                   </Link>
                 </p>
               </Form>
