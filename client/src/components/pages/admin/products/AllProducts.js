@@ -50,7 +50,6 @@ function AllProducts() {
   const { categories, fetchCategories, appUser } = useAllContext();
   const [selectedRowData, setSelectedRowData] = useState({});
   const [selectedRowId, setSelectedRowId] = useState(null);
-  const [selectedImage] = useState("");
   const [refreshPage, setRefreshPage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState([]);
