@@ -198,7 +198,7 @@ function SignIn() {
               xs={{ span: 22, offset: 0 }}
               md={{ span: 11, offset: 1 }}
               lg={{ span: 8, offset: 2 }}
-              xl={{ span: 6, offset: 3 }}
+              xl={{ span: 7, offset: 3 }}
             >
               <Title className="mb-15">Login</Title>
               <Title className="font-regular text-muted" level={5}>
