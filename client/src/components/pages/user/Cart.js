@@ -203,7 +203,7 @@ function Cart() {
                   <div className="cart-col">
                     <Image
                       style={{ maxWidth: "180px" }}
-                      src={`http://localhost:5000/${item.image.replace(
+                      src={`http://localhost:5000/${item.image[0].replace(
                         /\\/g,
                         "/"
                       )}`}

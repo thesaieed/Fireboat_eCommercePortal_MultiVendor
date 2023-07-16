@@ -64,7 +64,7 @@ function AdminSignIn() {
         } catch (err) {
           console.error(err);
         }
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.user.is_admin === true) {
           navigate("/admin/dashboard");
         } else {
