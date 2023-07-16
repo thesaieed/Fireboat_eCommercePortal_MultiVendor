@@ -208,6 +208,7 @@ function Cart() {
           )}
 
           {productData.map((item, index) => (
+
             <Row
               justify="start"
               align={"middle"}
@@ -238,9 +239,7 @@ function Cart() {
                     onClick={() => decrementQuantity(index)}
                     style={{ fontSize: 22 }}
                   />
-
                   <span style={{ padding: "5px" }}>{item.quantity}</span>
-
                   <PlusSquareFilled
                     onClick={() => incrementQuantity(index)}
                     style={{ fontSize: 22 }}

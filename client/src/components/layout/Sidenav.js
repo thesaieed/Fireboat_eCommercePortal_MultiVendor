@@ -18,6 +18,7 @@ import {
   UnorderedListOutlined,
   ExclamationCircleFilled,
   DatabaseFilled,
+  UserOutlined,
 } from "@ant-design/icons";
 import useAllContext from "../../context/useAllContext";
 
@@ -142,6 +143,22 @@ function Sidenav({ color }) {
         </NavLink>
       ),
       key: "approveVendors",
+    },
+    appUser.is_super_admin && {
+      label: (
+        <NavLink to="/admin/superadmin/allusers">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <UserOutlined />
+          </span>
+          <span className="label">All Users</span>
+        </NavLink>
+      ),
+      key: "allUsers",
     },
 
     {
