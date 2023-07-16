@@ -302,7 +302,13 @@ function SignIn() {
                 <p className="font-semibold text-muted ">
                   <span style={{ marginRight: 5 }}>Are you Vendor?</span>
                   <Link to="/adminlogin" className="text-dark font-bold ">
-                    <img src={vendorIcon} height={25} width={25} /> Vendor Login
+                    <img
+                      src={vendorIcon}
+                      height={25}
+                      width={25}
+                      alt="vendorIcon"
+                    />{" "}
+                    Vendor Login
                   </Link>
                 </p>
               </Form>
