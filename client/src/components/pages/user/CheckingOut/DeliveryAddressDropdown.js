@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Radio, Row, Col, Card } from "antd";
 
 function DeliveryAddressDropdown({
   addresses,
   onAddNewAddress,
-  onSelectAddress,
-  selectedAddress,
   setSelectedAddressId,
   selectedAddressId,
 }) {

@@ -253,6 +253,7 @@ const Checkout = () => {
     if (itemDetails.length > 0) {
       fetchQuantity();
     }
+    // eslint-disable-next-line
   }, [itemDetails.length]);
 
   useEffect(() => {
@@ -273,7 +274,6 @@ const Checkout = () => {
   const prev = () => {
     setCurrent(current - 1);
   };
-
   const steps = [
     {
       title: "Delivery Address",

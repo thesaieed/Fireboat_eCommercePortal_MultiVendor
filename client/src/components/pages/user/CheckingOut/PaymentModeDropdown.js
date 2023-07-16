@@ -1,5 +1,5 @@
 // PaymentModeDropdown.js
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Card, Table, Typography, Image, Descriptions } from "antd";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -14,7 +14,7 @@ function PaymentModeDropdown({
   const { Text, Title } = Typography;
 
   const [txnDetails, setTxnDetails] = useState({});
-  const getTransactionData = async () => {
+  const getTransactionData = useCallback(async () => {
     try {
       const txnData = await axios.post(
         "http://localhost:5000/payments/getpaydetails",
@@ -25,12 +25,12 @@ function PaymentModeDropdown({
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [appUser.id, txnid]);
   useEffect(() => {
     if (txnid?.length && appUser.id) {
       getTransactionData();
     }
-  }, [txnid]);
+  }, [txnid, appUser.id, getTransactionData]);
 
   const columns = [
     {
