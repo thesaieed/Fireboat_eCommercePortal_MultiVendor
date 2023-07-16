@@ -39,7 +39,7 @@ import Cart from "./components/pages/user/Cart";
 import Browse from "./components/pages/user/Browse";
 import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
 
-import Checkout from "./components/pages/user/CheckingOut/Checkout";
+import Checkout from "./components/pages/user/CheckingOut/CheckOut";
 
 import AllUsers from "./components/pages/admin/superAdmin/allUsers";
 
