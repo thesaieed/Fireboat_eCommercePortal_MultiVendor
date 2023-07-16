@@ -201,7 +201,7 @@ function ShowProductDetails() {
             marginTop: 10,
           }}
         >
-          <Row justify="center" align="middle">
+          <Row justify="center" align="middle" style={{ maxHeight: 500 }}>
             {/* <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
               <Image
                 style={{ maxWidth: "250px" }}
@@ -209,12 +209,37 @@ function ShowProductDetails() {
                 alt="Product"
               />
             </Col> */}
-            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
-              <Carousel>
+            <Col
+              className="spd-col"
+              xs={24}
+              sm={12}
+              md={8}
+              lg={8}
+              xl={8}
+              style={{ textAlign: "center" }}
+            >
+              <Carousel
+                style={{
+                  maxHeight: 450,
+                }}
+              >
                 {Array.isArray(imageUrl) ? (
                   imageUrl.map((imagePath) => (
-                    <div key={imagePath}>
-                      <Image src={imagePath} alt="Product" />
+                    <div
+                      key={imagePath}
+                      style={{
+                        maxHeight: 450,
+                        overflow: "hidden",
+                        objectFit: "contain",
+                      }}
+                    >
+                      <Image
+                        src={imagePath}
+                        alt="Product"
+                        style={{
+                          maxHeight: 450,
+                        }}
+                      />
                     </div>
                   ))
                 ) : (
@@ -553,53 +578,58 @@ function ShowProductDetails() {
                 />
               </Row>
             </Col>
-            {allReviews.allreviews?.length > 0 &&
-              allReviews.allreviews[0].review.length > 0 && (
-                <Col xs={24} sm={24} lg={14} xl={14}>
-                  <Title level={3}>All Reviews</Title>
-                  <hr style={{ width: "100%" }} />
-                  {allReviews.allreviews?.map((review, index) => {
-                    return index < 4 && review.review.length ? (
-                      <div style={{ marginTop: 30 }} key={`review${index}`}>
-                        <Title level={5} style={{ margin: 0, padding: 0 }}>
-                          <Avatar
-                            icon={<UserOutlined />}
-                            style={{ margin: "-4px 5px 0px 0px" }}
-                          />
-                          {review.username}
-                        </Title>
-                        <div style={{ marginLeft: 40 }}>
-                          <Row align="middle">
-                            {" "}
-                            <Text strong>Rating : </Text>
-                            <StarRatings
-                              rating={review?.rating}
-                              starRatedColor="#86c61f"
-                              numberOfStars={5}
-                              name="avgRating"
-                              starDimension="25px"
-                              starSpacing="1px"
-                            />
-                          </Row>
-                          <Paragraph strong style={{ margin: 0, padding: 0 }}>
-                            Review
-                          </Paragraph>
-                          <Paragraph
-                            style={{ margin: 0, padding: 0 }}
-                            ellipsis={{
-                              rows: 3,
-                              expandable: true,
-                              symbol: "more",
-                            }}
-                          >
-                            {review.review}
-                          </Paragraph>
-                        </div>
-                      </div>
-                    ) : null;
-                  })}
-                </Col>
+
+            <Col xs={24} sm={24} lg={14} xl={14}>
+              <Title level={3}>All Reviews</Title>
+              <hr style={{ width: "100%" }} />
+              {!allReviews.allreviews?.length && (
+                <div style={{ marginTop: 30 }} key={`Noreview`}>
+                  <Title level={5} style={{ margin: 0, padding: 0 }}>
+                    No Reviews Yet
+                  </Title>
+                </div>
               )}
+              {allReviews.allreviews?.map((review, index) => {
+                return index < 4 && review.review.length ? (
+                  <div style={{ marginTop: 30 }} key={`review${index}`}>
+                    <Title level={5} style={{ margin: 0, padding: 0 }}>
+                      <Avatar
+                        icon={<UserOutlined />}
+                        style={{ margin: "-4px 5px 0px 0px" }}
+                      />
+                      {review.username}
+                    </Title>
+                    <div style={{ marginLeft: 40 }}>
+                      <Row align="middle">
+                        {" "}
+                        <Text strong>Rating : </Text>
+                        <StarRatings
+                          rating={review?.rating}
+                          starRatedColor="#86c61f"
+                          numberOfStars={5}
+                          name="avgRating"
+                          starDimension="25px"
+                          starSpacing="1px"
+                        />
+                      </Row>
+                      <Paragraph strong style={{ margin: 0, padding: 0 }}>
+                        Review
+                      </Paragraph>
+                      <Paragraph
+                        style={{ margin: 0, padding: 0 }}
+                        ellipsis={{
+                          rows: 3,
+                          expandable: true,
+                          symbol: "more",
+                        }}
+                      >
+                        {review.review}
+                      </Paragraph>
+                    </div>
+                  </div>
+                ) : null;
+              })}
+            </Col>
           </Row>
         </Card>
       )}
