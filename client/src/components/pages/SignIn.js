@@ -39,8 +39,15 @@ function SignIn() {
     // console.log("Success:", values);
     setButtonLoading(true);
     const res = await axios.post("http://localhost:5000/login", values);
+    // console.log(res.data);
     switch (res.data.loginStatus) {
       case 200:
+        //check if the user has been disabled
+        if (!res.data.user.isactive) {
+          setErrorMessage("user has been disabled, contact admin");
+          setButtonLoading(false);
+          return; // Stop the execution here
+        }
         const userToken = generateRandomString(12);
         // console.log("Res.data.user : ", res.data.user);
         // console.log("Login UserToken : ", userToken);
@@ -191,7 +198,7 @@ function SignIn() {
               xs={{ span: 22, offset: 0 }}
               md={{ span: 11, offset: 1 }}
               lg={{ span: 8, offset: 2 }}
-              xl={{ span: 6, offset: 3 }}
+              xl={{ span: 7, offset: 3 }}
             >
               <Title className="mb-15">Login</Title>
               <Title className="font-regular text-muted" level={5}>
