@@ -38,7 +38,11 @@ import ShowProductDetails from "./components/pages/user/ShowProductDetails";
 import Cart from "./components/pages/user/Cart";
 import Browse from "./components/pages/user/Browse";
 import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
+
 import Checkout from "./components/pages/user/CheckingOut/Checkout";
+
+import AllUsers from "./components/pages/admin/superAdmin/allUsers";
+
 //User Components End
 
 function App() {
@@ -74,6 +78,7 @@ function App() {
             <Route path="superadmin">
               <Route path="allvendors" element={<AllVendors />} />
               <Route path="approvevendors" element={<ApproveVendors />} />
+              <Route path="allusers" element={<AllUsers />} />
             </Route>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />

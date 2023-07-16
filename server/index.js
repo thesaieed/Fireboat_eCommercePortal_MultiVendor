@@ -55,12 +55,13 @@ app.post("/login", async (req, res) => {
       }
       // console.log("result login hashCheck : ", passwordMatched);
       if (passwordMatched) {
-        const { id, name, isadmin, isemailverified } = foundUser.rows[0];
+        const { id, name, isadmin, isemailverified, isactive } =
+          foundUser.rows[0];
         if (!isemailverified) {
           await generateTokenAndSendMail(id, email);
           data = { loginStatus: 407 };
         } else {
-          data = { loginStatus: 200, user: { id, name, isadmin } };
+          data = { loginStatus: 200, user: { id, name, isadmin, isactive } };
         }
       } else {
         // console.log("Invalid Credentials");
@@ -1202,7 +1203,53 @@ app.post("/admin/deleteproductimage", async (req, res) => {
   }
 });
 
-//listen
+app.get("/allusers", async (req, res) => {
+  try {
+    const allUsers = await pool.query(
+      "SELECT id, name, address, email, phone, isActive FROM users"
+    );
+    res.send(allUsers.rows);
+    // res.send("Hello all users");
+  } catch (err) {
+    console.error(err);
+    res.send([]);
+  }
+});
+app.delete("/deleteuser/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  // console.log(userId);
+  try {
+    await pool.query("Delete from users where id=$1", [userId]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500, "server error");
+  }
+});
+app.put("/disableuser/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  // console.log(userId);
+  try {
+    await pool.query("update  users  set isActive=false where id=$1", [userId]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/enableuser/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  // console.log(userId);
+  try {
+    await pool.query("update  users  set isActive=true where id=$1", [userId]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+//listen to the radio
 app.listen(5000, () => {
   console.log("Listening on Port 5000");
 });
