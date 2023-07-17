@@ -17,17 +17,14 @@ import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 import useAllContext from "../../../../context/useAllContext";
 import { UploadOutlined } from "@ant-design/icons";
-import cardImage from "../../../../assets/images/addproductCardImg.png";
 import TextEditor from "./TextEditor";
 
 function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
-  const [prodImgPreview, setProdImgPreview] = useState(cardImage);
   const [form] = Form.useForm();
   const { categories, fetchCategories, appUser } = useAllContext();
   const [brands, setBrands] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
-  // const navigate = useNavigate();
   const [textDesc, setTextDesc] = useState();
 
   //get request to get the categories available stored in db
@@ -76,7 +73,6 @@ function AddProduct() {
         // navigate("/admin/dashboard");
         message.success("Product added Successfully");
         form.resetFields();
-        setProdImgPreview(cardImage);
       } else {
         setErrorMessage("Something went Wrong");
       }
@@ -245,12 +241,9 @@ function AddProduct() {
                 <Upload.Dragger
                   listType="picture"
                   multiple
+                  maxCount={5}
                   name="image"
                   accept="image/*"
-                  beforeUpload={(event) => {
-                    setProdImgPreview(URL.createObjectURL(event));
-                    return false;
-                  }}
                   iconRender={() => {
                     return <Spin></Spin>;
                   }}
@@ -264,7 +257,7 @@ function AddProduct() {
                   }}
                 >
                   <Button icon={<UploadOutlined />} className="w-100">
-                    Drag and drop images
+                    Drag and drop images (max 5)
                   </Button>
                 </Upload.Dragger>
               </Form.Item>
