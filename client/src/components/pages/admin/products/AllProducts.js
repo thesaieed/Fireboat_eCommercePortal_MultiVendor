@@ -13,7 +13,6 @@ import {
   Col,
   Upload,
   Alert,
-  Tooltip,
   Card,
   Typography,
   Image,
@@ -22,17 +21,19 @@ import {
   Checkbox,
 } from "antd";
 import {
-  UploadOutlined,
   SearchOutlined,
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
   PlusOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import useAllContext from "../../../../context/useAllContext";
 import TextEditor from "./TextEditor";
 import LoadingScreen from "../../../layout/LoadingScreen";
 import StarRatings from "react-star-ratings";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import "@splidejs/react-splide/css";
 
 function AllProducts() {
   const [search, setSearch] = useState("");
@@ -49,11 +50,12 @@ function AllProducts() {
   const { categories, fetchCategories, appUser } = useAllContext();
   const [selectedRowData, setSelectedRowData] = useState({});
   const [selectedRowId, setSelectedRowId] = useState(null);
-  const [selectedImage] = useState("");
   const [refreshPage, setRefreshPage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState([]);
   const [updateButtonLoading, setUpdateButtonLoading] = useState([]);
+  const [deleteImagesLoading, setDeleteImagesLoading] = useState(false);
+  const [uploadImagesLoading, setUploadImagesLoading] = useState(false);
 
   const { Text } = Typography;
 
@@ -237,84 +239,43 @@ function AllProducts() {
   };
 
   const columns = [
-    // {
-    //   name: "Image",
-    //   width: "10%",
-
-    //   selector: (row) => (
-    //     <Image
-    //       // width={50}
-    //       // height={50}
-    //       src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
-    //       alt=""
-    //       style={{ cursor: "pointer", padding: 7, height: "80%" }}
-    //       // onClick={() => {
-    //       //   setSelectedImage(row.image);
-    //       //   setImageModalVisible(true);
-    //       // }}
-    //     ></Image>
-    //   ),
-    // },
-    // {
-    //   name: "Image",
-    //   width: "10%",
-    //   selector: (row) => (
-    //     <>
-    //       {Array.isArray(row.image) ? (
-    //         <Carousel dots arrows>
-    //           {row.image.map((imagePath, index) => (
-    //             <div key={index}>
-    //               <Image
-    //                 src={`http://localhost:5000/${imagePath.replace(
-    //                   /\\/g,
-    //                   "/"
-    //                 )}`}
-    //                 alt=""
-    //                 style={{ cursor: "pointer", padding: 7, maxWidth: "100px" }}
-    //               />
-    //             </div>
-    //           ))}
-    //         </Carousel>
-    //       ) : (
-    //         <Image
-    //           src={`http://localhost:5000/${row.image[0].replace(/\\/g, "/")}`}
-    //           alt=""
-    //           style={{ cursor: "pointer", padding: 7, height: "80%" }}
-    //         />
-    //       )}
-    //     </>
-    //   ),
-    // }  ,
     {
       name: "Image",
-      width: "11%",
+      width: "270px",
+      style: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
       selector: (row) => (
         <>
-          <Row>
-            <Col span={18}>
-              {Array.isArray(row.image) && row.image.length > 1 ? (
-                <Carousel>
-                  {row.image.map((imagePath, index) => (
-                    <div key={index}>
-                      <Image
-                        src={`http://localhost:5000/${imagePath}`}
-                        alt=""
-                        style={{ cursor: "pointer", padding: 7, height: "80%" }}
-                      />
-                    </div>
-                  ))}
-                </Carousel>
-              ) : (
-                row.image && (
+          {/* <Row justify="center" align="middle"> */}
+          <Splide
+            key={`CarouselImages`}
+            options={{
+              rewind: true,
+              width: "100%",
+              gap: "1rem",
+            }}
+          >
+            {row.image.map((imgurl, index) => {
+              return (
+                <SplideSlide
+                  key={`Carousel${index}`}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
                   <Image
-                    src={`http://localhost:5000/${row.image[0]}`}
-                    alt=""
-                    style={{ cursor: "pointer", padding: 7, height: "50%" }}
-                  />
-                )
-              )}
-            </Col>
-          </Row>
+                    src={`http://localhost:5000/${imgurl.replace(/\\/g, "/")}`}
+                    style={{
+                      cursor: "pointer",
+                      padding: 0,
+                      maxHeight: 240,
+                    }}
+                  ></Image>
+                </SplideSlide>
+              );
+            })}
+          </Splide>
         </>
       ),
     },
@@ -322,7 +283,7 @@ function AllProducts() {
       name: (
         <div style={{ width: "100%", textAlign: "center" }}>Product Name</div>
       ),
-      width: "45%",
+      width: "550px",
       cell: (row) => (
         <div
           style={{
@@ -378,37 +339,47 @@ function AllProducts() {
     {
       name: <div style={{ width: "100%", textAlign: "center" }}>Category</div>,
       selector: (row) => row.category,
-      width: "8%",
+      width: "100px",
       style: { display: "flex", justifyContent: "center" },
     },
     {
       name: <div style={{ width: "100%", textAlign: "center" }}>Brand</div>,
       selector: (row) => row.brand.brand,
-      width: "8%",
+      width: "100px",
       style: { display: "flex", justifyContent: "center" },
     },
     {
       name: <div style={{ width: "100%", textAlign: "center" }}>Price</div>,
       selector: (row) => row.price,
-      width: "6%",
+      width: "100px",
       style: { display: "flex", justifyContent: "center" },
     },
     {
       name: <div style={{ width: "100%", textAlign: "center" }}>Stock</div>,
       selector: (row) => row.stock_available,
-      width: "6%",
+      width: "100px",
       style: { display: "flex", justifyContent: "center" },
     },
 
     {
       name: <div style={{ width: "100%", textAlign: "center" }}>Actions</div>,
-      width: "200px",
-      style: { display: "flex", justifyContent: "center" },
+      width: "100px",
+      style: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      },
       cell: (row) => (
         <>
           {!appUser.is_super_admin && (
             <Button
-              style={{ width: "43%", background: "#4b7ee5", color: "#fff" }}
+              style={{
+                width: 90,
+                background: "#4b7ee5",
+                color: "#fff",
+                marginBottom: 8,
+              }}
               type="primary"
               onClick={() => {
                 openModal(row);
@@ -427,13 +398,12 @@ function AllProducts() {
             okButtonProps={{
               style: {
                 height: 40,
-                width: 40,
                 background: "#f53131",
                 color: "white",
               },
             }}
             cancelButtonProps={{
-              style: { height: 40, width: 40 },
+              style: { height: 40 },
               type: "default",
             }}
           >
@@ -441,8 +411,7 @@ function AllProducts() {
             <Button
               id={row.id}
               style={{
-                width: "51%",
-                marginLeft: 10,
+                width: 90,
                 background: "#9e2426",
                 color: "#fff",
               }}
@@ -497,6 +466,7 @@ function AllProducts() {
   };
 
   const handleDeleteImages = async () => {
+    setDeleteImagesLoading(true);
     const selectedImagePaths = selectedImages.map(
       (index) => productImages[index]
     );
@@ -523,6 +493,7 @@ function AllProducts() {
     } catch (error) {
       console.log("server error", error);
     }
+    setDeleteImagesLoading(true);
   };
 
   const openDeleteImageModal = () => {
@@ -541,6 +512,7 @@ function AllProducts() {
     setAddImageModalVisible(false);
   };
   const handleImageUpload = async (values) => {
+    setUploadImagesLoading(true);
     try {
       const formData = new FormData();
       values.image.forEach((file) => {
@@ -571,12 +543,12 @@ function AllProducts() {
     } catch (error) {
       console.log(error);
     }
+    setUploadImagesLoading(false);
   };
   const selectedProduct = products.find(
     (product) => product.id === selectedRowId
   );
   const productImages = selectedProduct ? selectedProduct.image : [];
-
   return !loading ? (
     <>
       <Card>
@@ -627,19 +599,6 @@ function AllProducts() {
           )}
           {/* {modalDescription} */}
         </Modal>
-
-        {/* <Modal
-          title="Image Preview"
-          open={imageModalVisible}
-          onCancel={() => setImageModalVisible(false)}
-          footer={null}
-        > */}
-        {/* <Image
-          src={`http://localhost:5000/${selectedImage.replace(/\\/g, "/")}`}
-          alt=""
-          style={{ width: "100%" }}
-        /> */}
-        {/* </Modal> */}
 
         <Modal
           // title="Edit Product"
@@ -760,43 +719,6 @@ function AllProducts() {
             </Row>
             <Row>
               <Col span={24}>
-                {/* <Form.Item
-                  name="image"
-                  label="Image"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e) => e.fileList}
-                  rules={[{ required: false, message: "Image is required!" }]}
-                  hasFeedback
-                > */}
-                {/* <Tooltip title="Do not fill this field if you want to keep previous Images">
-                    <Upload.Dragger
-                      listType="picture"
-                      multiple
-                      name="image"
-                      accept="image/*"
-                      beforeUpload={() => false}
-                      onChange={(info) => {
-                        const { fileList } = info;
-                        form.setFieldsValue({ image: fileList });
-                      }}
-                      iconRender={() => {
-                        return <Spin></Spin>;
-                      }}
-                      progress={{
-                        strokeWidth: 3,
-                        strokeColor: {
-                          "0%": "#f0f",
-                          100: "#ff0",
-                        },
-                        style: { top: 15 },
-                      }}
-                    > */}
-                {/* <Button icon={<UploadOutlined />} className="w-100">
-                        Drag and drop images
-                      </Button>
-                    </Upload.Dragger>
-                  </Tooltip> */}
-                {/* </Form.Item> */}
                 <Row>
                   <Col span={12} style={{ paddingRight: ".5rem" }}>
                     <Button
@@ -863,24 +785,6 @@ function AllProducts() {
             )}
 
             <Form.Item>
-              {/* <Popconfirm
-              title="Are you sure you want to update this product?"
-              onConfirm={() => onFinish(form.getFieldsValue())}
-              okText="Yes"
-              cancelText="No"
-              okButtonProps={{
-                style: {
-                  height: 40,
-                  width: 45,
-                  // background: "#f53131",
-                  // color: "white",
-                },
-              }}
-              cancelButtonProps={{
-                style: { height: 40, width: 40 },
-                type: "default",
-              }}
-            > */}
               <Button
                 style={{ width: 150 }}
                 type="primary"
@@ -960,16 +864,18 @@ function AllProducts() {
                       <PlusOutlined />
                     </p>
                     <p className="ant-upload-text">
-                      Click or drag image to upload
+                      Click or Drag image to upload
                     </p>
                   </Upload.Dragger>
                 </Form.Item>
-                <Row>
+                <Row justify="end">
                   <Form.Item>
                     <Button
                       type="primary"
                       htmlType="submit"
                       style={{ width: "200px", marginTop: "2rem" }}
+                      icon={<UploadOutlined />}
+                      loading={uploadImagesLoading}
                     >
                       Upload
                     </Button>
@@ -1008,8 +914,13 @@ function AllProducts() {
                   />
                 </Checkbox>
               ))}
-              <Row style={{ marginTop: "2rem" }}>
-                <Button onClick={handleDeleteImages}>
+              <Row style={{ marginTop: "2rem" }} justify="end">
+                <Button
+                  loading={deleteImagesLoading}
+                  onClick={handleDeleteImages}
+                  danger
+                  icon={<DeleteOutlined />}
+                >
                   Delete Selected Images
                 </Button>
               </Row>
