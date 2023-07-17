@@ -183,40 +183,6 @@ function AllUsers() {
       width: "200px",
       cell: (row) => (
         <>
-          <Popconfirm
-            title="Are you sure you want to delete this user?"
-            onConfirm={() => deleteUserFromUsers(row.id)}
-            okText="Yes"
-            cancelText="No"
-            okButtonProps={{
-              style: {
-                height: 40,
-                width: 40,
-                background: "#f53131",
-                color: "white",
-              },
-            }}
-            cancelButtonProps={{
-              style: { height: 40, width: 40 },
-              type: "default",
-            }}
-          >
-            <Button
-              id={row.id}
-              style={{
-                width: "51%",
-                marginLeft: 10,
-                background: "#9e2426",
-                color: "#fff",
-              }}
-              danger
-              type="primary"
-              icon={<DeleteOutlined />}
-              loading={buttonLoading[row.id]}
-            >
-              Delete
-            </Button>
-          </Popconfirm>
           {row.isactive ? (
             <Popconfirm
               title="Are you sure you want to disable this user?"
@@ -286,6 +252,40 @@ function AllUsers() {
               </Button>
             </Popconfirm>
           )}
+          <Popconfirm
+            title="Are you sure you want to delete this user?"
+            onConfirm={() => deleteUserFromUsers(row.id)}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{
+              style: {
+                height: 40,
+                width: 40,
+                background: "#f53131",
+                color: "white",
+              },
+            }}
+            cancelButtonProps={{
+              style: { height: 40, width: 40 },
+              type: "default",
+            }}
+          >
+            <Button
+              id={row.id}
+              style={{
+                width: "51%",
+                marginLeft: 10,
+                background: "#9e2426",
+                color: "#fff",
+              }}
+              danger
+              type="primary"
+              icon={<DeleteOutlined />}
+              loading={buttonLoading[row.id]}
+            >
+              Delete
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
