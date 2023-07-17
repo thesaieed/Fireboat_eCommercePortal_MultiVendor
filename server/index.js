@@ -91,12 +91,13 @@ app.post("/googlelogin", async (req, res) => {
       // if email exists, a row array is sent back in foundUser obj
 
       // console.log("result login hashCheck : ", passwordMatched);
-      const { id, name, isadmin, isemailverified } = foundUser.rows[0];
+      const { id, name, isadmin, isemailverified, isactive } =
+        foundUser.rows[0];
       if (!isemailverified) {
         await generateTokenAndSendMail(id, email);
         data = { loginStatus: 407 };
       } else {
-        data = { loginStatus: 200, user: { id, name, isadmin } };
+        data = { loginStatus: 200, user: { id, name, isadmin, isactive } };
       }
     } else {
       const newUser = await pool.query(

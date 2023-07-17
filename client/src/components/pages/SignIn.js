@@ -116,6 +116,12 @@ function SignIn() {
       const res = await axios.post("http://localhost:5000/googlelogin", values);
       switch (res.data.loginStatus) {
         case 200:
+          //check if user disabled
+          if (!res.data.user.isactive) {
+            setErrorMessage("user has been disabled, contact admin");
+            setButtonLoading(false);
+            return; // Stop the execution here
+          }
           const userToken = generateRandomString(12);
           // console.log("Res.data.user : ", res.data.user);
           // console.log("Login UserToken : ", userToken);
