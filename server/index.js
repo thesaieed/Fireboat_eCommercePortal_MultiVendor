@@ -627,6 +627,7 @@ app.get("/admin/productdetails", async (req, res) => {
 app.post("/search", async (req, res) => {
   // console.log(req.body);
   const { searchTerms, category } = req.body;
+  // console.log(searchTerms, category);
   let queryTerm = "";
 
   //send all Products if searchTerm = allProducts.. else search the database
@@ -1250,7 +1251,40 @@ app.put("/enableuser/:userId", async (req, res) => {
     console.error(error);
   }
 });
-//listen to the radio
+
+app.get("/suggestedproducts", async (req, res) => {
+  // console.log(req.query);
+  const brandId = req.query.brand_id;
+  const productId = req.query.product_id;
+  // console.log(productId);
+  try {
+    const queryResult = await pool.query(
+      "SELECT * FROM products WHERE category_id = $1 AND id !=$2 ORDER BY RANDOM() LIMIT 5",
+      [brandId, productId]
+    );
+
+    const brandIds = queryResult.rows.map((brand) => brand.brand_id);
+    const brandQueryResult = await pool.query(
+      "SELECT * FROM brands WHERE id = ANY($1)",
+      [brandIds]
+    );
+    const updatedQueryResults = queryResult.rows.map((queryRow) => {
+      const matchingBrand = brandQueryResult.rows.find(
+        (brand) => brand.id === queryRow.brand_id
+      );
+      return {
+        ...queryRow,
+        brand: matchingBrand ? matchingBrand.brand : null,
+      };
+    });
+
+    // console.log(updatedQueryResults);
+    res.json(updatedQueryResults);
+  } catch (error) {
+    console.error(error);
+  }
+});
+//listen to radio
 app.listen(5000, () => {
   console.log("Listening on Port 5000");
 });
