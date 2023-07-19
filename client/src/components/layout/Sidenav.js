@@ -26,8 +26,8 @@ import { FaCartShopping } from "react-icons/fa6";
 import {
   BsCartPlus,
   BsCartCheck,
-  BsCartX,
-  BsClockHistory,
+  // BsCartX,
+  // BsClockHistory,
 } from "react-icons/bs";
 
 import categoryIconWhite from "../../assets/images/categoryIconWhite.png";
@@ -285,7 +285,7 @@ function Sidenav({ color }) {
               background: color,
             }}
           >
-            <img src={categoryIconWhite} style={{ width: 22 }} />
+            <img src={categoryIconWhite} style={{ width: 22 }} alt="catIcon" />
           </span>
           <span className="label">Categories</span>
         </NavLink>

@@ -11,6 +11,7 @@ import {
   Col,
   Typography,
   Image,
+  message,
 } from "antd";
 import {
   ShoppingCartOutlined,
@@ -25,7 +26,7 @@ import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
 
 function Cart() {
-  const { appUser, updateNumberOfCartItems } = useAllContext();
+  const { appUser, updateNumberOfCartItems, isValidToken } = useAllContext();
   const [productData, setProductData] = useState([]);
   const { Paragraph, Title } = Typography;
   const [productLinks, setProductLinks] = useState([]);
@@ -35,7 +36,13 @@ function Cart() {
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
-
+  useEffect(() => {
+    if (!isValidToken && !appUser.id) {
+      console.log("Login check");
+      navigate("/login");
+      message.info("You need to be Logged In to access Cart!");
+    }
+  });
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -209,6 +216,7 @@ function Cart() {
 
           {productData.map((item, index) => (
             <Row
+              key={index}
               justify="start"
               align={"middle"}
               style={{
