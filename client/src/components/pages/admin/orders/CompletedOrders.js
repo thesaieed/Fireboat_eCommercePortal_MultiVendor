@@ -6,8 +6,6 @@ import {
   SearchOutlined,
   EyeFilled,
   CheckCircleFilled,
-  ExclamationCircleFilled,
-  QuestionCircleFilled,
 } from "@ant-design/icons";
 import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
@@ -143,7 +141,7 @@ const CompletedOrders = () => {
         // console.log("ROW", row);
         const key = Object.keys(row)[0];
 
-        const date = new Date(row[key][0]?.modified_at);
+        const date = new Date(row[key][0]?.created_at);
         return date.toLocaleDateString("en-US", dateOptions);
       },
       width: "230px",

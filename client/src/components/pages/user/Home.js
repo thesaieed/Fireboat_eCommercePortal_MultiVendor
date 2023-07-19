@@ -15,6 +15,7 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
+import { PiShootingStarFill } from "react-icons/pi";
 
 const Home = () => {
   const { appUser } = useAllContext();
@@ -79,32 +80,67 @@ const Home = () => {
     navigate(`/browse/?search=${e.target.value}`);
   };
   const suggestedRow = (categoryObject) => {
-    // console.log(categoryObject);
-    const key = categoryObject[0].category;
     const products = categoryObject;
-    // const key = Object.keys(categoryObject)[0];
-    // const products = Object.values(categoryObject)[0];
+    const key =
+      responseStatus === 201 ? "Top Rated Products" : "Items You May Like";
     if (!products.length) return null;
     else {
       return (
         <>
-          <h1 style={{ paddingLeft: "40px", paddingTop: "20px" }}>
-            {responseStatus === 201
-              ? "Our Top Rated Products"
-              : "Items You May Like"}
-          </h1>
           <hr style={{ margin: "0px 40px" }}></hr>
           <Row
             key={`RowMain${key}`}
             style={{
-              background: "",
+              background: "#fff",
               marginTop: 20,
               marginRight: 0,
               padding: 0,
-              marginLeft: 100,
-              marginBottom: 50,
             }}
           >
+            <Col
+              xs={24}
+              sm={6}
+              md={4}
+              lg={3}
+              style={{
+                display: "flex",
+                alignItems: "stretch",
+                justifyContent: "center",
+                margin: 0,
+                padding: 0,
+              }}
+              className="homeRowColumn categoryColHome"
+            >
+              <div
+                key={`CardMain${key}`}
+                className="d-flex flex-column align-items-center justify-content-center"
+                // hoverable
+                id="categoryNameCard"
+                style={{
+                  margin: 10,
+                  marginRight: 0,
+                  minWidth: "100%",
+                  overflow: "hidden",
+                }}
+              >
+                <PiShootingStarFill fontSize={80} style={{ rotate: "45deg" }} />
+                <span
+                  id="categoryName"
+                  // className="one-line"
+                  style={{
+                    fontWeight: 500,
+                    color: "#000",
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    marginRight: 0,
+                    overflowWrap: "anywhere",
+                    textAlign: "center",
+                  }}
+                >
+                  {key}
+                </span>
+              </div>
+            </Col>
             <Col
               xs={24}
               sm={18}
