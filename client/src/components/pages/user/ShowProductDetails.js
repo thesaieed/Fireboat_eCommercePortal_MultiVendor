@@ -50,7 +50,11 @@ function ShowProductDetails() {
   const [reviewButtonLoading, setReviewButtonLoading] = useState(false);
   const [deleteReviewButtonLoading, setDeleteReviewButtonLoading] =
     useState(false);
-  const [allReviews, setAllReviews] = useState({});
+  const [allReviews, setAllReviews] = useState({
+    allreviews: [],
+    noOfRatings: 0,
+    totalRating: 0,
+  });
   const [newReview, setNewReview] = useState({
     rating: 0,
     review: "",
@@ -232,27 +236,26 @@ function ShowProductDetails() {
     else {
       return (
         <>
-          <h1 style={{ paddingLeft: "40px" }}>Top Rated in this Category</h1>
-          <hr style={{ margin: "0px 40px" }}></hr>
           <Row
             key={`RowMain${key}`}
             style={{
-              background: "",
-              marginTop: 20,
+              background: "none",
+              marginTop: 40,
               marginRight: 0,
               padding: 0,
-              marginLeft: 100,
               marginBottom: 50,
             }}
           >
+            <h1>Items you might like</h1>
             <Col
               xs={24}
-              sm={18}
-              md={20}
-              lg={21}
+              sm={24}
+              md={24}
+              lg={24}
               className="homeRowColumn"
               style={{ marginRight: 0, padding: 0 }}
             >
+              <hr />
               <Splide
                 key={`CarouselMain${key}`}
                 aria-label="CategoryProducts"
@@ -550,9 +553,7 @@ function ShowProductDetails() {
               ></div>
             </Col>
           </Row>
-          {suggestedProducts !== undefined && suggestedProducts.length > 0 && (
-            <>{suggestedRow(suggestedProducts)}</>
-          )}
+
           <Row justify="space-evenly">
             <Col
               xs={24}
@@ -769,11 +770,11 @@ function ShowProductDetails() {
                 />
               </Row>
             </Col>
-
             <Col xs={24} sm={24} lg={14} xl={14}>
               <Title level={3}>All Reviews</Title>
               <hr style={{ width: "100%" }} />
-              {!allReviews.allreviews?.length && (
+              {(allReviews.allreviews?.length === 0 ||
+                allReviews.allreviews[0].review.length === 0) && (
                 <div style={{ marginTop: 30 }} key={`Noreview`}>
                   <Title level={5} style={{ margin: 0, padding: 0 }}>
                     No Reviews Yet
@@ -822,6 +823,9 @@ function ShowProductDetails() {
               })}
             </Col>
           </Row>
+          {suggestedProducts !== undefined && suggestedProducts.length > 0 && (
+            <>{suggestedRow(suggestedProducts)}</>
+          )}
         </Card>
       )}
       <Footer />

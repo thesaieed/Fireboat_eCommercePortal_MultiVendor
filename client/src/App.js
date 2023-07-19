@@ -1,9 +1,9 @@
 //Libraries
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "antd/dist/reset.css";
 import "./assets/styles/main.css";
 import "./assets/styles/responsive.css";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 // Common Components
 import { VerifyEmail } from "./components/pages/user/auth/VerifyEmail";
@@ -51,10 +51,11 @@ import AllUsers from "./components/pages/admin/superAdmin/allUsers";
 
 function App() {
   const { userToken, validateUserToken, isLoading } = useAllContext();
-
+  const location = useLocation();
+  const currentURL = useMemo(() => location.pathname, [location.pathname]);
   useEffect(() => {
     validateUserToken();
-  }, [validateUserToken, userToken]);
+  }, [validateUserToken, userToken, currentURL]);
 
   return isLoading ? (
     <LoadingScreen />

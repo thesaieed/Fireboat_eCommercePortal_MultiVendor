@@ -19,60 +19,63 @@ reviewRoutes.post("/newreview", async (req, res) => {
 });
 reviewRoutes.post("/productreviews", async (req, res) => {
   const { product_id } = req.body;
-  // console.log(product_id);
 
   try {
     var productReviews = await pool.query(
       "SELECT * from reviews where product_id=$1",
       [product_id]
     );
-    var allReviews = [];
-    await productReviews.rows.map(async (review) => {
-      try {
-        const reviewuser = await pool.query(
-          "SELECT name from users where id=$1",
-          [review.user_id]
-        );
-        allReviews.push({ ...review, username: reviewuser.rows[0].name });
-      } catch (error) {
-        console.error("review user", error);
-        return review;
-      }
-    });
-    const ratings = await pool.query(
-      "SELECT rating from reviews where product_id=$1",
-      [product_id]
-    );
-    const totalRating = ratings.rowCount;
-    var noOfRatings = { one: 0, two: 0, three: 0, four: 0, five: 0 };
-    ratings.rows.map((rating) => {
-      switch (rating.rating) {
-        case 1:
-          noOfRatings = { ...noOfRatings, one: noOfRatings.one + 1 };
-          break;
-        case 2:
-          noOfRatings = { ...noOfRatings, two: noOfRatings.two + 1 };
-          break;
-        case 3:
-          noOfRatings = { ...noOfRatings, three: noOfRatings.three + 1 };
-          break;
-        case 4:
-          noOfRatings = { ...noOfRatings, four: noOfRatings.four + 1 };
-          break;
-        case 5:
-          noOfRatings = { ...noOfRatings, five: noOfRatings.five + 1 };
-          break;
+    if (productReviews.rowCount === 0) {
+      res.send({ allreviews: [], noOfRatings: 0, totalRating: 0 });
+    } else {
+      var allReviews = [];
+      await productReviews.rows.map(async (review) => {
+        try {
+          const reviewuser = await pool.query(
+            "SELECT name from users where id=$1",
+            [review.user_id]
+          );
+          allReviews.push({ ...review, username: reviewuser.rows[0].name });
+        } catch (error) {
+          console.error("review user", error);
+          return review;
+        }
+      });
+      const ratings = await pool.query(
+        "SELECT rating from reviews where product_id=$1",
+        [product_id]
+      );
+      const totalRating = ratings.rowCount;
+      var noOfRatings = { one: 0, two: 0, three: 0, four: 0, five: 0 };
+      ratings.rows.map((rating) => {
+        switch (rating.rating) {
+          case 1:
+            noOfRatings = { ...noOfRatings, one: noOfRatings.one + 1 };
+            break;
+          case 2:
+            noOfRatings = { ...noOfRatings, two: noOfRatings.two + 1 };
+            break;
+          case 3:
+            noOfRatings = { ...noOfRatings, three: noOfRatings.three + 1 };
+            break;
+          case 4:
+            noOfRatings = { ...noOfRatings, four: noOfRatings.four + 1 };
+            break;
+          case 5:
+            noOfRatings = { ...noOfRatings, five: noOfRatings.five + 1 };
+            break;
 
-        default:
-          break;
-      }
-    });
-    // console.log(typeof avgRating);
-    // console.log(avgRating);
-    res.send({ allreviews: allReviews, noOfRatings, totalRating });
+          default:
+            break;
+        }
+      });
+      // console.log(typeof avgRating);
+      // console.log(avgRating);
+      res.send({ allreviews: allReviews, noOfRatings, totalRating });
+    }
   } catch (err) {
     console.error(err);
-    res.send([]);
+    res.send({});
   }
 });
 

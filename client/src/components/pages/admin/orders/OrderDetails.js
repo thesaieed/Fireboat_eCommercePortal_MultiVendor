@@ -162,7 +162,7 @@ const OrderDetails = () => {
                 {orderDetails[0]?.order_id}
               </Descriptions.Item>
               <Descriptions.Item label="Ordered On" span={2}>
-                {new Date(orderDetails[0]?.modified_at).toLocaleDateString(
+                {new Date(orderDetails[0]?.created_at).toLocaleDateString(
                   "en-US",
                   dateOptions
                 )}

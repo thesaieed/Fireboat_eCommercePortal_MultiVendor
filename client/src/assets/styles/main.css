@@ -590,7 +590,8 @@ body {
   .ant-layout-sider.sider-primary
   .ant-menu-submenu.ant-menu-item-selected
   .active,
-.layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .active {
+.layout-dashboard .ant-layout-sider.sider-primary .ant-menu-submenu .active,
+.ant-menu-title-content .active {
   border: 1px solid #689125;
 }
 

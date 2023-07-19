@@ -128,8 +128,8 @@ function Main() {
         className={`border-right sider-primary ant-layout-sider-primary ${
           sidenavType === "#fff" ? "active-route" : ""
         }`}
-        // style={{ background: sidenavType }}
-        style={{ background: "white" }}
+        style={{ background: sidenavType }}
+        // style={{ background: "white" }}
       >
         <Sidenav
           color={sidenavColor}
