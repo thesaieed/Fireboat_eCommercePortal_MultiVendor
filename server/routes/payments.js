@@ -1,5 +1,3 @@
-// This is your test secret API key.
-const sha512 = require("js-sha512");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 const express = require("express");
@@ -7,6 +5,10 @@ const router = express.Router();
 const pool = require("../db");
 router.use(express.static("public"));
 router.use(bodyParser.urlencoded({ extended: true }));
+const payu = require("payu-sdk-node-index-fixed")({
+  key: process.env.MERCHKEY,
+  salt: process.env.MERCHSALT, // should be on server side only
+});
 
 router.post("/initpayment", async (req, res) => {
   const {
@@ -23,9 +25,8 @@ router.post("/initpayment", async (req, res) => {
 
   try {
     await products.map(async (product) => {
-      console.log("Payment product :", product);
       await pool.query(
-        "INSERT into orders(user_id, amount,transaction_id,product_id, quantity,order_id,vendor_id,payment_status,address_id) values($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id",
+        "INSERT into orders(user_id, amount,transaction_id,product_id, quantity,order_id,vendor_id,payment_status,address_id, product_info,firstname,email) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id",
         [
           user_id,
           product.amount,
@@ -36,11 +37,13 @@ router.post("/initpayment", async (req, res) => {
           product.vendor_id,
           "In Progress",
           address_id,
+          `OrderId${orderID}`,
+          fullname,
+          email,
         ]
       );
     });
 
-    const salt = process.env.MERCHSALT;
     var data = {
       key: process.env.MERCHKEY,
       txnid: transactionID,
@@ -49,13 +52,23 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://998c-103-200-86-204.ngrok-free.app/payments/successpay",
-      furl: "https://998c-103-200-86-204.ngrok-free.app/payments/failedpay",
+      surl: "https://7354-223-189-4-160.ngrok-free.app/payments/successpay",
+      furl: "https://7354-223-189-4-160.ngrok-free.app/payments/failedpay",
     };
     const url = process.env.TESTPAYMENTURL;
-    const hashString = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|||||||||||${salt}`;
-    const hash = sha512(hashString);
+
+    const hash = payu.hasher.generateHash({
+      txnid: data.txnid,
+      amount: data.amount,
+      productinfo: data.productinfo,
+      firstname: data.firstname,
+      email: data.email,
+    });
     data.hash = hash;
+    await pool.query("UPDATE orders SET hash=$1 WHERE order_id=$2", [
+      hash,
+      orderID,
+    ]);
     res.send({ url, data });
   } catch (orderError) {
     console.log(orderError);
@@ -63,25 +76,45 @@ router.post("/initpayment", async (req, res) => {
   }
 });
 router.post("/successpay", async (req, res) => {
-  const { mihpayid, mode, status, productinfo, amount, txnid } = req.body;
+  const { mihpayid, mode, status, productinfo, amount, txnid, hash } = req.body;
   try {
+    const { rows } = await pool.query(
+      "SELECT transaction_id, amount, product_info, firstname,email FROM orders WHERE transaction_id=$1",
+      [txnid]
+    );
+    const isValidHash = payu.hasher.validateHash(hash, {
+      txnid: rows[0].transaction_id,
+      amount: Number(rows[0].amount).toFixed(2),
+      productinfo: rows[0].product_info,
+      firstname: rows[0].firstname,
+      email: rows[0].email,
+      status: status,
+    });
     const order_id = productinfo.slice(7);
-    const payinfo = await pool.query(
-      "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
-      [order_id, amount, status, txnid, productinfo, mihpayid, mode]
-    );
-    await pool.query(
-      "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3",
-      [status, payinfo.rows[0].id, order_id]
-    );
-    const user = await pool.query(
-      "SELECT user_id from orders where order_id=$1",
-      [order_id]
-    );
 
-    await pool.query("DELETE from cart where user_id=$1", [
-      user.rows[0].user_id,
-    ]);
+    if (isValidHash) {
+      const payinfo = await pool.query(
+        "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
+        [order_id, amount, status, txnid, productinfo, mihpayid, mode]
+      );
+      await pool.query(
+        "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3",
+        [status, payinfo.rows[0].id, order_id]
+      );
+      const user = await pool.query(
+        "SELECT user_id from orders where order_id=$1",
+        [order_id]
+      );
+
+      await pool.query("DELETE from cart where user_id=$1", [
+        user.rows[0].user_id,
+      ]);
+    } else {
+      await pool.query(
+        "UPDATE orders set payment_status=$1 where order_id=$3",
+        ["SuccessfulTamperedPayment", order_id]
+      );
+    }
   } catch (paymenterror) {
     console.error(paymenterror);
   }
@@ -90,17 +123,39 @@ router.post("/successpay", async (req, res) => {
   );
 });
 router.post("/failedpay", async (req, res) => {
-  const { mihpayid, mode, status, productinfo, amount, txnid } = req.body;
+  const { mihpayid, mode, status, productinfo, amount, txnid, hash } = req.body;
   const order_id = productinfo.slice(7);
-  const payinfo = await pool.query(
-    "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
-    [order_id, amount, status, txnid, productinfo, mihpayid, mode]
-  );
-
-  await pool.query(
-    "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3",
-    [status, payinfo.rows[0].id, order_id]
-  );
+  try {
+    const { rows } = await pool.query(
+      "SELECT transaction_id, amount, product_info, firstname,email FROM orders WHERE transaction_id=$1",
+      [txnid]
+    );
+    const isValidHash = payu.hasher.validateHash(hash, {
+      txnid: rows[0].transaction_id,
+      amount: Number(rows[0].amount).toFixed(2),
+      productinfo: rows[0].product_info,
+      firstname: rows[0].firstname,
+      email: rows[0].email,
+      status: status,
+    });
+    if (isValidHash) {
+      const payinfo = await pool.query(
+        "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
+        [order_id, amount, status, txnid, productinfo, mihpayid, mode]
+      );
+      await pool.query(
+        "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3",
+        [status, payinfo.rows[0].id, order_id]
+      );
+    } else {
+      await pool.query(
+        "UPDATE orders set payment_status=$1 where order_id=$3",
+        ["FailedTamperedPayment", order_id]
+      );
+    }
+  } catch (error) {
+    console.log("Failed PAY Error", error);
+  }
 
   res.redirect(
     `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`

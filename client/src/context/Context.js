@@ -98,7 +98,7 @@ function Provider({ children }) {
     setUserToken("");
     setIsValidToken(false);
     removeSavedUserToken(userToken, appUser.id, appUser.is_admin);
-    window.location.reload();
+    // window.location.reload();
   };
   const generateRandomString = (len) => {
     let result = "";
@@ -141,6 +141,8 @@ function Provider({ children }) {
   useEffect(() => {
     if (isValidToken) {
       fetchUserDetails();
+    } else {
+      setAppUser({});
     }
     fetchCategories();
   }, [userToken, fetchUserDetails, isValidToken, fetchCategories]);
