@@ -633,9 +633,23 @@ app.get("/admin/productdetails", async (req, res) => {
 //searchProducts
 app.post("/search", async (req, res) => {
   // console.log(req.body);
-  const { searchTerms, category } = req.body;
-  let queryTerm = "";
+  const { searchTerms, category, user_id } = req.body;
+  // console.log(searchTerms, category);
 
+  //storing search results for user
+  // console.log(searchTerms[0]);
+  if (!searchTerms.includes("allProducts")) {
+    try {
+      await pool.query(
+        "UPDATE users SET recent_searches = array_prepend($1, array_remove(recent_searches, $1)) WHERE id = $2",
+        [searchTerms[0], user_id]
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  let queryTerm = "";
   //send all Products if searchTerm = allProducts.. else search the database
   if ("categoryProducts".includes(searchTerms)) {
     try {
@@ -1257,7 +1271,94 @@ app.put("/enableuser/:userId", async (req, res) => {
     console.error(error);
   }
 });
-//listen to the radio
+
+app.get("/suggestedproducts", async (req, res) => {
+  // console.log(req.query);
+  const brandId = req.query.brand_id;
+  const productId = req.query.product_id;
+  // console.log(productId);
+  try {
+    const queryResult = await pool.query(
+      "SELECT * FROM products WHERE category_id = $1 AND id !=$2 ORDER BY RANDOM() LIMIT 5",
+      [brandId, productId]
+    );
+
+    const brandIds = queryResult.rows.map((brand) => brand.brand_id);
+    const brandQueryResult = await pool.query(
+      "SELECT * FROM brands WHERE id = ANY($1)",
+      [brandIds]
+    );
+    const updatedQueryResults = queryResult.rows.map((queryRow) => {
+      const matchingBrand = brandQueryResult.rows.find(
+        (brand) => brand.id === queryRow.brand_id
+      );
+      return {
+        ...queryRow,
+        brand: matchingBrand ? matchingBrand.brand : null,
+      };
+    });
+
+    // console.log(updatedQueryResults);
+    res.json(updatedQueryResults);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//fetching items based on user searches
+app.get("/searchproducts", async (req, res) => {
+  const user_id = req.query.user_id;
+  console.log(user_id);
+
+  try {
+    // Fetch the recent search terms made by the user
+    const recentSearches = await pool.query(
+      "SELECT recent_searches FROM users WHERE id = $1",
+      [user_id]
+    );
+
+    const { recent_searches: searchTerms } = recentSearches.rows[0] || {
+      recent_searches: [],
+    };
+
+    if (searchTerms && searchTerms.length > 2) {
+      const recentSearchTerms = searchTerms.slice(0, 3);
+      //fetch customer recently searched products
+      const suggestedProducts = await pool.query(
+        `
+        SELECT p.*, b.brand
+        FROM products p
+        JOIN brands b ON p.brand_id = b.id
+        WHERE to_tsvector('english', p.name) @@ to_tsquery('english', $1)
+        ORDER BY
+          ts_rank(to_tsvector('english', p.name), to_tsquery('english', $1)) DESC
+        LIMIT 10;
+        `,
+        [recentSearchTerms.join(" | ")]
+      );
+
+      // console.log(suggestedProducts.rows);
+      res.status(200).send(suggestedProducts.rows);
+    } else {
+      const suggestedProducts = await pool.query(`
+        SELECT p.*, b.brand
+        FROM products p
+        JOIN brands b ON p.brand_id = b.id
+        JOIN reviews r ON p.id = r.product_id
+        WHERE r.rating >= 4
+        ORDER BY RANDOM()
+        LIMIT 10;
+      `);
+      const message = "Our top rated products";
+      res.status(201).send(suggestedProducts.rows);
+    }
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
+
+//listen to radio
 app.listen(5000, () => {
   console.log("Listening on Port 5000");
 });
