@@ -208,7 +208,6 @@ function Cart() {
           )}
 
           {productData.map((item, index) => (
-
             <Row
               justify="start"
               align={"middle"}
@@ -351,7 +350,7 @@ function Cart() {
             </Row>
           ))}
 
-          {productData.length && (
+          {productData.length > 0 && (
             <div
               className="cart-summary"
               style={{

@@ -18,10 +18,19 @@ import {
   UnorderedListOutlined,
   ExclamationCircleFilled,
   DatabaseFilled,
-  UserOutlined,
+  TeamOutlined,
+  TagFilled,
 } from "@ant-design/icons";
 import useAllContext from "../../context/useAllContext";
+import { FaCartShopping } from "react-icons/fa6";
+import {
+  BsCartPlus,
+  BsCartCheck,
+  BsCartX,
+  BsClockHistory,
+} from "react-icons/bs";
 
+import categoryIconWhite from "../../assets/images/categoryIconWhite.png";
 function Sidenav({ color }) {
   const dashboard = [
     <svg
@@ -153,14 +162,70 @@ function Sidenav({ color }) {
               background: color,
             }}
           >
-            <UserOutlined />
+            <TeamOutlined />
           </span>
           <span className="label">All Users</span>
         </NavLink>
       ),
       key: "allUsers",
     },
-
+    {
+      label: (
+        <Divider plain style={{ margin: 0, padding: 0 }}>
+          Orders
+        </Divider>
+      ),
+      key: "ordersHeading",
+      type: "group",
+    },
+    {
+      label: (
+        <NavLink to="/admin/orders/allorders">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <FaCartShopping />
+          </span>
+          <span className="label">All Orders</span>
+        </NavLink>
+      ),
+      key: "allOrders",
+    },
+    {
+      label: (
+        <NavLink to="/admin/orders/pending">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <BsCartPlus />
+          </span>
+          <span className="label">Pending Orders</span>
+        </NavLink>
+      ),
+      key: "pendingOrders",
+    },
+    {
+      label: (
+        <NavLink to="/admin/orders/completed">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <BsCartCheck />
+          </span>
+          <span className="label">Completed Orders</span>
+        </NavLink>
+      ),
+      key: "completedOrders",
+    },
     {
       label: (
         <Divider plain style={{ margin: 0, padding: 0 }}>
@@ -220,7 +285,7 @@ function Sidenav({ color }) {
               background: color,
             }}
           >
-            <UnorderedListOutlined />
+            <img src={categoryIconWhite} style={{ width: 22 }} />
           </span>
           <span className="label">Categories</span>
         </NavLink>
@@ -236,7 +301,7 @@ function Sidenav({ color }) {
               background: color,
             }}
           >
-            <UnorderedListOutlined />
+            <TagFilled />
           </span>
           <span className="label">Brands</span>
         </NavLink>
