@@ -1311,7 +1311,7 @@ app.get("/suggestedproducts", async (req, res) => {
 //fetching items based on user searches
 app.get("/searchproducts", async (req, res) => {
   const user_id = req.query.user_id;
-  console.log(user_id);
+  // console.log(user_id);
 
   try {
     // Fetch the recent search terms made by the user
