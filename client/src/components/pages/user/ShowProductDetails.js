@@ -232,7 +232,7 @@ function ShowProductDetails() {
     else {
       return (
         <>
-          <h1 style={{ paddingLeft: "40px" }}>Items you might like</h1>
+          <h1 style={{ paddingLeft: "40px" }}>Top Rated in this Category</h1>
           <hr style={{ margin: "0px 40px" }}></hr>
           <Row
             key={`RowMain${key}`}
