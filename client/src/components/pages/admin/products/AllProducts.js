@@ -380,7 +380,7 @@ function AllProducts() {
                 color: "#fff",
                 marginBottom: 8,
               }}
-              type="primary"
+              type="link"
               onClick={() => {
                 openModal(row);
               }}
@@ -412,11 +412,9 @@ function AllProducts() {
               id={row.id}
               style={{
                 width: 90,
-                background: "#9e2426",
-                color: "#fff",
               }}
               danger
-              type="primary"
+              type="link"
               icon={<DeleteOutlined />}
               loading={buttonLoading[row.id]}
             >

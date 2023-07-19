@@ -3,11 +3,7 @@ import { Editor } from "@tinymce/tinymce-react";
 
 function TextEditor({ textDesc, setTextDesc }) {
   const editorRef = useRef(null);
-  const log = () => {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-    }
-  };
+
   const oninitialise = (evt, editor) => {
     editorRef.current = editor;
   };

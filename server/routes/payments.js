@@ -23,6 +23,7 @@ router.post("/initpayment", async (req, res) => {
 
   try {
     await products.map(async (product) => {
+      console.log("Payment product :", product);
       await pool.query(
         "INSERT into orders(user_id, amount,transaction_id,product_id, quantity,order_id,vendor_id,payment_status,address_id) values($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id",
         [

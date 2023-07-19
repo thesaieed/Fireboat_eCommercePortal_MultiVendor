@@ -12,6 +12,7 @@ const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
 const vendorRoutes = require("./routes/vendor");
 const reviewRoutes = require("./routes/review");
 const paymentRoutes = require("./routes/payments");
+const orderRoutes = require("./routes/orders");
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -32,6 +33,7 @@ const upload = multer({ storage: storage });
 app.use("/vendor", vendorRoutes);
 app.use("/review", reviewRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/orders", orderRoutes);
 //login route
 app.post("/login", async (req, res) => {
   // console.log("body: ", req.body);
@@ -582,14 +584,16 @@ app.post("/userdetails", async (req, res) => {
 
 //route to handle get product details for a specific product
 app.get("/admin/productdetails", async (req, res) => {
-  const { productId, userId } = req.query;
-  // console.log(productId)
+  var { productId, userId } = req.query;
+  productId = Number(productId);
+  // console.log(productId);
   try {
     let productDetails = await pool.query(
-      "select * from products where id =$1",
+      "select * from products where id=$1",
       [productId]
     );
     if (productDetails.rows.length === 0) {
+      console.log("not found product", productDetails);
       res.sendStatus(404);
     } else {
       const brandDetails = await pool.query(
@@ -604,17 +608,20 @@ app.get("/admin/productdetails", async (req, res) => {
       productDetails.rows[0].brand = brandDetails.rows[0].brand;
       productDetails.rows[0].vendor = vendorDetails.rows[0].business_name;
       // console.log("prod : ", productDetails.rows[0]);
-      var userReviewforProduct;
-      const usersreview = await pool.query(
-        "select rating,review from reviews where user_id=$1 AND product_id=$2",
-        [userId, productId]
-      );
-      if (usersreview.rowCount > 0) {
-        userReviewforProduct = usersreview.rows[0];
-      } else {
-        userReviewforProduct = [];
+
+      if (userId) {
+        var userReviewforProduct;
+        const usersreview = await pool.query(
+          "select rating,review from reviews where user_id=$1 AND product_id=$2",
+          [userId, productId]
+        );
+        if (usersreview.rowCount > 0) {
+          userReviewforProduct = usersreview.rows[0];
+        } else {
+          userReviewforProduct = [];
+        }
+        productDetails.rows[0].userReviewforProduct = userReviewforProduct;
       }
-      productDetails.rows[0].userReviewforProduct = userReviewforProduct;
       res.send(productDetails.rows[0]);
     }
   } catch (error) {
@@ -1109,7 +1116,7 @@ app.get("/checkout", async (req, res) => {
   // console.log(intIds);
   try {
     const query = `
-      SELECT id, quantity
+      SELECT id, quantity, product_id
       FROM cart
       WHERE id = ANY($1::int[])
     `;

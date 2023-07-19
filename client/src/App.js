@@ -30,6 +30,10 @@ import AddProduct from "./components/pages/admin/products/AddProduct";
 import AllProducts from "./components/pages/admin/products/AllProducts";
 import AllCategories from "./components/pages/admin/categories/AllCategories";
 import Brands from "./components/pages/admin/brands/Brands";
+import AllOrders from "./components/pages/admin/orders/AllOrders";
+import OrderDetails from "./components/pages/admin/orders/OrderDetails";
+import PendingOrders from "./components/pages/admin/orders/PendingOrders";
+import CompletedOrders from "./components/pages/admin/orders/CompletedOrders";
 //Admin Components Ends
 
 //User Components
@@ -83,6 +87,14 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="orders">
+              <Route index element={<AllOrders />} />
+              <Route path="allorders" element={<AllOrders />} />
+              <Route path="orderdetails" element={<OrderDetails />} />
+              <Route path="completed" element={<CompletedOrders />} />
+              <Route path="pending" element={<PendingOrders />} />
+              <Route path="*" element={<AllOrders />} />
+            </Route>
             <Route path="products">
               <Route path="addproduct" element={<AddProduct />} />
               <Route index element={<AddProduct />} />
