@@ -117,7 +117,9 @@ const Browse = () => {
         const res = await axios.post("http://localhost:5000/search", {
           searchTerms: params,
           category: category?.length ? category : null,
+          user_id: appUser.id,
         });
+        // console.log("search", appUser);
         const brands = await axios.get("http://localhost:5000/brands");
         // console.log("brands.data : ", brands.data);
 
@@ -159,7 +161,7 @@ const Browse = () => {
       }
       setLoading(false);
     },
-    [category]
+    [category, appUser.id]
   );
 
   const applyFilters = useCallback(() => {

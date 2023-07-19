@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import useAllContext from "../../../context/useAllContext";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import {
   Button,
   Card,
@@ -33,8 +33,12 @@ import LoadingScreen from "../../layout/LoadingScreen";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import ProductReviewsModal from "./productReviewsModal";
+//suggested carousel
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import "@splidejs/react-splide/css";
 
 function ShowProductDetails() {
+  const [suggestedProducts, setSuggestedProducts] = useState();
   const [productDetails, setProductDetails] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -55,6 +59,7 @@ function ShowProductDetails() {
   // const { productId } = useParams();
   // console.log(productId);
   // const productId = props.match.params.id;
+  const baseImgUrl = "http://localhost:5000/";
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
   const { Title, Paragraph, Text } = Typography; // console.log(productId);
@@ -188,6 +193,190 @@ function ShowProductDetails() {
     setButtonLoading(false);
   };
 
+  //fetching suggested products
+  useEffect(() => {
+    const fetchSuggestedProducts = async () => {
+      // console.log(productDetails.brand_id);
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/suggestedproducts",
+          {
+            params: {
+              brand_id: productDetails.category_id,
+              product_id: productDetails.id,
+            },
+          }
+        );
+        // console.log(response.data);
+        setSuggestedProducts(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (productDetails) {
+      fetchSuggestedProducts();
+    }
+  }, [productDetails]);
+  // console.log(suggestedProducts);
+
+  //check
+  const suggestedRow = (categoryObject) => {
+    // console.log(categoryObject);
+    const key = categoryObject[0].category;
+    const products = categoryObject;
+    // const key = Object.keys(categoryObject)[0];
+    // const products = Object.values(categoryObject)[0];
+
+    // console.log(key, " products :", products);
+    if (!products.length) return null;
+    else {
+      return (
+        <>
+          <h1 style={{ paddingLeft: "40px" }}>Items you might like</h1>
+          <hr style={{ margin: "0px 40px" }}></hr>
+          <Row
+            key={`RowMain${key}`}
+            style={{
+              background: "",
+              marginTop: 20,
+              marginRight: 0,
+              padding: 0,
+              marginLeft: 100,
+              marginBottom: 50,
+            }}
+          >
+            <Col
+              xs={24}
+              sm={18}
+              md={20}
+              lg={21}
+              className="homeRowColumn"
+              style={{ marginRight: 0, padding: 0 }}
+            >
+              <Splide
+                key={`CarouselMain${key}`}
+                aria-label="CategoryProducts"
+                options={{
+                  rewind: true,
+                  autoWidth: true,
+                  gap: 4,
+                  pagination: false,
+                }}
+                className="splide"
+              >
+                {products.map((product, index) => {
+                  if (index > 4) return null;
+                  return (
+                    <SplideSlide key={`Carousel${key}${index}`}>
+                      <Card
+                        key={`Card${key}${index}`}
+                        className="productContainer"
+                        // onClick={() => {
+                        //   navigate(`/product/?id=${product.id}`);
+                        //   window.scroll(0, 0);
+                        // }}
+                        style={{ width: 300, margin: 10, marginRight: 0 }}
+                      >
+                        <img
+                          // width="100%"
+                          className="productImg"
+                          style={{ minWidth: 200, height: 200, maxWidth: 200 }}
+                          alt="productImage"
+                          src={baseImgUrl + product.image[0]}
+                        />
+                        <Row>
+                          <Link to={`/product/?id=${product.id}`}>
+                            <Title className="one-line" level={5}>
+                              {product.name}
+                            </Title>
+                          </Link>
+                        </Row>
+                        <Row>
+                          <Paragraph
+                            strong
+                            type="secondary"
+                            // level={5}
+                            className="d-flex one-line"
+                            style={{ margin: 0, padding: 2 }}
+                          >
+                            <img
+                              src={brandIcon}
+                              alt="brandIcon"
+                              style={{
+                                height: 20,
+                                width: 20,
+                                marginRight: 3,
+                              }}
+                            />
+                            {product.brand}
+                          </Paragraph>
+                        </Row>
+                        <Row style={{ marginTop: 2 }}>
+                          <Paragraph
+                            style={{ margin: 0, padding: 2 }}
+                            type="secondary"
+                            className="m-0 p-0 d-flex one-line"
+                          >
+                            <img
+                              src={categoryIcon}
+                              alt="categoryIcon"
+                              style={{
+                                height: 24,
+                                width: 24,
+                                marginRight: 3,
+                              }}
+                            />
+                            {product.category}
+                          </Paragraph>
+                        </Row>
+
+                        <Row style={{ marginTop: 14 }}>
+                          <div>
+                            <StarRatings
+                              rating={product.avg_rating}
+                              starRatedColor="#86c61f"
+                              numberOfStars={5}
+                              name="mainAvgRating"
+                              starDimension="20px"
+                              starSpacing="1px"
+                            />
+                            <strong> ({product.avg_rating.toFixed(1)}) </strong>
+                          </div>
+                        </Row>
+                        <Row
+                          style={{ marginTop: 6 }}
+                          align="middle"
+                          justify="space-between"
+                        >
+                          <Col>
+                            <Paragraph
+                              className="productPrice"
+                              style={{ margin: 0, padding: 0 }}
+                            >
+                              &#8377; {product.price}
+                            </Paragraph>
+                          </Col>
+                          {/* <Col>
+                          <Button
+                            type="primary"
+                            shape="round"
+                            icon={<ThunderboltOutlined />}
+                          >
+                            Quick Buy
+                          </Button>
+                        </Col> */}
+                        </Row>
+                      </Card>
+                    </SplideSlide>
+                  );
+                })}
+              </Splide>
+            </Col>
+          </Row>
+        </>
+      );
+    }
+  };
   return (
     <Layout className="layout-default">
       <CommonNavbar handleSearch={handleSearch} />
@@ -361,7 +550,9 @@ function ShowProductDetails() {
               ></div>
             </Col>
           </Row>
-
+          {suggestedProducts !== undefined && suggestedProducts.length > 0 && (
+            <>{suggestedRow(suggestedProducts)}</>
+          )}
           <Row justify="space-evenly">
             <Col
               xs={24}
@@ -633,7 +824,6 @@ function ShowProductDetails() {
           </Row>
         </Card>
       )}
-
       <Footer />
     </Layout>
   );

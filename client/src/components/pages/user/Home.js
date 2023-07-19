@@ -8,6 +8,7 @@ import StarRatings from "react-star-ratings";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import LoadingScreen from "../../layout/LoadingScreen";
+import useAllContext from "../../../context/useAllContext";
 
 // import Carousel from "react-grid-carousel";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
@@ -16,6 +17,9 @@ import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
 
 const Home = () => {
+  const { appUser } = useAllContext();
+  const [suggestedProducts, setSuggestedProducts] = useState();
+  const [responseStatus, setResponseStatus] = useState();
   const [allProducts, setAllProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +29,34 @@ const Home = () => {
   const { Paragraph, Title, Text } = Typography;
   const { Content } = Layout;
   const baseImgUrl = "http://localhost:5000/";
+
+  //fetch suggested products
+  useEffect(() => {
+    const fetchSuggestedProducts = async () => {
+      // console.log(productDetails.brand_id);
+      try {
+        if (appUser.id) {
+          const response = await axios.get(
+            "http://localhost:5000/searchproducts",
+            {
+              params: {
+                user_id: appUser.id,
+              },
+            }
+          );
+          // console.log(response.status);
+          // console.log(response.data);
+          setSuggestedProducts(response.data);
+          setResponseStatus(response.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (appUser) {
+      fetchSuggestedProducts();
+    }
+  }, [appUser.id, appUser]);
 
   const getHomeData = async () => {
     try {
@@ -46,7 +78,165 @@ const Home = () => {
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
+  const suggestedRow = (categoryObject) => {
+    // console.log(categoryObject);
+    const key = categoryObject[0].category;
+    const products = categoryObject;
+    // const key = Object.keys(categoryObject)[0];
+    // const products = Object.values(categoryObject)[0];
+    if (!products.length) return null;
+    else {
+      return (
+        <>
+          <h1 style={{ paddingLeft: "40px", paddingTop: "20px" }}>
+            {responseStatus === 201
+              ? "Our Top Rated Products"
+              : "Items You May Like"}
+          </h1>
+          <hr style={{ margin: "0px 40px" }}></hr>
+          <Row
+            key={`RowMain${key}`}
+            style={{
+              background: "",
+              marginTop: 20,
+              marginRight: 0,
+              padding: 0,
+              marginLeft: 100,
+              marginBottom: 50,
+            }}
+          >
+            <Col
+              xs={24}
+              sm={18}
+              md={20}
+              lg={21}
+              className="homeRowColumn"
+              style={{ marginRight: 0, padding: 0 }}
+            >
+              <Splide
+                key={`CarouselMain${key}`}
+                aria-label="CategoryProducts"
+                options={{
+                  rewind: true,
+                  autoWidth: true,
+                  gap: 4,
+                  pagination: false,
+                }}
+                className="splide"
+              >
+                {products.map((product, index) => {
+                  if (index > 8) return null;
+                  return (
+                    <SplideSlide key={`Carousel${key}${index}`}>
+                      <Card
+                        key={`Card${key}${index}`}
+                        className="productContainer"
+                        // onClick={() => {
+                        //   navigate(`/product/?id=${product.id}`);
+                        //   window.scroll(0, 0);
+                        // }}
+                        style={{ width: 300, margin: 10, marginRight: 0 }}
+                      >
+                        <img
+                          // width="100%"
+                          className="productImg"
+                          style={{ minWidth: 200, height: 200, maxWidth: 200 }}
+                          alt="productImage"
+                          src={baseImgUrl + product.image[0]}
+                        />
+                        <Row>
+                          <Link to={`/product/?id=${product.id}`}>
+                            <Title className="one-line" level={5}>
+                              {product.name}
+                            </Title>
+                          </Link>
+                        </Row>
+                        <Row>
+                          <Paragraph
+                            strong
+                            type="secondary"
+                            // level={5}
+                            className="d-flex one-line"
+                            style={{ margin: 0, padding: 2 }}
+                          >
+                            <img
+                              src={brandIcon}
+                              alt="brandIcon"
+                              style={{
+                                height: 20,
+                                width: 20,
+                                marginRight: 3,
+                              }}
+                            />
+                            {product.brand}
+                          </Paragraph>
+                        </Row>
+                        <Row style={{ marginTop: 2 }}>
+                          <Paragraph
+                            style={{ margin: 0, padding: 2 }}
+                            type="secondary"
+                            className="m-0 p-0 d-flex one-line"
+                          >
+                            <img
+                              src={categoryIcon}
+                              alt="categoryIcon"
+                              style={{
+                                height: 24,
+                                width: 24,
+                                marginRight: 3,
+                              }}
+                            />
+                            {product.category}
+                          </Paragraph>
+                        </Row>
 
+                        <Row style={{ marginTop: 14 }}>
+                          <div>
+                            <StarRatings
+                              rating={product.avg_rating}
+                              starRatedColor="#86c61f"
+                              numberOfStars={5}
+                              name="mainAvgRating"
+                              starDimension="20px"
+                              starSpacing="1px"
+                            />
+                            <strong> ({product.avg_rating.toFixed(1)}) </strong>
+                          </div>
+                        </Row>
+                        <Row
+                          style={{ marginTop: 6 }}
+                          align="middle"
+                          justify="space-between"
+                        >
+                          <Col>
+                            <Paragraph
+                              className="productPrice"
+                              style={{ margin: 0, padding: 0 }}
+                            >
+                              &#8377; {product.price}
+                            </Paragraph>
+                          </Col>
+                          {/* <Col>
+                          <Button
+                            type="primary"
+                            shape="round"
+                            icon={<ThunderboltOutlined />}
+                          >
+                            Quick Buy
+                          </Button>
+                        </Col> */}
+                        </Row>
+                      </Card>
+                    </SplideSlide>
+                  );
+                })}
+              </Splide>
+            </Col>
+          </Row>
+        </>
+      );
+    }
+  };
   const categoryRow = (categoryObject) => {
     // console.log(categoryObject);
     const key = Object.keys(categoryObject)[0];
@@ -274,7 +464,9 @@ const Home = () => {
               <DownOutlined id="homeDownArrow" />
             </div>
           </section>
-
+          {suggestedProducts !== undefined && suggestedProducts.length > 0 && (
+            <>{suggestedRow(suggestedProducts)}</>
+          )}
           {allProducts.map((categoryObject) => {
             //{Pencil: Array[...]}
             return categoryRow(categoryObject);
