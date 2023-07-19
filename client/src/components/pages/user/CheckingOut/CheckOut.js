@@ -106,7 +106,7 @@ const Checkout = () => {
 
   const { Option } = Select;
   const [form] = Form.useForm();
-  const { appUser, generateRandomString } = useAllContext();
+  const { appUser, generateRandomString, isValidToken } = useAllContext();
 
   const fetchAddress = useCallback(async () => {
     setLoading(true);
@@ -242,7 +242,12 @@ const Checkout = () => {
     // setShowDeliveryDropdown(false);
     // setShowPaymentDropdown(true)
   };
-
+  useEffect(() => {
+    if (!isValidToken && !appUser.id) {
+      navigate("/login");
+      message.info("You need to be Logged In to Checkout from Cart!");
+    }
+  });
   //end for cart summary
   useEffect(() => {
     if (paymentdone === true) setCurrent(2);
@@ -384,9 +389,7 @@ const Checkout = () => {
     var transactionID = generateRandomString(10);
     var orderID = generateRandomString(7);
     transactionID = `${transactionID}${Date.now()}`;
-    // const productinfo = `OrderID3`;
-    var { id, name, email, phone } = appUser;
-    phone = "8082588960";
+    var { id, name, email } = appUser;
     try {
       const getdata = await axios.post(
         "http://localhost:5000/payments/initpayment",
@@ -398,13 +401,14 @@ const Checkout = () => {
           fullname: name,
           address_id: selectedAddress.id,
           email,
-          phone,
-          amount: 1,
-          // totalPrice +
-          // deliveryCharge -
-          // Math.floor(
-          //   (totalPrice + deliveryCharge) * (discountPercentage / 100)
-          // ),
+          phone: selectedAddress.phone_number,
+          amount: Number(
+            totalPrice +
+              deliveryCharge -
+              Math.floor(
+                (totalPrice + deliveryCharge) * (discountPercentage / 100)
+              )
+          ).toFixed(2),
         }
       );
       if (getdata.data?.url?.length) {
