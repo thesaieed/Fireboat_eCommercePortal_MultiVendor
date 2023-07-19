@@ -53,7 +53,7 @@ function AddProduct() {
       formData.append("price", values.price);
       formData.append("brand", values.brand);
       formData.append("vendor_id", appUser.id);
-
+      formData.append("stock_available", values.stock_available);
       values.image.forEach((file) => {
         formData.append("image", file.originFileObj);
       });
@@ -105,33 +105,6 @@ function AddProduct() {
           </h5>
         }
         bordered="false"
-        // cover={
-        //   <Form.Item
-        //     name="image"
-        //     valuePropName="fileList"
-        //     getValueFromEvent={(e) => e.fileList}
-        //     rules={[{ required: true, message: "Image is required!" }]}
-        //     hasFeedback
-        //   >
-        //     <Upload
-        //       // className="d-flex flex-column justify-content-center align-items-center"
-        //       name="image"
-        //       showUploadList={false}
-        //       accept="image/*"
-        //       beforeUpload={(event) => {
-        //         setProdImgPreview(URL.createObjectURL(event));
-        //         return false;
-        //       }}
-        //     >
-        //       <img
-        //         style={{ width: "100%", margin: "auto", padding: 5 }}
-        //         id="prod_img_preview"
-        //         alt="example"
-        //         src={prodImgPreview}
-        //       />
-        //     </Upload>
-        //   </Form.Item>
-        // }
       >
         <Form
           form={form}
@@ -155,7 +128,7 @@ function AddProduct() {
                   { required: true, message: "Please input product name!" },
                 ]}
               >
-                <Input placeholder="Product Name" />
+                <Input placeholder="Product Name" style={{ height: 50 }} />
               </Form.Item>
             </Col>
           </Row>
@@ -171,13 +144,20 @@ function AddProduct() {
                   },
                 ]}
               >
-                <Select className="ant-input " placeholder="Brand">
-                  {brands.map((brand) => (
-                    <Option key={brand.id} value={brand.id}>
-                      {brand.brand}
-                    </Option>
-                  ))}
-                </Select>
+                <Select
+                  className="ant-input "
+                  placeholder="Brand"
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={brands.map((brand) => {
+                    return { value: brand.id, label: brand.brand };
+                  })}
+                />
               </Form.Item>
             </Col>
             <Col style={{ paddingLeft: "0.5rem" }} span={12}>
@@ -191,13 +171,20 @@ function AddProduct() {
                   },
                 ]}
               >
-                <Select className="ant-input " placeholder="Category">
-                  {categories.map((category) => (
-                    <Option key={category.id} value={category.id}>
-                      {category.name}
-                    </Option>
-                  ))}
-                </Select>
+                <Select
+                  className="ant-input "
+                  placeholder="Category"
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={categories.map((category) => {
+                    return { value: category.id, label: category.name };
+                  })}
+                ></Select>
               </Form.Item>
             </Col>
           </Row>
@@ -211,7 +198,12 @@ function AddProduct() {
                   { required: true, message: "Please input product price!" },
                 ]}
               >
-                <Input placeholder="Product Price" type="number" min="0" />
+                <Input
+                  placeholder="Product Price"
+                  type="number"
+                  min="0"
+                  style={{ height: 45 }}
+                />
               </Form.Item>
             </Col>
             <Col style={{ paddingLeft: "0.5rem" }} span={12}>
@@ -225,7 +217,12 @@ function AddProduct() {
                   },
                 ]}
               >
-                <Input placeholder="Stock Available" type="number" min="0" />
+                <Input
+                  placeholder="Stock Available"
+                  type="number"
+                  min="0"
+                  style={{ height: 45 }}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -256,7 +253,11 @@ function AddProduct() {
                     style: { top: 15 },
                   }}
                 >
-                  <Button icon={<UploadOutlined />} className="w-100">
+                  <Button
+                    icon={<UploadOutlined />}
+                    className="w-100"
+                    style={{ height: 50 }}
+                  >
                     Drag and drop images (max 5)
                   </Button>
                 </Upload.Dragger>

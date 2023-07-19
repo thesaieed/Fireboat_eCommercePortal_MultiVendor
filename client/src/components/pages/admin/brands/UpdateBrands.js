@@ -168,18 +168,14 @@ function UpdateBrands({
           >
             <Button
               style={{
-                width: "51%",
+                // width: "51%",
                 marginLeft: 10,
-                background: "#9e2426",
-                color: "#fff",
               }}
-              type="primary"
+              type="link"
               danger
               icon={<DeleteOutlined />}
               loading={buttonLoading[row.id]}
-            >
-              Delete
-            </Button>
+            ></Button>
           </Popconfirm>
         </>
       ),
