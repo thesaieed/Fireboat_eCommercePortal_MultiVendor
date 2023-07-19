@@ -1239,7 +1239,10 @@ app.put("/disableuser/:userId", async (req, res) => {
   const userId = req.params.userId;
   // console.log(userId);
   try {
-    await pool.query("update  users  set isActive=false where id=$1", [userId]);
+    await pool.query(
+      "update  users  set isActive=false, logged_in_tokens='{}' where id=$1",
+      [userId]
+    );
     // Send a success response
     res.sendStatus(200);
   } catch (error) {
