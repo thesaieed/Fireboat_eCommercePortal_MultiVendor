@@ -28,11 +28,13 @@ import prodIcon from "../../../assets/images/productsIcon.png";
 import vendorIcon from "../../../assets/images/vendorsIcon.png";
 import ordersIcon from "../../../assets/images/ordersIcon.png";
 import usersIcon from "../../../assets/images/usersIcon.png";
-import queueCart from "../../../assets/images/queueCart.png";
-import finishCart from "../../../assets/images/finishCart.png";
-import cancelledCart from "../../../assets/images/cancelledCart.png";
-import historyCart from "../../../assets/images/historyCart.png";
 
+import {
+  BsCartPlus,
+  BsCartCheck,
+  // BsCartX,
+  BsClockHistory,
+} from "react-icons/bs";
 import useAllContext from "../../../context/useAllContext";
 
 import { Dropdown } from "antd";
@@ -67,12 +69,12 @@ function Dashboard() {
               style={{ width: 320 }}
               cover={<img alt="VendorCardCover" src={vendorsImg} />}
               actions={[
-                <Tooltip title="View all Vendors" color={"orange"}>
+                <Tooltip title="View all Vendors" color={"#9edd38"}>
                   <Link to="/admin/superadmin/allvendors">
                     <UnorderedListOutlined key="allvendors" />
                   </Link>
                 </Tooltip>,
-                <Tooltip title="Approve Vendors" color={"orange"}>
+                <Tooltip title="Approve Vendors" color={"#9edd38"}>
                   <Link to="/admin/superadmin/approvevendors">
                     <IssuesCloseOutlined key="approvevendors" />
                   </Link>
@@ -96,17 +98,17 @@ function Dashboard() {
             style={{ width: 320 }}
             cover={<img alt="ProdCardCover" src={prodImg} />}
             actions={[
-              <Tooltip title="Add Product" color={"orange"}>
+              <Tooltip title="Add Product" color={"#9edd38"}>
                 <Link to="/admin/products/addproduct">
                   <PlusCircleOutlined key="addproduct" />
                 </Link>
               </Tooltip>,
-              <Tooltip title="View all Products" color={"orange"}>
+              <Tooltip title="View all Products" color={"#9edd38"}>
                 <Link to="/admin/products/allproducts">
                   <UnorderedListOutlined key="viewproducts" />
                 </Link>
               </Tooltip>,
-              <Tooltip title="More Options" color={"orange"}>
+              <Tooltip title="More Options" color={"#9edd38"}>
                 <Dropdown
                   menu={{ items }}
                   trigger={["click"]}
@@ -134,24 +136,24 @@ function Dashboard() {
             style={{ width: 320 }}
             cover={<img alt="ProdCardCover" src={ordersImg} />}
             actions={[
-              <Tooltip title="In Queue Orders" color={"orange"}>
-                <Link to="/admin/orders/inqueue">
-                  <Avatar src={queueCart} key="inQueueOrders" />
+              <Tooltip title="Pending Orders" color={"#9edd38"}>
+                <Link to="/admin/orders/pending">
+                  <BsCartPlus style={{ fontSize: 20 }} />
                 </Link>
               </Tooltip>,
-              <Tooltip title="Completed Orders" color={"orange"}>
+              <Tooltip title="Completed Orders" color={"#9edd38"}>
                 <Link to="/admin/orders/completed">
-                  <Avatar src={finishCart} key="finishedOrders" />
+                  <BsCartCheck style={{ fontSize: 20 }} />
                 </Link>
               </Tooltip>,
-              <Tooltip title="Cancelled Orders" color={"orange"}>
-                <Link to="/admin/orders/cancelled">
-                  <Avatar src={cancelledCart} key="cancelled" />
-                </Link>
-              </Tooltip>,
-              <Tooltip title="Order History" color={"orange"}>
-                <Link to="/admin/orders/history">
-                  <Avatar src={historyCart} key="finishedOrders" />
+              // <Tooltip title="Cancelled Orders" color={"#9edd38"}>
+              //   <Link to="/admin/orders/cancelled">
+              //     <BsCartX style={{ fontSize: 20 }} />
+              //   </Link>
+              // </Tooltip>,
+              <Tooltip title="Order History" color={"#9edd38"}>
+                <Link to="/admin/orders/allorders">
+                  <BsClockHistory style={{ fontSize: 20 }} />
                 </Link>
               </Tooltip>,
               // <EditOutlined key="edit" />,
@@ -170,12 +172,12 @@ function Dashboard() {
             style={{ width: 320 }}
             cover={<img alt="ProdCardCover" src={usersImg} />}
             actions={[
-              <Tooltip title="View Users" color={"orange"}>
+              <Tooltip title="View Users" color={"#9edd38"}>
                 <Link to="/admin/viewusers">
                   <EyeOutlined key="viewUsers" />
                 </Link>
               </Tooltip>,
-              <Tooltip title="Manage Users" color={"orange"}>
+              <Tooltip title="Manage Users" color={"#9edd38"}>
                 <Link to="admin/manageusers">
                   <SettingOutlined key="manageusers" />
                 </Link>

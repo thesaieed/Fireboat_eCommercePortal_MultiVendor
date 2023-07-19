@@ -140,7 +140,11 @@ const Checkout = () => {
           (updatedItem) => updatedItem.id === item.id
         );
         if (matchingItem) {
-          return { ...item, quantity: matchingItem.quantity };
+          return {
+            ...item,
+            quantity: matchingItem.quantity,
+            product_id: matchingItem.product_id,
+          };
         }
         return item;
       });
@@ -371,7 +375,7 @@ const Checkout = () => {
     setLoading(true);
     const products = itemDetails.map((item) => {
       return {
-        productID: item.id,
+        productID: item.product_id,
         quantity: item.quantity,
         amount: item.price * item.quantity,
         vendor_id: item.vendor_id,
