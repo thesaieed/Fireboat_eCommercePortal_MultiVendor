@@ -220,7 +220,7 @@ function ShowProductDetails() {
   // console.log(suggestedProducts);
 
   //check
-  const categoryRow = (categoryObject) => {
+  const suggestedRow = (categoryObject) => {
     // console.log(categoryObject);
     const key = categoryObject[0].category;
     const products = categoryObject;
@@ -551,7 +551,7 @@ function ShowProductDetails() {
             </Col>
           </Row>
           {suggestedProducts !== undefined && suggestedProducts.length > 0 && (
-            <>{categoryRow(suggestedProducts)}</>
+            <>{suggestedRow(suggestedProducts)}</>
           )}
           <Row justify="space-evenly">
             <Col
