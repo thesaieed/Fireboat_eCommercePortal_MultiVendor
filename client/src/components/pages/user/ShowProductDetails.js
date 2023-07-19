@@ -393,7 +393,7 @@ function ShowProductDetails() {
             marginTop: 10,
           }}
         >
-          <Row justify="center" align="middle" style={{ maxHeight: 500 }}>
+          <Row justify="center" align="middle">
             {/* <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
               <Image
                 style={{ maxWidth: "250px" }}

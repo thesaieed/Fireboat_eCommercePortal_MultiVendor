@@ -36,20 +36,18 @@ const Home = () => {
     const fetchSuggestedProducts = async () => {
       // console.log(productDetails.brand_id);
       try {
-        if (appUser.id) {
-          const response = await axios.get(
-            "http://localhost:5000/searchproducts",
-            {
-              params: {
-                user_id: appUser.id,
-              },
-            }
-          );
-          // console.log(response.status);
-          // console.log(response.data);
-          setSuggestedProducts(response.data);
-          setResponseStatus(response.status);
-        }
+        const response = await axios.get(
+          "http://localhost:5000/searchproducts",
+          {
+            params: {
+              user_id: appUser.id,
+            },
+          }
+        );
+        // console.log(response.status);
+        // console.log(response.data);
+        setSuggestedProducts(response.data);
+        setResponseStatus(response.status);
       } catch (error) {
         console.error(error);
       }
