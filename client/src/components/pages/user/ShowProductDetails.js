@@ -15,17 +15,18 @@ import {
   Input,
   Avatar,
   Progress,
-  Carousel,
 } from "antd";
 
 import StarRatings from "react-star-ratings";
 import {
-  MinusOutlined,
-  PlusOutlined,
+  ShoppingCartOutlined,
   UserOutlined,
   EyeFilled,
   DeleteFilled,
+  PlusSquareFilled,
+  MinusSquareFilled,
 } from "@ant-design/icons";
+import { MdShoppingCartCheckout } from "react-icons/md";
 import vendorIcon from "../../../assets/images/vendorsIcon.png";
 import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
@@ -40,7 +41,6 @@ import "@splidejs/react-splide/css";
 function ShowProductDetails() {
   const [suggestedProducts, setSuggestedProducts] = useState();
   const [productDetails, setProductDetails] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
   const { appUser, updateNumberOfCartItems } = useAllContext();
@@ -150,15 +150,6 @@ function ShowProductDetails() {
     window.scroll(0, 0);
     fetchProductDetails();
   }, [navigate, productId, fetchProductDetails]);
-
-  useEffect(() => {
-    if (productDetails) {
-      const imageUrls = productDetails.image.map((path) => {
-        return "http://localhost:5000/" + path.replace(/\\/g, "/");
-      });
-      setImageUrl(imageUrls);
-    }
-  }, [productDetails]);
 
   const incrementQuantity = () => {
     if (quantity < 10) setQuantity((prevQuantity) => prevQuantity + 1);
@@ -380,6 +371,7 @@ function ShowProductDetails() {
       );
     }
   };
+
   return (
     <Layout className="layout-default">
       <CommonNavbar handleSearch={handleSearch} />
@@ -394,55 +386,50 @@ function ShowProductDetails() {
           }}
         >
           <Row justify="center" align="middle">
-            {/* <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
-              <Image
-                style={{ maxWidth: "250px" }}
-                src={imageUrl[0]}
-                alt="Product"
-              />
-            </Col> */}
             <Col
               className="spd-col"
               xs={24}
               sm={12}
-              md={8}
+              md={12}
               lg={8}
               xl={8}
-              style={{ textAlign: "center" }}
+              style={{ padding: 0, margin: "auto" }}
             >
-              <Carousel
-                style={{
-                  maxHeight: 450,
+              <Splide
+                key={`CarouselImages`}
+                options={{
+                  rewind: true,
+                  width: "100%",
+                  gap: "1rem",
                 }}
+                style={{ padding: 0 }}
               >
-                {Array.isArray(imageUrl) ? (
-                  imageUrl.map((imagePath) => (
-                    <div
-                      key={imagePath}
+                {productDetails?.image?.map((imgurl, index) => {
+                  return (
+                    <SplideSlide
+                      key={`Carousel${index}`}
                       style={{
-                        maxHeight: 450,
-                        overflow: "hidden",
-                        objectFit: "contain",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       <Image
-                        src={imagePath}
-                        alt="Product"
+                        src={baseImgUrl + imgurl.replace(/\\/g, "/")}
                         style={{
-                          maxHeight: 450,
+                          cursor: "pointer",
+                          padding: 0,
+                          maxHeight: 300,
+                          margin: "auto",
                         }}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <div>
-                    <Image src={imageUrl} alt="Product" />
-                  </div>
-                )}
-              </Carousel>
+                      ></Image>
+                    </SplideSlide>
+                  );
+                })}
+              </Splide>
             </Col>
 
-            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
+            <Col className="spd-col" xs={24} sm={12} md={12} lg={8} xl={8}>
               <div>
                 {productDetails ? (
                   <div>
@@ -511,30 +498,47 @@ function ShowProductDetails() {
               </div>
             </Col>
 
-            <Col className="spd-col" xs={24} sm={12} md={8} lg={8} xl={8}>
-              <div className="quantity-container">
+            <Col className="spd-col" xs={24} sm={24} md={24} lg={8} xl={8}>
+              <div
+                className="quantity-container"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <div className="quantity-section">
-                  <p style={{ fontWeight: "bold", marginRight: "8px" }}>
-                    Quantity{" "}
-                  </p>
-                  <Button type="default" onClick={decrementQuantity}>
-                    <MinusOutlined />
-                  </Button>
-                  <span style={{ padding: "5px" }}>{quantity}</span>
-                  <Button type="default" onClick={incrementQuantity}>
-                    <PlusOutlined />
-                  </Button>
+                  <div className="d-flex align-items-center">
+                    <span style={{ fontWeight: "bold", marginRight: "8px" }}>
+                      Quantity
+                    </span>
+                    <MinusSquareFilled
+                      onClick={decrementQuantity}
+                      style={{ fontSize: 30 }}
+                    />
+                    <span style={{ padding: "5px" }}>{quantity}</span>
+                    <PlusSquareFilled
+                      onClick={incrementQuantity}
+                      style={{ fontSize: 30 }}
+                    />
+                  </div>
                 </div>
                 <Button
                   className="add-to-cart-button"
                   type="default"
                   onClick={handleAddToCart}
                   loading={buttonLoading}
+                  icon={<ShoppingCartOutlined style={{ fontSize: 18 }} />}
                 >
                   Add to Cart
                 </Button>
 
-                <Button type="primary" className="buy-now-button">
+                <Button
+                  type="primary"
+                  className="buy-now-button"
+                  icon={<MdShoppingCartCheckout fontSize={20} />}
+                >
                   Buy Now
                 </Button>
               </div>

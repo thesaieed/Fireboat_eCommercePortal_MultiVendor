@@ -88,9 +88,17 @@ const CommonNavbar = ({ handleSearch }) => {
       <div className="navbar-menu">
         <div className="leftMenu">{/* <LeftMenu mode={"horizontal"} /> */}</div>
 
-        <div className="rightMenu">
+        <div
+          className="rightMenu"
+          style={{ display: "flex", justifyContent: "end" }}
+        >
           <Menu
-            style={{ background: "transparent", borderColor: "#86c61f" }}
+            style={{
+              background: "transparent",
+              borderColor: "#86c61f",
+              padding: 0,
+              marginLeft: 10,
+            }}
             mode="horizontal"
             // className="navMenu
             id="searchBtn"
