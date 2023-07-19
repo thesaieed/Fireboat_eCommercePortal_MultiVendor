@@ -1282,7 +1282,11 @@ app.get("/suggestedproducts", async (req, res) => {
       "SELECT * FROM products WHERE category_id = $1 AND id !=$2 ORDER BY RANDOM() LIMIT 5",
       [brandId, productId]
     );
-
+    //use this query when item are reviewed
+    // const queryResult = await pool.query(
+    //   "SELECT p.* FROM products p JOIN reviews r ON p.id = r.product_id WHERE p.category_id = $1 AND p.id != $2 AND r.rating >= 3 ORDER BY RANDOM() LIMIT 5",
+    //   [brandId, productId]
+    // );
     const brandIds = queryResult.rows.map((brand) => brand.brand_id);
     const brandQueryResult = await pool.query(
       "SELECT * FROM brands WHERE id = ANY($1)",
