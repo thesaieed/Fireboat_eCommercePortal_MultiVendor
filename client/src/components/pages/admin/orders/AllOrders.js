@@ -27,6 +27,7 @@ const AllOrders = () => {
     try {
       var orders = await axios.post("http://localhost:5000/orders/allorders", {
         vendor_id: appUser.id,
+        is_super_admin: appUser.is_super_admin,
       });
       setAllOrders(orders.data.orders);
       setFilteredOrders(orders.data.orders);
@@ -35,7 +36,7 @@ const AllOrders = () => {
       console.log(err);
     }
     setLoading(false);
-  }, [appUser.id]);
+  }, [appUser.id, appUser.is_super_admin]);
   useEffect(() => {
     getAllOrders();
   }, [getAllOrders]);
@@ -49,8 +50,6 @@ const AllOrders = () => {
   }, [search, allOrders]);
 
   const getOrderDetails = async (order) => {
-    // setModalDataLoading(true);
-    // setOrderDetailsModalVisible(true);
     const order_id = Object.keys(order)[0];
     const orderProducts = order[order_id];
     const completeProductsWithAllDetails = await Promise.all(
@@ -63,6 +62,7 @@ const AllOrders = () => {
               payment_details_id: product.payment_details_id,
               user_id: product.user_id,
               product_id: product.product_id,
+              order_id,
             }
           );
           return { ...product, ...data };
@@ -118,17 +118,40 @@ const AllOrders = () => {
           >
             {Object.keys(row)[0]}
           </Button>
-          <Typography.Text
-            type="secondary"
-            style={{
-              textAlign: "center",
-              textTransform: "capitalize",
-              display:
-                Object.values(row)[0][0].payment_status !== "success" && "none",
-            }}
-          >
-            {Object.values(row)[0][0].order_status}
-          </Typography.Text>
+          {!appUser.is_super_admin && (
+            <Typography.Text
+              type="secondary"
+              style={{
+                textAlign: "center",
+                textTransform: "capitalize",
+                display:
+                  Object.values(row)[0][0].payment_status !== "success" &&
+                  "none",
+              }}
+            >
+              {Object.values(row)[0][0].order_status}
+            </Typography.Text>
+          )}
+          {appUser.is_super_admin && (
+            <Typography.Text
+              type="secondary"
+              style={{
+                textAlign: "center",
+                textTransform: "capitalize",
+                display:
+                  Object.values(row)[0][0].payment_status !== "success" &&
+                  "none",
+              }}
+            >
+              {Object.values(row)[0].find((o) => {
+                if (o.order_status !== "delivered") {
+                  return true;
+                } else return false;
+              })
+                ? "Pending"
+                : "Delivered"}
+            </Typography.Text>
+          )}
         </div>
       ),
       width: "140px",
@@ -226,7 +249,7 @@ const AllOrders = () => {
       width: "170px",
       style: { display: "flex", justifyContent: "center" },
     },
-    {
+    !appUser.is_super_admin && {
       name: <div style={{ textAlign: "center", width: "100%" }}>Actions</div>,
       selector: (row) => (
         <div className="d-flex justify-content-between align-items-center">
