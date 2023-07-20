@@ -252,7 +252,12 @@ export default function SignUp() {
               <Form.Item
                 name="fullname"
                 rules={[
-                  { required: true, message: "Please input your username!" },
+                  {
+                    required: true,
+                    message: "Please input valid name!",
+                    pattern: /^[A-Za-z][A-Za-z\s]*$/,
+                    // pattern: /^[A-Za-z][A-Za-z0-9\s]*$/, if you want numbers after characters
+                  },
                 ]}
               >
                 <Input
@@ -301,9 +306,12 @@ export default function SignUp() {
                 name="password"
                 rules={[
                   {
-                    min: 4,
+                    pattern:
+                      /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{4,}$/,
+                    min: 8,
                     required: true,
-                    message: "Please input password greater than 4 characters",
+                    message:
+                      "Please inclued special characters, numbers and a upper case letter in Your password",
                   },
                 ]}
                 hasFeedback
@@ -349,7 +357,9 @@ export default function SignUp() {
                       value
                         ? Promise.resolve()
                         : Promise.reject(
-                            new Error("Please accept the terms and conditions")
+                            new Error(
+                              "Please accept the terms and conditions to continue"
+                            )
                           ),
                   },
                 ]}
