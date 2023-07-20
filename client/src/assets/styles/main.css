@@ -242,14 +242,17 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  border: none !important;
+  background-color: transparent !important;
 }
 .SidebarlogoutMenu a {
-  border-top: 1px solid #d3d3d3 !important;
+  background-color: transparent !important;
   border-radius: 0 !important;
   -webkit-border-radius: 0 !important;
   -moz-border-radius: 0 !important;
   -ms-border-radius: 0 !important;
   -o-border-radius: 0 !important;
+  border: none !important;
 }
 .nav-search {
   display: flex;
@@ -1225,7 +1228,7 @@ button.ant-btn.bell strong {
   width: 48px;
   height: 48px;
   text-align: center;
-  background: #1890ff;
+  background: #82b530;
   color: #fff;
   border-radius: 0.5rem;
   margin-left: auto;
@@ -2928,6 +2931,7 @@ section.ant-layout.layout-content .ant-layout-content.content-ant {
   color: #ffffff;
   font-weight: normal;
 }
+
 .logout:hover {
   background-color: #ff4d4f !important;
   border-radius: 5px !important;
