@@ -2,7 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
-
+const {
+  sendOrderStatusUpdateUser,
+} = require("../utils/sendOrderStatusUpdateUser");
 router.post("/allorders", async (req, res) => {
   const { vendor_id, is_super_admin } = req.body;
   var products = [];
@@ -285,6 +287,30 @@ router.post("/getOrderProductDetails", async (req, res) => {
     res.send({});
   }
 });
+const sendOrderStatusMailUser = async (order_id, vendor_id) => {
+  try {
+    const order = await pool.query(
+      "SELECT user_id,order_status from orders where order_id=$1 AND vendor_id=$2",
+      [order_id, vendor_id]
+    );
+    const user = await pool.query("SELECT name,email from users where id=$1", [
+      order.rows[0].user_id,
+    ]);
+    const vendor = await pool.query(
+      "SELECT business_name from vendors where id=$1",
+      [vendor_id]
+    );
+    sendOrderStatusUpdateUser(
+      user.rows[0].name,
+      user.rows[0].email,
+      order_id,
+      order.rows[0].order_status,
+      vendor.rows[0].business_name
+    );
+  } catch (error) {
+    console.log("Order Status Update Error", error);
+  }
+};
 router.post("/changeorderstatus", async (req, res) => {
   const { vendor_id, newStatus, order_id } = req.body;
   // console.log(req.body);
@@ -293,6 +319,7 @@ router.post("/changeorderstatus", async (req, res) => {
       "UPDATE orders SET order_status=$1 WHERE order_id=$2 AND vendor_id=$3",
       [newStatus, order_id, vendor_id]
     );
+    sendOrderStatusMailUser(order_id, vendor_id);
     res.send(true);
   } catch (err) {
     console.log(err);
