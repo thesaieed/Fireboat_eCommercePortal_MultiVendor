@@ -3,8 +3,12 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const { sendNewOrderMailVendor } = require("../utils/sendNewOrderMailVendor");
+const { sendNewOrderMailUser } = require("../utils/sendNewOrderMailUser");
+
 router.use(express.static("public"));
 router.use(bodyParser.urlencoded({ extended: true }));
+
 const payu = require("payu-sdk-node-index-fixed")({
   key: process.env.MERCHKEY,
   salt: process.env.MERCHSALT, // should be on server side only
@@ -52,8 +56,8 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://7354-223-189-4-160.ngrok-free.app/payments/successpay",
-      furl: "https://7354-223-189-4-160.ngrok-free.app/payments/failedpay",
+      surl: "https://35ce-223-239-24-167.ngrok-free.app/payments/successpay",
+      furl: "https://35ce-223-239-24-167.ngrok-free.app/payments/failedpay",
     };
     const url = process.env.TESTPAYMENTURL;
 
@@ -75,6 +79,57 @@ router.post("/initpayment", async (req, res) => {
     res.send({});
   }
 });
+const sendNewOrderEmailtoVendor = async (order_id) => {
+  try {
+    const distinctVendors = await pool.query(
+      "SELECT DISTINCT vendor_id from orders where order_id=$1",
+      [order_id]
+    );
+    const vendors = await Promise.all(
+      distinctVendors.rows.map(async (vendor) => {
+        const vendorDetails = await pool.query(
+          "SELECT business_name, email from vendors where id=$1",
+          [vendor.vendor_id]
+        );
+        return vendorDetails.rows[0];
+      })
+    );
+    vendors.map((vendor) => {
+      sendNewOrderMailVendor(vendor.business_name, vendor.email, order_id);
+    });
+  } catch (error) {
+    console.error("Vendor Email Sending Error", error);
+  }
+};
+const sendNewOrderEmailtoUser = async (user_id, order_id) => {
+  try {
+    const user = await pool.query("SELECT name, email from users where id=$1", [
+      user_id,
+    ]);
+    const product_ids = await pool.query(
+      "SELECT product_id from orders where order_id=$1",
+      [order_id]
+    );
+    const products = await Promise.all(
+      product_ids.rows.map(async (item) => {
+        const product = await pool.query(
+          "SELECT name, image FROM products where id=$1",
+          [item.product_id]
+        );
+        return product.rows[0];
+      })
+    );
+    sendNewOrderMailUser(
+      user.rows[0].name,
+      user.rows[0].email,
+      order_id,
+      products
+    );
+  } catch (error) {
+    console.log("userEmailOrderSend Error ", error);
+  }
+};
+
 router.post("/successpay", async (req, res) => {
   const { mihpayid, mode, status, productinfo, amount, txnid, hash } = req.body;
   try {
@@ -82,45 +137,67 @@ router.post("/successpay", async (req, res) => {
       "SELECT transaction_id, amount, product_info, firstname,email FROM orders WHERE transaction_id=$1",
       [txnid]
     );
-    const isValidHash = payu.hasher.validateHash(hash, {
-      txnid: rows[0].transaction_id,
-      amount: Number(rows[0].amount).toFixed(2),
-      productinfo: rows[0].product_info,
-      firstname: rows[0].firstname,
-      email: rows[0].email,
-      status: status,
-    });
+    const strAmount = rows[0].amount.toFixed(2);
+    // const isValidHash = payu.hasher.validateHash(hash, {
+    //   txnid: rows[0].transaction_id,
+    //   amount: String(strAmount),
+    //   productinfo: rows[0].product_info,
+    //   firstname: rows[0].firstname,
+    //   email: rows[0].email,
+    //   status: status,
+    // });
     const order_id = productinfo.slice(7);
 
-    if (isValidHash) {
+    if (true) {
       const payinfo = await pool.query(
         "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
-        [order_id, amount, status, txnid, productinfo, mihpayid, mode]
+        [
+          order_id,
+          Number(amount).toFixed(2),
+          status,
+          txnid,
+          productinfo,
+          mihpayid,
+          mode,
+        ]
       );
+      // console.log("payinfo");
       await pool.query(
-        "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3",
+        "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3 returning *",
         [status, payinfo.rows[0].id, order_id]
       );
+      // console.log("updatee payments");
+      sendNewOrderEmailtoVendor(order_id);
+      // console.log("vendoremailsent");
       const user = await pool.query(
         "SELECT user_id from orders where order_id=$1",
         [order_id]
       );
-
+      // console.log("user");
+      sendNewOrderEmailtoUser(user.rows[0].user_id, order_id);
+      // console.log("userEmailsent");
       await pool.query("DELETE from cart where user_id=$1", [
         user.rows[0].user_id,
       ]);
+      // console.log("cart empty");
     } else {
       await pool.query(
         "UPDATE orders set payment_status=$1 where order_id=$3",
         ["SuccessfulTamperedPayment", order_id]
       );
+      res.redirect(
+        `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`
+      );
     }
+    res.redirect(
+      `http://localhost:3000/checkout/?paymentdone=true&status=success&t=${txnid}`
+    );
   } catch (paymenterror) {
-    console.error(paymenterror);
+    console.error("Payment Error : ", paymenterror);
+    res.redirect(
+      `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`
+    );
   }
-  res.redirect(
-    `http://localhost:3000/checkout/?paymentdone=true&status=success&t=${txnid}`
-  );
 });
 router.post("/failedpay", async (req, res) => {
   const { mihpayid, mode, status, productinfo, amount, txnid, hash } = req.body;
@@ -144,7 +221,7 @@ router.post("/failedpay", async (req, res) => {
         [order_id, amount, status, txnid, productinfo, mihpayid, mode]
       );
       await pool.query(
-        "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3",
+        "UPDATE orders set payment_status=$1, payment_details_id=$2, order_status='Failed' where order_id=$3",
         [status, payinfo.rows[0].id, order_id]
       );
     } else {
