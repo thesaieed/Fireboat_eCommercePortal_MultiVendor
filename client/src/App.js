@@ -34,6 +34,7 @@ import AllOrders from "./components/pages/admin/orders/AllOrders";
 import OrderDetails from "./components/pages/admin/orders/OrderDetails";
 import PendingOrders from "./components/pages/admin/orders/PendingOrders";
 import CompletedOrders from "./components/pages/admin/orders/CompletedOrders";
+import AllUsers from "./components/pages/admin/superAdmin/allUsers";
 //Admin Components Ends
 
 //User Components
@@ -42,11 +43,11 @@ import ShowProductDetails from "./components/pages/user/ShowProductDetails";
 import Cart from "./components/pages/user/Cart";
 import Browse from "./components/pages/user/Browse";
 import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
-
 import Checkout from "./components/pages/user/CheckingOut/CheckOut";
-
-import AllUsers from "./components/pages/admin/superAdmin/allUsers";
-
+import UserProfile from "./components/pages/user/UserProfile";
+import YourOrders from "./components/pages/user/UserProfileComponents/YourOrders";
+import YourAddresses from "./components/pages/user/UserProfileComponents/YourAddresses";
+import LoginAndSecurity from "./components/pages/user/UserProfileComponents/LoginAndSecurity";
 //User Components End
 
 function App() {
@@ -74,6 +75,10 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/product" element={<ShowProductDetails />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/yourorders" element={<YourOrders />} />
+          <Route path="/youraddresses" element={<YourAddresses />} />
+          <Route path="/loginandsecurity" element={<LoginAndSecurity />} />
           {/* user routes end */}
 
           {/* Admin Routes start */}

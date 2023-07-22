@@ -311,7 +311,7 @@ export default function SignUp() {
                     min: 8,
                     required: true,
                     message:
-                      "Please inclued special characters, numbers and a upper case letter in Your password",
+                      "Password must be greater than 8 chars and include special characters, numbers and a upper case letter",
                   },
                 ]}
                 hasFeedback
