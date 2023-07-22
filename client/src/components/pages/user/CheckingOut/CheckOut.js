@@ -103,8 +103,6 @@ const Checkout = () => {
     "Puducherry",
   ];
   const countries = ["India"];
-
-  const { Option } = Select;
   const [form] = Form.useForm();
   const { appUser, generateRandomString, isValidToken } = useAllContext();
 

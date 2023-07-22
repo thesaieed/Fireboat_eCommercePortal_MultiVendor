@@ -96,7 +96,7 @@ export const ResetPasswordAdmin = () => {
       setIsVerified(false);
     }
     setIsVerifying(false);
-  }, [email, token]);
+  }, [email, token, isVendor]);
 
   useEffect(() => {
     verifyToken();
