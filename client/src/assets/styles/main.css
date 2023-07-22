@@ -4005,3 +4005,7 @@ div.slick-tracker {
   margin-left: -5px !important;
   margin-right: -5px !important;
 }
+/* profile styling*/
+.profile-cards {
+  margin: 20px;
+}
