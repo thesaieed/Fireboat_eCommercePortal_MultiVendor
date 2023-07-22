@@ -28,7 +28,6 @@ function AddProduct() {
   const [textDesc, setTextDesc] = useState();
 
   //get request to get the categories available stored in db
-  const { Option } = Select;
   const getBrands = async () => {
     try {
       const brands = await axios.get("http://localhost:5000/brands");

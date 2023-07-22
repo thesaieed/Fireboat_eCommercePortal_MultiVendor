@@ -134,55 +134,63 @@ export const ResetPassword = () => {
                     onFinishFailed={onFinishFailed}
                     className="row-col p-15"
                   >
-                    <Form.Item
-                      name="password"
-                      rules={[
-                        {
-                          min: 4,
-                          required: true,
-                          message:
-                            "Please input password greater than 4 characters",
-                        },
-                      ]}
-                      hasFeedback
-                    >
-                      <Input.Password
-                        prefix={
-                          <LockOutlined className="site-form-item-icon" />
-                        }
-                        placeholder="New Password"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="confirmPassword"
-                      dependencies={["password"]}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Password does not match",
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            if (!value || getFieldValue("password") === value) {
-                              return Promise.resolve();
+                    {!successfulReset && (
+                      <>
+                        {" "}
+                        <Form.Item
+                          name="password"
+                          rules={[
+                            {
+                              min: 4,
+                              required: true,
+                              message:
+                                "Please input password greater than 4 characters",
+                            },
+                          ]}
+                          hasFeedback
+                        >
+                          <Input.Password
+                            prefix={
+                              <LockOutlined className="site-form-item-icon" />
                             }
-                            return Promise.reject(
-                              new Error(
-                                "The two passwords that you entered do not match!"
-                              )
-                            );
-                          },
-                        }),
-                      ]}
-                      hasFeedback
-                    >
-                      <Input.Password
-                        prefix={
-                          <LockOutlined className="site-form-item-icon" />
-                        }
-                        placeholder="Confirm New Password"
-                      />
-                    </Form.Item>
+                            placeholder="New Password"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="confirmPassword"
+                          dependencies={["password"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Password does not match",
+                            },
+                            ({ getFieldValue }) => ({
+                              validator(_, value) {
+                                if (
+                                  !value ||
+                                  getFieldValue("password") === value
+                                ) {
+                                  return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                  new Error(
+                                    "The two passwords that you entered do not match!"
+                                  )
+                                );
+                              },
+                            }),
+                          ]}
+                          hasFeedback
+                        >
+                          <Input.Password
+                            prefix={
+                              <LockOutlined className="site-form-item-icon" />
+                            }
+                            placeholder="Confirm New Password"
+                          />
+                        </Form.Item>
+                      </>
+                    )}
                     {errorMessage && (
                       <Form.Item>
                         <Alert

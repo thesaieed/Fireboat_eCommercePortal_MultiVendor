@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -76,7 +76,7 @@ function YourAddresses() {
     const pincodePattern = /^[1-9][0-9]{5}$/;
     return pincode === "" || pincodePattern.test(pincode);
   };
-  const getAddresses = async () => {
+  const getAddresses = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:5000/youraddresses", {
         params: {
@@ -88,12 +88,12 @@ function YourAddresses() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [appUser.id]);
   useEffect(() => {
     if (appUser.id !== null && appUser.id !== undefined) {
       getAddresses();
     }
-  }, [appUser.id]);
+  }, [appUser.id, getAddresses]);
 
   //editing address
   const handleEditAddress = (address) => {
