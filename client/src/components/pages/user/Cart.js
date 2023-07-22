@@ -24,7 +24,7 @@ import Footer from "../../layout/Footer";
 import { Content } from "antd/lib/layout/layout";
 import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
-
+import { MdShoppingCartCheckout } from "react-icons/md";
 function Cart() {
   const { appUser, updateNumberOfCartItems, isValidToken } = useAllContext();
   const [productData, setProductData] = useState([]);
@@ -376,7 +376,11 @@ function Cart() {
                 <span className="spanItems">{calculateTotalItems()}</span> items{" "}
                 <span className="spanCost">&#8377;{calculateSubtotal()}</span>
               </h1>
-              <Button onClick={handleClick} type="primary">
+              <Button
+                onClick={handleClick}
+                type="primary"
+                icon={<MdShoppingCartCheckout fontSize={18} />}
+              >
                 Proceed To Buy
               </Button>
             </div>

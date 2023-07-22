@@ -13,6 +13,7 @@ import SignUp from "./components/pages/SignUp";
 import useAllContext from "./context/useAllContext";
 import { ConfigProvider } from "antd";
 import appTheme from "./eCommerseTheme.json";
+import { IconContext } from "react-icons";
 //Common Components End
 
 //SuperAdmin Components
@@ -62,88 +63,91 @@ function App() {
     <LoadingScreen />
   ) : (
     <ConfigProvider theme={appTheme}>
-      <div className="App">
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path="auth">
-            <Route path="verifyemail" element={<VerifyEmail />}></Route>
-          </Route>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<SignIn />} />
-          {/* user routes Start*/}
-          <Route path="/browse" element={<Browse />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/product" element={<ShowProductDetails />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/yourorders" element={<YourOrders />} />
-          <Route path="/youraddresses" element={<YourAddresses />} />
-          <Route path="/loginandsecurity" element={<LoginAndSecurity />} />
-          {/* user routes end */}
 
-          {/* Admin Routes start */}
-          <Route path="/adminsignup" element={<AdminSignUp />} />
-          <Route path="/adminlogin" element={<AdminSignIn />} />
-          <Route path="/admin" element={<Main />}>
-            <Route path="superadmin">
-              <Route path="allvendors" element={<AllVendors />} />
-              <Route path="approvevendors" element={<ApproveVendors />} />
-              <Route path="allusers" element={<AllUsers />} />
+      <IconContext.Provider value={{ style: { verticalAlign: "middle" } }}>
+        <div className="App">
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="auth">
+              <Route path="verifyemail" element={<VerifyEmail />}></Route>
             </Route>
-            <Route index element={<Dashboard />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="orders">
-              <Route index element={<AllOrders />} />
-              <Route path="allorders" element={<AllOrders />} />
-              <Route path="orderdetails" element={<OrderDetails />} />
-              <Route path="completed" element={<CompletedOrders />} />
-              <Route path="pending" element={<PendingOrders />} />
-              <Route path="*" element={<AllOrders />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<SignIn />} />
+            {/* user routes Start*/}
+            <Route path="/browse" element={<Browse />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/product" element={<ShowProductDetails />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/yourorders" element={<YourOrders />} />
+            <Route path="/youraddresses" element={<YourAddresses />} />
+            <Route path="/loginandsecurity" element={<LoginAndSecurity />} />
+            {/* user routes end */}
+
+            {/* Admin Routes start */}
+            <Route path="/adminsignup" element={<AdminSignUp />} />
+            <Route path="/adminlogin" element={<AdminSignIn />} />
+            <Route path="/admin" element={<Main />}>
+              <Route path="superadmin">
+                <Route path="allvendors" element={<AllVendors />} />
+                <Route path="approvevendors" element={<ApproveVendors />} />
+                <Route path="allusers" element={<AllUsers />} />
+              </Route>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="orders">
+                <Route index element={<AllOrders />} />
+                <Route path="allorders" element={<AllOrders />} />
+                <Route path="orderdetails" element={<OrderDetails />} />
+                <Route path="completed" element={<CompletedOrders />} />
+                <Route path="pending" element={<PendingOrders />} />
+                <Route path="*" element={<AllOrders />} />
+              </Route>
+              <Route path="products">
+                <Route path="addproduct" element={<AddProduct />} />
+                <Route index element={<AddProduct />} />
+                <Route path="allproducts" element={<AllProducts />} />
+                <Route path="*" element={<AddProduct />} />
+              </Route>
+              <Route path="categories">
+                <Route
+                  index
+                  element={
+                    <>
+                      <AllCategories /> <Updatecategories />
+                    </>
+                  }
+                />
+              </Route>
+              <Route path="brands">
+                <Route index element={<Brands />} />
+              </Route>
             </Route>
-            <Route path="products">
-              <Route path="addproduct" element={<AddProduct />} />
-              <Route index element={<AddProduct />} />
-              <Route path="allproducts" element={<AllProducts />} />
-              <Route path="*" element={<AddProduct />} />
+            {/* Admin Routes end */}
+            <Route path="/mainadmin" element={<Main />}>
+              <Route index element={<Dashboard />} />
             </Route>
-            <Route path="categories">
-              <Route
-                index
-                element={
-                  <>
-                    <AllCategories /> <Updatecategories />
-                  </>
-                }
-              />
-            </Route>
-            <Route path="brands">
-              <Route index element={<Brands />} />
-            </Route>
-          </Route>
-          {/* Admin Routes end */}
-          <Route path="/mainadmin" element={<Main />}>
-            <Route index element={<Dashboard />} />
-          </Route>
-          <Route
-            path="*"
-            element={
-              <h1
-                style={{
-                  fontFamily: "cursive",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100vh",
-                  fontSize: "5rem",
-                }}
-              >
-                ! Page Not Found
-              </h1>
-            }
-          />
-        </Routes>
-      </div>
+            <Route
+              path="*"
+              element={
+                <h1
+                  style={{
+                    fontFamily: "cursive",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100vh",
+                    fontSize: "5rem",
+                  }}
+                >
+                  ! Page Not Found
+                </h1>
+              }
+            />
+          </Routes>
+        </div>
+      </IconContext.Provider>
     </ConfigProvider>
   );
 }
