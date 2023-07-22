@@ -144,10 +144,12 @@ export const ResetPasswordAdmin = () => {
                           name="password"
                           rules={[
                             {
-                              min: 4,
+                              pattern:
+                                /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{4,}$/,
+                              min: 8,
                               required: true,
                               message:
-                                "Please input password greater than 4 characters",
+                                "Password must be greater than 8 chars and include special characters, numbers and a upper case letter",
                             },
                           ]}
                           hasFeedback
