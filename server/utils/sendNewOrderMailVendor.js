@@ -14,7 +14,7 @@ module.exports.sendNewOrderMailVendor = async (
   <h2>You have a New Order</h2>
   <p style="margin-bottom: 10px;"> Order ID : ${order_id}</p>
   <p style="margin-top: 30px;">Login in to NILE to see Complete Order Details  </p> 
-  <a href="http://localhost:3000/adminlogin" style="background-color: #86c61f; border: none;
+  <a href="http://localhost:3000/auth/admin/login" style="background-color: #86c61f; border: none;
   color: #000000;
   padding: 15px 32px;
   text-align: center;

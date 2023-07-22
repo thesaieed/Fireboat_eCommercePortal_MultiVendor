@@ -8,8 +8,7 @@ import { useEffect, useMemo } from "react";
 // Common Components
 import { VerifyEmail } from "./components/pages/user/auth/VerifyEmail";
 import LoadingScreen from "./components/layout/LoadingScreen";
-import SignIn from "./components/pages/SignIn";
-import SignUp from "./components/pages/SignUp";
+
 import useAllContext from "./context/useAllContext";
 import { ConfigProvider } from "antd";
 import appTheme from "./eCommerseTheme.json";
@@ -23,8 +22,8 @@ import ApproveVendors from "./components/pages/admin/superAdmin/approveVendors";
 
 //Admin Components
 import Main from "./components/layout/Main";
-import AdminSignIn from "./components/pages/admin/AdminSignIn";
-import AdminSignUp from "./components/pages/admin/AdminSignUp";
+import AdminSignIn from "./components/pages/admin/auth/AdminSignIn";
+import AdminSignUp from "./components/pages/admin/auth/AdminSignUp";
 import Dashboard from "./components/pages/admin/Dashboard";
 import Profile from "./components/pages/admin/Profile";
 import AddProduct from "./components/pages/admin/products/AddProduct";
@@ -35,7 +34,10 @@ import AllOrders from "./components/pages/admin/orders/AllOrders";
 import OrderDetails from "./components/pages/admin/orders/OrderDetails";
 import PendingOrders from "./components/pages/admin/orders/PendingOrders";
 import CompletedOrders from "./components/pages/admin/orders/CompletedOrders";
+import ForgotPasswordAdmin from "./components/pages/admin/auth/ForgotPasswordAdmin";
+import { ResetPasswordAdmin } from "./components/pages/admin/auth/ResetPasswordAdmin";
 import AllUsers from "./components/pages/admin/superAdmin/allUsers";
+import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
 //Admin Components Ends
 
 //User Components
@@ -43,8 +45,11 @@ import Home from "./components/pages/user/Home";
 import ShowProductDetails from "./components/pages/user/ShowProductDetails";
 import Cart from "./components/pages/user/Cart";
 import Browse from "./components/pages/user/Browse";
-import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
 import Checkout from "./components/pages/user/CheckingOut/CheckOut";
+import ForgotPassword from "./components/pages/user/auth/ForgotPassword";
+import { ResetPassword } from "./components/pages/user/auth/ResetPassword";
+import SignIn from "./components/pages/user/auth/SignIn";
+import SignUp from "./components/pages/user/auth/SignUp";
 import UserProfile from "./components/pages/user/UserProfile";
 import YourOrders from "./components/pages/user/UserProfileComponents/YourOrders";
 import YourAddresses from "./components/pages/user/UserProfileComponents/YourAddresses";
@@ -63,16 +68,27 @@ function App() {
     <LoadingScreen />
   ) : (
     <ConfigProvider theme={appTheme}>
-
       <IconContext.Provider value={{ style: { verticalAlign: "middle" } }}>
         <div className="App">
           <Routes>
             <Route index element={<Home />} />
             <Route path="auth">
+              <Route path="signup" element={<SignUp />} />
+              <Route path="login" element={<SignIn />} />
               <Route path="verifyemail" element={<VerifyEmail />}></Route>
+              <Route path="forgotpassword" element={<ForgotPassword />}></Route>
+              <Route path="resetpassword" element={<ResetPassword />}></Route>
+              <Route path="admin">
+                <Route path="signup" element={<AdminSignUp />} />
+                <Route path="login" element={<AdminSignIn />} />
+                <Route
+                  path="forgotpassword"
+                  element={<ForgotPasswordAdmin />}
+                />
+                <Route path="resetpassword" element={<ResetPasswordAdmin />} />
+              </Route>
             </Route>
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<SignIn />} />
+
             {/* user routes Start*/}
             <Route path="/browse" element={<Browse />} />
             <Route path="/cart" element={<Cart />} />
@@ -85,8 +101,7 @@ function App() {
             {/* user routes end */}
 
             {/* Admin Routes start */}
-            <Route path="/adminsignup" element={<AdminSignUp />} />
-            <Route path="/adminlogin" element={<AdminSignIn />} />
+
             <Route path="/admin" element={<Main />}>
               <Route path="superadmin">
                 <Route path="allvendors" element={<AllVendors />} />
