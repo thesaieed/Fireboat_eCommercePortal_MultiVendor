@@ -1523,7 +1523,74 @@ app.put("/editpassword/:id", async (req, res) => {
 //   console.log(id, email);
 //
 // });
-//listen to radio
+
+//admin profile routes
+app.put("/editbusinessname/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { full_name: business_name } = req.body;
+  try {
+    await pool.query("update vendors set business_name=$1 where id=$2", [
+      business_name,
+      id,
+    ]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/editbusinessphonenumber/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { phone_number } = req.body;
+  try {
+    await pool.query("update vendors set phone=$1 where id=$2", [
+      phone_number,
+      id,
+    ]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/editbusinesspassword/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const query1Result = await pool.query(
+      "select password from vendors where id=$1",
+      [id]
+    );
+
+    // console.log(query1Result.rows[0].password);
+    if (query1Result.rows.length > 0) {
+      let passwordMatched = false;
+      if (query1Result.rows[0].password != null) {
+        passwordMatched = await bcrypt.compare(
+          currentPassword,
+          query1Result.rows[0].password
+        );
+      }
+      if (passwordMatched) {
+        const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+        await pool.query("update vendors set password=$1", [newPasswordHash]);
+        res.sendStatus(200);
+      } else {
+        res.sendStatus("404");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+//listen
 app.listen(5000, () => {
   console.log("Listening on Port 5000");
 });
