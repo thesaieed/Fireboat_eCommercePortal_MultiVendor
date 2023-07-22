@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 
-import signinbg from "../../assets/images/1.png";
+import signinbg from "../../../../assets/images/1.png";
 
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import vendorIcon from "../../assets/images/vendorsIcon.png";
+import vendorIcon from "../../../../assets/images/vendorsIcon.png";
 import axios from "axios";
-import useAllContext from "../../context/useAllContext";
+import useAllContext from "../../../../context/useAllContext";
+
 const { Title } = Typography;
 const { Footer, Content } = Layout;
 
@@ -295,19 +296,32 @@ function SignIn() {
                     SIGN IN
                   </Button>
                 </Form.Item>
+
                 <Form.Item style={{ width: "100%", textAlign: "center" }}>
                   <div id="googleLoginButton"></div>
                 </Form.Item>
+                <div
+                  className="d-flex justify-content-end"
+                  style={{ marginTop: -15, marginBottom: 10 }}
+                >
+                  <Link
+                    to="/auth/forgotpassword"
+                    className="text-dark font-bold"
+                  >
+                    Forgot Password!
+                  </Link>
+                </div>
 
                 <p className="font-semibold text-muted">
                   Don't have an account?{" "}
-                  <Link to="/signup" className="text-dark font-bold">
+                  <Link to="/auth/signup" className="text-dark font-bold">
                     Sign Up
                   </Link>
                 </p>
+
                 <p className="font-semibold text-muted ">
                   <span style={{ marginRight: 5 }}>Are you Vendor?</span>
-                  <Link to="/adminlogin" className="text-dark font-bold ">
+                  <Link to="/auth/admin/login" className="text-dark font-bold ">
                     <img
                       src={vendorIcon}
                       height={25}

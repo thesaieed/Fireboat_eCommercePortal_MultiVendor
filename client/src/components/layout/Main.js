@@ -52,7 +52,7 @@ function Main() {
 
   useEffect(() => {
     if (!isValidToken) {
-      navigate("/login");
+      navigate("/auth/admin/login");
     } else {
       // console.log("isLoading :", isLoading);
       fetchUserDetails();

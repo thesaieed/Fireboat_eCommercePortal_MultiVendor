@@ -22,7 +22,7 @@ import {
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import useAllContext from "../../../context/useAllContext";
+import useAllContext from "../../../../context/useAllContext";
 
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
@@ -214,32 +214,6 @@ export default function AdminSignUp() {
   return (
     <>
       <div className="layout-default ant-layout layout-sign-up">
-        {/* <Header>
-          <div className="header-col header-brand">
-            <h5 className="brandText">AlSaleels</h5>
-          </div>
-          <div className="header-col header-nav">
-            <Menu mode="horizontal" defaultSelectedKeys={["1"]}>
-              <Menu.Item key="1">
-                <Link to="/">
-                  <span> Home</span>
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="">
-                  <span>Our Products</span>
-                </Link>
-              </Menu.Item>
-            </Menu>
-          </div>
-          <div className="header-col header-btn">
-            <Button type="primary">
-              <ShoppingCartOutlined />
-              Cart
-            </Button>
-          </div>
-        </Header> */}
-
         <Content className="signupContent">
           <div className="sign-up-header vendor-sign-up-header">
             <div className="content">
@@ -252,18 +226,6 @@ export default function AdminSignUp() {
             title={<h5>Register With</h5>}
             bordered="false"
           >
-            {/* <div className="sign-up-gateways">
-              <Button type="false">
-                <img src={logo1} alt="logo 1" />
-              </Button>
-              <Button type="false">
-                <img src={logo2} alt="logo 2" />
-              </Button>
-              <Button type="false">
-                <img src={logo3} alt="logo 3" />
-              </Button>
-            </div>
-            <p className="text-center my-25 font-semibold text-muted">Or</p> */}
             <div
               id="googleLoginButton"
               style={{ width: "100%", textAlign: "center" }}
@@ -431,7 +393,7 @@ export default function AdminSignUp() {
 
             <p className="font-semibold text-muted text-center">
               Already have a Vendor? {/* add link to signpage */}
-              <Link to="/adminlogin" className="font-bold text-dark">
+              <Link to="/auth/admin/login" className="font-bold text-dark">
                 Sign In
               </Link>
             </p>

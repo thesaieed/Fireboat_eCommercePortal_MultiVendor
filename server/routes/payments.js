@@ -56,8 +56,8 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://35ce-223-239-24-167.ngrok-free.app/payments/successpay",
-      furl: "https://35ce-223-239-24-167.ngrok-free.app/payments/failedpay",
+      surl: "https://6dfb-223-189-18-74.ngrok-free.app/payments/successpay",
+      furl: "https://6dfb-223-189-18-74.ngrok-free.app/payments/failedpay",
     };
     const url = process.env.TESTPAYMENTURL;
 
@@ -131,6 +131,7 @@ const sendNewOrderEmailtoUser = async (user_id, order_id) => {
 };
 
 router.post("/successpay", async (req, res) => {
+  //dont uncomment the comments or delete
   const { mihpayid, mode, status, productinfo, amount, txnid, hash } = req.body;
   try {
     const { rows } = await pool.query(
@@ -148,47 +149,47 @@ router.post("/successpay", async (req, res) => {
     // });
     const order_id = productinfo.slice(7);
 
-    if (true) {
-      const payinfo = await pool.query(
-        "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
-        [
-          order_id,
-          Number(amount).toFixed(2),
-          status,
-          txnid,
-          productinfo,
-          mihpayid,
-          mode,
-        ]
-      );
-      // console.log("payinfo");
-      await pool.query(
-        "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3 returning *",
-        [status, payinfo.rows[0].id, order_id]
-      );
-      // console.log("updatee payments");
-      sendNewOrderEmailtoVendor(order_id);
-      // console.log("vendoremailsent");
-      const user = await pool.query(
-        "SELECT user_id from orders where order_id=$1",
-        [order_id]
-      );
-      // console.log("user");
-      sendNewOrderEmailtoUser(user.rows[0].user_id, order_id);
-      // console.log("userEmailsent");
-      await pool.query("DELETE from cart where user_id=$1", [
-        user.rows[0].user_id,
-      ]);
-      // console.log("cart empty");
-    } else {
-      await pool.query(
-        "UPDATE orders set payment_status=$1 where order_id=$3",
-        ["SuccessfulTamperedPayment", order_id]
-      );
-      res.redirect(
-        `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`
-      );
-    }
+    // if (true) {
+    const payinfo = await pool.query(
+      "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
+      [
+        order_id,
+        Number(amount).toFixed(2),
+        status,
+        txnid,
+        productinfo,
+        mihpayid,
+        mode,
+      ]
+    );
+    // console.log("payinfo");
+    await pool.query(
+      "UPDATE orders set payment_status=$1, payment_details_id=$2 where order_id=$3 returning *",
+      [status, payinfo.rows[0].id, order_id]
+    );
+    // console.log("updatee payments");
+    sendNewOrderEmailtoVendor(order_id);
+    // console.log("vendoremailsent");
+    const user = await pool.query(
+      "SELECT user_id from orders where order_id=$1",
+      [order_id]
+    );
+    // console.log("user");
+    sendNewOrderEmailtoUser(user.rows[0].user_id, order_id);
+    // console.log("userEmailsent");
+    await pool.query("DELETE from cart where user_id=$1", [
+      user.rows[0].user_id,
+    ]);
+    // console.log("cart empty");
+    // } else {
+    //   await pool.query(
+    //     "UPDATE orders set payment_status=$1 where order_id=$3",
+    //     ["SuccessfulTamperedPayment", order_id]
+    //   );
+    //   res.redirect(
+    //     `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`
+    //   );
+    // }
     res.redirect(
       `http://localhost:3000/checkout/?paymentdone=true&status=success&t=${txnid}`
     );
