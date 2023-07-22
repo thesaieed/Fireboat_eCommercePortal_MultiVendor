@@ -285,12 +285,9 @@ function AdminSignIn() {
                   // label="Password"
                   rules={[
                     {
-                      min: 4,
                       required: true,
-                      message: "Password should be greater than 4 characters",
                     },
                   ]}
-                  hasFeedback
                 >
                   <Input.Password
                     prefix={<LockOutlined className="site-form-item-icon" />}
