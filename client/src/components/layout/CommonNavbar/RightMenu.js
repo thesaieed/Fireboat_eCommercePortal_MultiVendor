@@ -40,7 +40,7 @@ const RightMenu = ({ mode }) => {
         }
       : null,
     {
-      label: "Profile",
+      label: <Link to="/profile">Profile</Link>,
       key: "Profile",
       icon: <UserOutlined />,
     },

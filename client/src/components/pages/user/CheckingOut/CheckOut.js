@@ -653,7 +653,11 @@ const Checkout = () => {
                 label="Full Name"
                 name="full_name"
                 rules={[
-                  { required: true, message: "Please input your full name!" },
+                  {
+                    required: true,
+                    message: "Please input a valid name!",
+                    pattern: /^[A-Za-z][A-Za-z0-9\s]*$/,
+                  },
                 ]}
               >
                 <Input />
@@ -663,12 +667,11 @@ const Checkout = () => {
                 name="phone_number"
                 rules={[
                   {
-                    required: true,
-                    message: "Please input your phone number",
-                  },
-                  {
                     min: 10,
                     max: 10,
+                    required: true,
+                    message: "Please input valid phone number",
+                    pattern: /^[9876]\d{9}$/,
                   },
                 ]}
               >
@@ -748,7 +751,8 @@ const Checkout = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your town/city name!",
+                        message: "Please input your valid town/city name!",
+                        pattern: /^[A-Za-z]+$/,
                       },
                     ]}
                   >
