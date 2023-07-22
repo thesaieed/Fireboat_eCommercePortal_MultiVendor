@@ -279,16 +279,22 @@ function Dashboard() {
           </Card>
         </Col>
       </Row>
+      <Title level={3} style={{ marginTop: 25, marginLeft: 10 }}>
+        Actions
+      </Title>
+      <hr />
+
       <Row
         gutter={[24, 0]}
+        // className="d-flex align-items-center justify-content-between "
         style={{ marginTop: 20 }}
-        className="d-flex align-items-center justify-content-around "
+        justify="space-between"
+        align="stretch"
       >
         {appUser.is_super_admin && (
-          <Col className=" mb-24">
+          <Col className=" mb-24" flex="1 0 25%">
             <Card
-              style={{ width: 300 }}
-              // cover={<img alt="VendorCardCover" src={vendorsImg} />}
+              style={{ height: "100%" }}
               actions={[
                 <Tooltip title="View all Vendors" color={"#9edd38"}>
                   <Link to="/admin/superadmin/allvendors">
@@ -300,9 +306,6 @@ function Dashboard() {
                     <IssuesCloseOutlined key="approvevendors" />
                   </Link>
                 </Tooltip>,
-
-                // <EditOutlined key="edit" />,
-                // <EllipsisOutlined key="ellipsis" />,
               ]}
             >
               <Meta
@@ -310,15 +313,14 @@ function Dashboard() {
                   <Avatar src={vendorIcon} style={{ background: "#9edd38" }} />
                 }
                 title="Vendors"
-                description="Information of Vendors"
+                description="Manage various aspects regarding Vendors"
               />
             </Card>
           </Col>
         )}
-        <Col className=" mb-24">
+        <Col className=" mb-24" flex="1 0 25%">
           <Card
-            style={{ width: 300 }}
-            // cover={<img alt="ProdCardCover" src={prodImg} />}
+            style={{ height: "100%" }}
             actions={[
               <Tooltip title="Add Product" color={"#9edd38"}>
                 <Link to="/admin/products/addproduct">
@@ -341,9 +343,6 @@ function Dashboard() {
                   </Link>
                 </Dropdown>
               </Tooltip>,
-
-              // <EditOutlined key="edit" />,
-              // <EllipsisOutlined key="ellipsis" />,
             ]}
           >
             <Meta
@@ -351,14 +350,13 @@ function Dashboard() {
                 <Avatar src={prodIcon} style={{ background: "#9edd38" }} />
               }
               title="Products"
-              description="Information of Products"
+              description="Manage various aspects regarding Products"
             />
           </Card>
         </Col>
-        <Col className="mb-24">
+        <Col className="mb-24" flex="1 0 25%">
           <Card
-            style={{ width: 300 }}
-            // cover={<img alt="ProdCardCover" src={ordersImg} />}
+            style={{ height: "100%" }}
             actions={[
               <Tooltip title="Pending Orders" color={"#9edd38"}>
                 <Link to="/admin/orders/pending">
@@ -370,18 +368,12 @@ function Dashboard() {
                   <BsCartCheck style={{ fontSize: 20 }} />
                 </Link>
               </Tooltip>,
-              // <Tooltip title="Cancelled Orders" color={"#9edd38"}>
-              //   <Link to="/admin/orders/cancelled">
-              //     <BsCartX style={{ fontSize: 20 }} />
-              //   </Link>
-              // </Tooltip>,
+
               <Tooltip title="Order History" color={"#9edd38"}>
                 <Link to="/admin/orders/allorders">
                   <BsClockHistory style={{ fontSize: 20 }} />
                 </Link>
               </Tooltip>,
-              // <EditOutlined key="edit" />,
-              // <EllipsisOutlined key="ellipsis" />,
             ]}
           >
             <Meta
@@ -389,33 +381,32 @@ function Dashboard() {
                 <Avatar src={ordersIcon} style={{ background: "#9edd38" }} />
               }
               title="Orders"
-              description="Information of Orders"
+              description="Manage various aspects regarding Orders"
             />
           </Card>
         </Col>
-        <Col className="mb-24">
-          <Card
-            style={{ width: 300 }}
-            // cover={<img alt="ProdCardCover" src={usersImg} />}
-            actions={[
-              <Tooltip title="Manage Users" color={"#9edd38"}>
-                <Link to="/admin/superadmin/allusers">
-                  <SettingOutlined key="manageusers" />
-                </Link>
-              </Tooltip>,
-              // <EditOutlined key="edit" />,
-              // <EllipsisOutlined key="ellipsis" />,
-            ]}
-          >
-            <Meta
-              avatar={
-                <Avatar src={usersIcon} style={{ background: "#9edd38" }} />
-              }
-              title="Users"
-              description="Information of Users"
-            />
-          </Card>
-        </Col>
+        {appUser.is_super_admin && (
+          <Col className="mb-24" flex="1 0 25%">
+            <Card
+              style={{ height: "100%" }}
+              actions={[
+                <Tooltip title="Manage Users" color={"#9edd38"}>
+                  <Link to="/admin/superadmin/allusers">
+                    <SettingOutlined key="manageusers" />
+                  </Link>
+                </Tooltip>,
+              ]}
+            >
+              <Meta
+                avatar={
+                  <Avatar src={usersIcon} style={{ background: "#9edd38" }} />
+                }
+                title="Users"
+                description={`Manage various aspects regarding Users`}
+              />
+            </Card>
+          </Col>
+        )}
       </Row>
     </>
   );

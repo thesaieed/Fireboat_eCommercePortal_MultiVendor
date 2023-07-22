@@ -19,7 +19,7 @@ import { UserOutlined, IdcardOutlined, LockOutlined } from "@ant-design/icons";
 // import logo3 from "../assets/images/Google__G__Logo.svg.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useAllContext from "../../context/useAllContext";
+import useAllContext from "../../../../context/useAllContext";
 
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
@@ -414,7 +414,7 @@ export default function SignUp() {
 
             <p className="font-semibold text-muted text-center">
               Already have an account? {/* add link to signpage */}
-              <Link to="/login" className="font-bold text-dark">
+              <Link to="/auth/login" className="font-bold text-dark">
                 Sign In
               </Link>
             </p>

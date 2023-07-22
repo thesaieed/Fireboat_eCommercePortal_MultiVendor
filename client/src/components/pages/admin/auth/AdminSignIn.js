@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+
 import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 
-import signinbg from "../../assets/images/1.png";
-
+import signinbg from "../../../../assets/images/vendorSigin.png";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import vendorIcon from "../../assets/images/vendorsIcon.png";
 import axios from "axios";
-import useAllContext from "../../context/useAllContext";
+import useAllContext from "../../../../context/useAllContext";
+import jwt_decode from "jwt-decode";
 const { Title } = Typography;
-const { Footer, Content } = Layout;
+const { /*Header,*/ Footer, Content } = Layout;
 
-function SignIn() {
+function AdminSignIn() {
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);
   const {
     setAppUser,
+    appUser,
     generateRandomString,
     setIsValidToken,
     setUserToken,
@@ -26,10 +26,13 @@ function SignIn() {
 
   useEffect(() => {
     if (isValidToken) {
-      // console.log("signIn navs to home");
-      navigate("/");
+      if (appUser.isadmin) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     }
-  }, [isValidToken, navigate]);
+  }, [isValidToken, appUser.isadmin, navigate]);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [errorDescription, setErrorDescription] = useState();
@@ -39,35 +42,33 @@ function SignIn() {
   const onFinish = async (values) => {
     // console.log("Success:", values);
     setButtonLoading(true);
-    const res = await axios.post("http://localhost:5000/login", values);
-    // console.log(res.data);
+    const res = await axios.post("http://localhost:5000/vendor/login", values);
     switch (res.data.loginStatus) {
       case 200:
-        //check if the user has been disabled
-        if (!res.data.user.isactive) {
-          setErrorMessage("user has been disabled, contact admin");
-          setButtonLoading(false);
-          return; // Stop the execution here
-        }
         const userToken = generateRandomString(12);
         // console.log("Res.data.user : ", res.data.user);
         // console.log("Login UserToken : ", userToken);
         localStorage.setItem("userToken", userToken);
-        localStorage.setItem("isa", false);
+        localStorage.setItem("isa", true);
         setUserToken(userToken);
-        setUserTokenIsAdmin(false);
+        setUserTokenIsAdmin(true);
         setAppUser(res.data.user);
         try {
           await axios.post("http://localhost:5000/addusersloggedintokens", {
             token: userToken,
             id: res.data.user.id,
-            isvendor: false,
+            isvendor: true,
           });
           setIsValidToken(true);
         } catch (err) {
           console.error(err);
         }
-        navigate("/");
+        // console.log(res.data);
+        if (res.data.user.is_admin === true) {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
 
         break;
       case 401:
@@ -78,6 +79,26 @@ function SignIn() {
       case 404:
         // console.log("User doesn't exist");
         setErrorMessage("User not Found ! Please SignUp.");
+        form.resetFields();
+        break;
+      case 102:
+        // console.log("User doesn't exist");
+        setErrorMessage(
+          <code>
+            Your Approval is in Process!
+            <br /> Please check your email for status!
+          </code>
+        );
+        form.resetFields();
+        break;
+      case 406:
+        // console.log("User doesn't exist");
+        setErrorMessage(
+          <code>
+            You have not been Approved!
+            <br /> Please check your email for status!
+          </code>
+        );
         form.resetFields();
         break;
       case 407:
@@ -104,43 +125,45 @@ function SignIn() {
   };
   const handleGoogleauthCallback = useCallback(
     async (response) => {
-      // console.log(response);
+      // console.log("Success:", values);
       let user = jwt_decode(response.credential);
-      // console.log("User:", user);
+      console.log("User:", user);
       const values = {
         googlename: user.name,
         email: user.email,
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post("http://localhost:5000/googlelogin", values);
+      const res = await axios.post(
+        "http://localhost:5000/vendor/googlelogin",
+        values
+      );
       switch (res.data.loginStatus) {
         case 200:
-          //check if user disabled
-          if (!res.data.user.isactive) {
-            setErrorMessage("user has been disabled, contact admin");
-            setButtonLoading(false);
-            return; // Stop the execution here
-          }
           const userToken = generateRandomString(12);
           // console.log("Res.data.user : ", res.data.user);
           // console.log("Login UserToken : ", userToken);
           localStorage.setItem("userToken", userToken);
-          localStorage.setItem("isa", false);
+          localStorage.setItem("isa", true);
           setUserToken(userToken);
-          setUserTokenIsAdmin(false);
+          setUserTokenIsAdmin(true);
           setAppUser(res.data.user);
           try {
             await axios.post("http://localhost:5000/addusersloggedintokens", {
               token: userToken,
               id: res.data.user.id,
-              isvendor: false,
+              isvendor: true,
             });
             setIsValidToken(true);
           } catch (err) {
             console.error(err);
           }
-          navigate("/");
+          // console.log(res.data);
+          if (res.data.user.is_admin === true) {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
 
           break;
         case 401:
@@ -151,6 +174,26 @@ function SignIn() {
         case 404:
           // console.log("User doesn't exist");
           setErrorMessage("User not Found ! Please SignUp.");
+          form.resetFields();
+          break;
+        case 102:
+          // console.log("User doesn't exist");
+          setErrorMessage(
+            <code>
+              Your Approval is in Process!
+              <br /> Please check your email for status!
+            </code>
+          );
+          form.resetFields();
+          break;
+        case 406:
+          // console.log("User doesn't exist");
+          setErrorMessage(
+            <code>
+              You have not been Approved!
+              <br /> Please check your email for status!
+            </code>
+          );
           form.resetFields();
           break;
         case 407:
@@ -171,13 +214,13 @@ function SignIn() {
       setButtonLoading(false);
     },
     [
+      navigate,
       form,
       generateRandomString,
       setAppUser,
       setIsValidToken,
       setUserToken,
       setUserTokenIsAdmin,
-      navigate,
     ]
   );
   useEffect(() => {
@@ -191,7 +234,7 @@ function SignIn() {
       document.getElementById("googleLoginButton"),
       { theme: "outline", size: "large" }
     );
-    // google.accounts.id.prompt();
+    google.accounts.id.prompt();
   }, [handleGoogleauthCallback]);
 
   return (
@@ -205,9 +248,9 @@ function SignIn() {
               xs={{ span: 22, offset: 0 }}
               md={{ span: 11, offset: 1 }}
               lg={{ span: 8, offset: 2 }}
-              xl={{ span: 7, offset: 3 }}
+              xl={{ span: 9, offset: 0 }}
             >
-              <Title className="mb-15">Login</Title>
+              <Title className="mb-15">Vendor Login</Title>
               <Title className="font-regular text-muted" level={5}>
                 Enter your email and password to login
               </Title>
@@ -242,12 +285,12 @@ function SignIn() {
                   // label="Password"
                   rules={[
                     {
-                      // min: 4,
+                      min: 4,
                       required: true,
-                      // message: "Password should be greater than 4 characters",
+                      message: "Password should be greater than 4 characters",
                     },
                   ]}
-                  // hasFeedback
+                  hasFeedback
                 >
                   <Input.Password
                     prefix={<LockOutlined className="site-form-item-icon" />}
@@ -278,8 +321,7 @@ function SignIn() {
                       }}
                       style={{
                         width: "100%",
-
-                        overflow: "hidden",
+                        overflow: "auto",
                       }}
                     />
                   </Form.Item>
@@ -292,29 +334,36 @@ function SignIn() {
                     style={{ width: "100%" }}
                     loading={buttonLoading}
                   >
-                    SIGN IN
+                    Login
                   </Button>
                 </Form.Item>
-                <Form.Item style={{ width: "100%", textAlign: "center" }}>
-                  <div id="googleLoginButton"></div>
+                <Form.Item>
+                  <div
+                    id="googleLoginButton"
+                    style={{ width: "100%", textAlign: "center" }}
+                  ></div>
                 </Form.Item>
-
+                <div
+                  className="d-flex justify-content-end"
+                  style={{ marginTop: -15, marginBottom: 10 }}
+                >
+                  <Link
+                    to="/auth/admin/forgotpassword"
+                    className="text-dark font-bold"
+                  >
+                    Forgot Password!
+                  </Link>
+                </div>
                 <p className="font-semibold text-muted">
-                  Don't have an account?{" "}
-                  <Link to="/signup" className="text-dark font-bold">
-                    Sign Up
+                  Don't have a Vendor Account?{" "}
+                  <Link to="/auth/admin/signup" className="text-dark font-bold">
+                    Register as Vendor
                   </Link>
                 </p>
-                <p className="font-semibold text-muted ">
-                  <span style={{ marginRight: 5 }}>Are you Vendor?</span>
-                  <Link to="/adminlogin" className="text-dark font-bold ">
-                    <img
-                      src={vendorIcon}
-                      height={25}
-                      width={25}
-                      alt="vendorIcon"
-                    />{" "}
-                    Vendor Login
+                <p className="font-semibold text-muted">
+                  Not a Vendor?{" "}
+                  <Link to="/auth/login" className="text-dark font-bold">
+                    Login as User
                   </Link>
                 </p>
               </Form>
@@ -324,8 +373,8 @@ function SignIn() {
               className="sign-img"
               style={{ padding: 12 }}
               xs={{ span: 24 }}
-              lg={{ span: 12 }}
-              md={{ span: 12 }}
+              lg={{ span: 11 }}
+              md={{ span: 11 }}
             >
               <img src={signinbg} alt="" />
             </Col>
@@ -339,4 +388,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default AdminSignIn;

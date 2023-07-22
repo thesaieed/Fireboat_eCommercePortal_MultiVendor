@@ -64,7 +64,7 @@ const RightMenu = ({ mode }) => {
   const loginMenuItem = [
     {
       label: (
-        <Link to="/login">
+        <Link to="/auth/login">
           <UserOutlined style={{ fontWeight: 600 }} />
           <span style={{ fontWeight: 600 }}>Login</span>
         </Link>
@@ -122,7 +122,7 @@ const RightMenu = ({ mode }) => {
               className="navLoginBtn"
               type="primary"
               onClick={() => {
-                navigate("/login");
+                navigate("/auth/login");
               }}
             >
               Login
@@ -151,7 +151,7 @@ const RightMenu = ({ mode }) => {
   ) : (
     <>
       <Menu mode={mode} className="navMenu" items={loginMenuItem} />
-      <Link to="/login">
+      <Link to="/auth/login">
         <Button
           type="link"
           className="Dropdown"

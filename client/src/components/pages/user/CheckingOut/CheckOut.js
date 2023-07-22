@@ -244,7 +244,7 @@ const Checkout = () => {
   };
   useEffect(() => {
     if (!isValidToken && !appUser.id) {
-      navigate("/login");
+      navigate("/auth/login");
       message.info("You need to be Logged In to Checkout from Cart!");
     }
   });
@@ -634,13 +634,20 @@ const Checkout = () => {
                   { required: true, message: "Please select a country!" },
                 ]}
               >
-                <Select placeholder="Select a Country" className="ant-input">
-                  {countries.map((country) => (
-                    <Option key={country} value={country}>
-                      {country}
-                    </Option>
-                  ))}
-                </Select>
+                <Select
+                  placeholder="Select a Country"
+                  className="ant-input"
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={countries.map((country) => {
+                    return { value: country, label: country };
+                  })}
+                ></Select>
               </Form.Item>
               <Form.Item
                 label="Full Name"
@@ -760,13 +767,20 @@ const Checkout = () => {
                       { required: true, message: "Please select a state" },
                     ]}
                   >
-                    <Select className="ant-input" placeholder="Select a state">
-                      {states.map((state) => (
-                        <Option key={state} value={state}>
-                          {state}
-                        </Option>
-                      ))}
-                    </Select>
+                    <Select
+                      className="ant-input"
+                      placeholder="Select a state"
+                      showSearch
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={states.map((state) => {
+                        return { value: state, label: state };
+                      })}
+                    ></Select>
                   </Form.Item>
                 </Col>
               </Row>
