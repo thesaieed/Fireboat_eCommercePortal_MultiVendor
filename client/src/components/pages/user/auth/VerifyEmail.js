@@ -138,7 +138,7 @@ export const VerifyEmail = () => {
                     <Button
                       type="primary"
                       onClick={() => {
-                        navigate("/login");
+                        navigate("/auth/login");
                       }}
                       style={{ float: "right" }}
                     >

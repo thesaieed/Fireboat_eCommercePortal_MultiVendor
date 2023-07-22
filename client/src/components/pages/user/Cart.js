@@ -39,7 +39,7 @@ function Cart() {
   useEffect(() => {
     if (!isValidToken && !appUser.id) {
       console.log("Login check");
-      navigate("/login");
+      navigate("/auth/login");
       message.info("You need to be Logged In to access Cart!");
     }
   });

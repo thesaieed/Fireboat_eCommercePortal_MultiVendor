@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 
-import signinbg from "../../../assets/images/vendorSigin.png";
-
+import signinbg from "../../../../assets/images/vendorSigin.png";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import axios from "axios";
-import useAllContext from "../../../context/useAllContext";
+import useAllContext from "../../../../context/useAllContext";
 import jwt_decode from "jwt-decode";
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
@@ -344,15 +343,26 @@ function AdminSignIn() {
                     style={{ width: "100%", textAlign: "center" }}
                   ></div>
                 </Form.Item>
+                <div
+                  className="d-flex justify-content-end"
+                  style={{ marginTop: -15, marginBottom: 10 }}
+                >
+                  <Link
+                    to="/auth/admin/forgotpassword"
+                    className="text-dark font-bold"
+                  >
+                    Forgot Password!
+                  </Link>
+                </div>
                 <p className="font-semibold text-muted">
                   Don't have a Vendor Account?{" "}
-                  <Link to="/adminsignup" className="text-dark font-bold">
+                  <Link to="/auth/admin/signup" className="text-dark font-bold">
                     Register as Vendor
                   </Link>
                 </p>
                 <p className="font-semibold text-muted">
                   Not a Vendor?{" "}
-                  <Link to="/login" className="text-dark font-bold">
+                  <Link to="/auth/login" className="text-dark font-bold">
                     Login as User
                   </Link>
                 </p>

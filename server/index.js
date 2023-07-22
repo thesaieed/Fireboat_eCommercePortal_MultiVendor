@@ -7,13 +7,14 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const saltRounds = 12;
 const { verifyEmail } = require("./utils/verifyEmail");
+const { sendResetPasswordMail } = require("./utils/sendResetPasswordMail");
 var jwt = require("jsonwebtoken");
 const generateTokenAndSendMail = require("./utils/generateTokenandSendMail");
 const vendorRoutes = require("./routes/vendor");
 const reviewRoutes = require("./routes/review");
 const paymentRoutes = require("./routes/payments");
 const orderRoutes = require("./routes/orders");
-const { error } = require("console");
+
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -122,6 +123,7 @@ app.post("/googlelogin", async (req, res) => {
 app.post("/verifyEmail", async (req, res) => {
   const { token, email, isVendor } = req.body;
   // console.log(req.body);
+
   try {
     var user;
     if (isVendor === "false") {
@@ -1513,6 +1515,156 @@ app.post("/lastsevendaysales", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.send([]);
+  }
+});
+
+app.post("/sendresetpasswordlink", async (req, res) => {
+  const { email, is_vendor } = req.body;
+  console.log(req.body);
+  let data = {};
+  try {
+    if (!is_vendor) {
+      const user = await pool.query("SELECT id from users where email=$1", [
+        email,
+      ]);
+      if (user.rowCount === 0) {
+        data = { status: 404 };
+      } else {
+        //generate a token including userID as data for verification
+        const token = jwt.sign(
+          {
+            data: email,
+          },
+          process.env.TOKENPVTKEY,
+          { expiresIn: 5 * 60 }
+        );
+        await sendResetPasswordMail(email, token, false);
+        data = { status: 200 };
+      }
+      res.send(data);
+    } else if (is_vendor) {
+      const vendor = await pool.query("SELECT id from vendors where email=$1", [
+        email,
+      ]);
+      if (vendor.rowCount === 0) {
+        data = { status: 404 };
+      } else {
+        //generate a token including userID as data for verification
+        const token = jwt.sign(
+          {
+            data: { email, is_vendor },
+          },
+          process.env.TOKENPVTKEY,
+          { expiresIn: 5 * 60 }
+        );
+        await sendResetPasswordMail(email, token, true);
+        data = { status: 200 };
+      }
+      res.send(data);
+    }
+  } catch (error) {
+    console.error(error);
+    res.send({ status: 500 });
+  }
+});
+app.post("/verifyresettoken", async (req, res) => {
+  const { token, useremail, is_vendor } = req.body;
+  console.log(req.body);
+  if (!is_vendor) {
+    jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
+      if (err) {
+        res.send({
+          status: 400,
+        });
+      } else if (decoded) {
+        if (decoded?.data !== useremail) {
+          res.send({
+            status: 400,
+          });
+        } else {
+          res.send({ status: 200 });
+        }
+      }
+    });
+  } else if (is_vendor) {
+    jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
+      if (err) {
+        res.send({
+          status: 400,
+        });
+      } else if (decoded) {
+        console.log(decoded.data);
+        if (
+          decoded?.data.email !== useremail &&
+          decoded?.data.is_vendor != true
+        ) {
+          res.send({
+            status: 400,
+          });
+        } else {
+          res.send({ status: 200 });
+        }
+      }
+    });
+  }
+});
+app.post("/resetpassword", async (req, res) => {
+  var { password, useremail, token, is_vendor } = req.body;
+  password = await bcrypt.hash(password, saltRounds);
+  if (!is_vendor) {
+    jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
+      if (err) {
+        res.send({
+          status: 400,
+        });
+      } else if (decoded) {
+        if (decoded?.data !== useremail) {
+          res.send({
+            status: 400,
+          });
+        } else {
+          try {
+            await pool.query("UPDATE users SET password=$1 WHERE email=$2", [
+              password,
+              useremail,
+            ]);
+            res.send({ status: 200 });
+          } catch (err) {
+            console.log("reset password error", err);
+            res.sendStatus(500);
+          }
+        }
+      }
+    });
+  } else if (is_vendor) {
+    jwt.verify(token, process.env.TOKENPVTKEY, async function (err, decoded) {
+      if (err) {
+        res.send({
+          status: 400,
+        });
+      } else if (decoded) {
+        console.log(decoded);
+        if (
+          decoded?.data.email !== useremail &&
+          decoded?.data.is_vendor != true
+        ) {
+          res.send({
+            status: 400,
+          });
+        } else {
+          try {
+            await pool.query("UPDATE vendors SET password=$1 WHERE email=$2", [
+              password,
+              useremail,
+            ]);
+            res.send({ status: 200 });
+          } catch (err) {
+            console.log("reset password error", err);
+            res.sendStatus(500);
+          }
+        }
+      }
+    });
   }
 });
 //listen to radio

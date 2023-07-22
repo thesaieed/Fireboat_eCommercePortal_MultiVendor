@@ -45,7 +45,7 @@ router.post("/approvevendor", async (req, res) => {
   const vendorId = req.body.itemId;
   try {
     const updatedVendor = await pool.query(
-      `UPDATE vendors set is_approved=true, is_under_approval=false WHERE id=${vendorId} returning *`
+      `UPDATE vendors set is_approved=true, is_under_approval=false, is_admin=true WHERE id=${vendorId} returning *`
     );
     // console.log(updatedVendor);
     if (updatedVendor.rows[0].is_approved) {
