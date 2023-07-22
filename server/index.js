@@ -15,6 +15,9 @@ const reviewRoutes = require("./routes/review");
 const paymentRoutes = require("./routes/payments");
 const orderRoutes = require("./routes/orders");
 
+// const { count } = require("console");
+// const { error } = require("console");
+
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
@@ -1367,6 +1370,233 @@ app.get("/searchproducts", async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+//user profile routes
+app.get("/yourorders", async (req, res) => {
+  user_id = req.query.user_id;
+  // console.log(req.query);
+  try {
+    const yourOrders = await pool.query(
+      `SELECT o.*, p.*, sa.*, v.email AS vemail
+      FROM orders o
+      JOIN products p ON o.product_id = p.id
+      JOIN shippingaddress sa ON o.address_id = sa.id
+      JOIN vendors v ON o.vendor_id = v.id
+      WHERE o.user_id = $1
+      ORDER BY o.created_at DESC;      
+      `,
+      [user_id]
+    );
+    res.send(yourOrders.rows);
+    // res.send("Hello all users");
+  } catch (err) {
+    console.error(err);
+    res.send([]);
+  }
+});
+app.get("/youraddresses", async (req, res) => {
+  user_id = req.query.user_id;
+  // console.log(req.query);
+  try {
+    const yourAddresses = await pool.query(
+      "select * from shippingaddress where user_id=$1",
+      [user_id]
+    );
+    res.send(yourAddresses.rows);
+    // res.send("Hello all users");
+  } catch (err) {
+    console.error(err);
+    res.send([]);
+  }
+});
+
+app.delete("/removeaddress/:id", async (req, res) => {
+  const id = req.params.itemId;
+  // console.log(itemId)
+  try {
+    // Perform the database operation to delete the item from the cart
+    await pool.query("DELETE FROM shippingaddress WHERE id = $1", [id]);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error deleting address from shippingaddress:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.put("/editshippingaddress/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const {
+    country,
+    full_name,
+    phone_number,
+    pincode,
+    house_no_company,
+    area_street_village,
+    landmark,
+    town_city,
+    state,
+  } = req.body;
+  try {
+    await pool.query(
+      "update shippingaddress set country=$1, full_name=$2,phone_number=$3,pincode=$4,house_no_company=$5,area_street_village=$6,landmark=$7,town_city=$8,state=$9 where id=$10",
+      [
+        country,
+        full_name,
+        phone_number,
+        pincode,
+        house_no_company,
+        area_street_village,
+        landmark,
+        town_city,
+        state,
+        id,
+      ]
+    );
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/editprofilename/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { full_name } = req.body;
+  try {
+    await pool.query("update users set name=$1 where id=$2", [full_name, id]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/editphonenumber/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { phone_number } = req.body;
+  try {
+    await pool.query("update users set phone=$1 where id=$2", [
+      phone_number,
+      id,
+    ]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/editpassword/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const query1Result = await pool.query(
+      "select password from users where id=$1",
+      [id]
+    );
+
+    // console.log(query1Result.rows[0].password);
+    if (query1Result.rows.length > 0) {
+      let passwordMatched = false;
+      if (query1Result.rows[0].password != null) {
+        passwordMatched = await bcrypt.compare(
+          currentPassword,
+          query1Result.rows[0].password
+        );
+      }
+      if (passwordMatched) {
+        const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+        await pool.query("update users set password=$1", [newPasswordHash]);
+        res.sendStatus(200);
+      } else {
+        res.sendStatus("404");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+//skipped email change option
+// app.put("/editemail/:id", async (req, res) => {
+//   const id = req.params.id;
+//   const { email } = req.body;
+//   console.log(id, email);
+//
+// });
+
+//admin profile routes
+app.put("/editbusinessname/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { full_name: business_name } = req.body;
+  try {
+    await pool.query("update vendors set business_name=$1 where id=$2", [
+      business_name,
+      id,
+    ]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/editbusinessphonenumber/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { phone_number } = req.body;
+  try {
+    await pool.query("update vendors set phone=$1 where id=$2", [
+      phone_number,
+      id,
+    ]);
+    // Send a success response
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+  }
+});
+app.put("/editbusinesspassword/:id", async (req, res) => {
+  const id = req.params.id;
+  // console.log(id);
+  // console.log(req.body);
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const query1Result = await pool.query(
+      "select password from vendors where id=$1",
+      [id]
+    );
+
+    // console.log(query1Result.rows[0].password);
+    if (query1Result.rows.length > 0) {
+      let passwordMatched = false;
+      if (query1Result.rows[0].password != null) {
+        passwordMatched = await bcrypt.compare(
+          currentPassword,
+          query1Result.rows[0].password
+        );
+      }
+      if (passwordMatched) {
+        const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+        await pool.query("update vendors set password=$1", [newPasswordHash]);
+        res.sendStatus(200);
+      } else {
+        res.sendStatus("404");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+//listen
 app.post("/topstats", async (req, res) => {
   const { vendor_id, is_super_admin } = req.body;
 
@@ -1668,6 +1898,7 @@ app.post("/resetpassword", async (req, res) => {
   }
 });
 //listen to radio
+
 app.listen(5000, () => {
   console.log("Listening on Port 5000");
 });

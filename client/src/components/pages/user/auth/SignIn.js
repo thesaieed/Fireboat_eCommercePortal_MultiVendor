@@ -243,12 +243,12 @@ function SignIn() {
                   // label="Password"
                   rules={[
                     {
-                      min: 4,
+                      // min: 4,
                       required: true,
-                      message: "Password should be greater than 4 characters",
+                      // message: "Password should be greater than 4 characters",
                     },
                   ]}
-                  hasFeedback
+                  // hasFeedback
                 >
                   <Input.Password
                     prefix={<LockOutlined className="site-form-item-icon" />}

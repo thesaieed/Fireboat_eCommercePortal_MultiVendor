@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, message, Modal, Form, Input, Button } from "antd";
-import Footer from "../../layout/Footer";
+import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  Layout,
+  Row,
+  Col,
+  message,
+  Modal,
+  Form,
+  Input,
+  Button,
+} from "antd";
+import CommonNavbar from "../../../layout/CommonNavbar";
+import Footer from "../../../layout/Footer";
 import "@splidejs/react-splide/css";
-import useAllContext from "../../../context/useAllContext";
+import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
 import { FcDataEncryption } from "react-icons/fc";
 import { BiSolidEditAlt } from "react-icons/bi";
 function LoginAndSecurity() {
+  const navigate = useNavigate();
   const { appUser, fetchUserDetails } = useAllContext();
+  const handleSearch = (e) => {
+    navigate(`/browse/?search=${e.target.value}`);
+  };
+
   useEffect(() => {
     fetchUserDetails();
   }, [appUser, fetchUserDetails]);
@@ -34,7 +51,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinessname/${appUser.id}`,
+        `http://localhost:5000/editprofilename/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -70,7 +87,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinessphonenumber/${appUser.id}`,
+        `http://localhost:5000/editphonenumber/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -87,7 +104,7 @@ function LoginAndSecurity() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinesspassword/${appUser.id}`,
+        `http://localhost:5000/editpassword/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -102,13 +119,11 @@ function LoginAndSecurity() {
   };
 
   return (
-    <>
-      <Card>
-        {" "}
-        <b>Login and security</b>
-      </Card>
+    <Layout className="layout-default">
+      <CommonNavbar handleSearch={handleSearch} />
+      <Card>Login and security</Card>
 
-      <Card style={{ padding: " 30px 20px" }}>
+      <Card style={{ padding: " 30px 200px" }}>
         <Card style={{ background: "#F5F5F5" }}>
           <Row>
             <Col span={20}>
@@ -344,7 +359,7 @@ function LoginAndSecurity() {
         </Form>
       </Modal>
       <Footer />
-    </>
+    </Layout>
   );
 }
 
