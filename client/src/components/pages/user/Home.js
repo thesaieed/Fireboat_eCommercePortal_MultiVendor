@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Row, Col, Typography, Layout, Card, Button } from "antd";
+import { Row, Col, Typography, Layout, Card, Button, message } from "antd";
 
 import { DownOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
@@ -18,18 +18,44 @@ import categoryIcon from "../../../assets/images/categoryIcon.png";
 import { PiShootingStarFill } from "react-icons/pi";
 
 const Home = () => {
-  const { appUser } = useAllContext();
+  const { appUser, updateNumberOfCartItems } = useAllContext();
   const [suggestedProducts, setSuggestedProducts] = useState();
   const [responseStatus, setResponseStatus] = useState();
   const [allProducts, setAllProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [quantity] = useState(1);
 
   const navigate = useNavigate();
 
   const { Paragraph, Title, Text } = Typography;
   const { Content } = Layout;
   const baseImgUrl = "http://localhost:5000/";
+
+  //quick buy
+  const handleQuickBuy = async (productId) => {
+    if (!appUser || !appUser.id) {
+      message.info("Please login for quick buy");
+      setLoading(false);
+      return;
+    }
+    if (appUser.is_admin) {
+      message.info("Admin not allowed this feature");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:5000/addtocart", {
+        user_id: appUser.id,
+        product_id: productId,
+        quantity: quantity,
+      });
+      navigate("/cart");
+    } catch (error) {
+      console.error("Error in quick buy:", error);
+    }
+    updateNumberOfCartItems();
+  };
 
   //fetch suggested products
   useEffect(() => {
@@ -250,15 +276,16 @@ const Home = () => {
                               &#8377; {product.price}
                             </Paragraph>
                           </Col>
-                          {/* <Col>
-                          <Button
-                            type="primary"
-                            shape="round"
-                            icon={<ThunderboltOutlined />}
-                          >
-                            Quick Buy
-                          </Button>
-                        </Col> */}
+                          <Col>
+                            <Button
+                              onClick={() => handleQuickBuy(product.id)}
+                              type="primary"
+                              shape="round"
+                              icon={<ThunderboltOutlined />}
+                            >
+                              Quick Buy
+                            </Button>
+                          </Col>
                         </Row>
                       </Card>
                     </SplideSlide>
@@ -449,6 +476,7 @@ const Home = () => {
                         </Col>
                         <Col>
                           <Button
+                            onClick={() => handleQuickBuy(product.id)}
                             type="primary"
                             shape="round"
                             icon={<ThunderboltOutlined />}
