@@ -1412,8 +1412,8 @@ app.get("/youraddresses", async (req, res) => {
 });
 
 app.delete("/removeaddress/:id", async (req, res) => {
-  const id = req.params.itemId;
-  // console.log(itemId)
+  const id = req.params.id;
+  // console.log(id);
   try {
     // Perform the database operation to delete the item from the cart
     await pool.query("DELETE FROM shippingaddress WHERE id = $1", [id]);
