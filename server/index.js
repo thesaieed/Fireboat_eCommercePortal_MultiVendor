@@ -716,6 +716,7 @@ app.post("/search", async (req, res) => {
 app.post("/addtocart", async (req, res) => {
   try {
     const { user_id, product_id, quantity } = req.body;
+    // console.log(req.body);
 
     // Check if the same user and product combination already exists in the cart
     const existingCartItem = await pool.query(
