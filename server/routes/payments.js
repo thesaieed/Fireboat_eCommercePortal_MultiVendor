@@ -287,7 +287,7 @@ router.post("/vendorpaymentstats", async (req, res) => {
 
 router.post("/initiatevendorpayment", async (req, res) => {
   const { checkoutAmount, vendor_id, upiAddress } = req.body;
-  console.log(req.body);
+
   try {
     const sumOfSales = await pool.query(
       "SELECT COALESCE(SUM(amount), 0) from orders WHERE vendor_id=$1 AND payment_status='success'",
@@ -306,7 +306,7 @@ router.post("/initiatevendorpayment", async (req, res) => {
     // console.log(sumOfCheckedOutPendingAmount.rows[0].coalesce);
     const currentBalance =
       sumOfSales.rows[0].coalesce - sumOfCheckedOutAmount.rows[0].coalesce;
-    console.log(currentBalance);
+
     if (
       checkoutAmount >= currentBalance ||
       checkoutAmount === 0 ||
@@ -350,7 +350,6 @@ router.get("/admintransactions", async (req, res) => {
   }
 });
 router.post("/approvecheckout", async (req, res) => {
-  console.log(req.body);
   const { transactionID, vendor_id, checkoutID } = req.body;
   try {
     await pool.query(
@@ -364,7 +363,6 @@ router.post("/approvecheckout", async (req, res) => {
   }
 });
 router.post("/denycheckout", async (req, res) => {
-  console.log(req.body);
   const { newDenialReason, vendor_id, checkoutID } = req.body;
   try {
     await pool.query(
