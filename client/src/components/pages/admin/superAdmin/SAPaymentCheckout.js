@@ -1,32 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  Typography,
-  Form,
-  message,
-  Button,
-  List,
-  Avatar,
-  Tooltip,
-  Modal,
-} from "antd";
+import { Row, Col, Card, Button, List, Avatar, Tooltip, Modal } from "antd";
 import {
   PlusOutlined,
   CloseOutlined,
   ExclamationOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import useAllContext from "../../../../context/useAllContext";
-import { Link } from "react-router-dom";
 import axios from "axios";
 const SAPaymentCheckout = () => {
   const [statsLoading, setStatsLoading] = useState(false);
   const [denyReason, setDenyReason] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [denyReasonModalVisible, setDenyReasonModalVisible] = useState("");
-  const { appUser } = useAllContext();
+
   const navigate = useNavigate();
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
@@ -40,7 +26,7 @@ const SAPaymentCheckout = () => {
       console.log(error);
     }
     setStatsLoading(false);
-  }, [appUser.id]);
+  }, []);
 
   useEffect(() => {
     getPaymentStats();
