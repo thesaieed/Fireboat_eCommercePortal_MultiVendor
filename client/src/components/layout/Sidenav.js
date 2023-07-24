@@ -29,7 +29,7 @@ import {
   // BsCartX,
   // BsClockHistory,
 } from "react-icons/bs";
-
+import { BsCreditCard2FrontFill } from "react-icons/bs";
 import categoryIconWhite from "../../assets/images/categoryIconWhite.png";
 function Sidenav({ color }) {
   const dashboard = [
@@ -316,6 +316,38 @@ function Sidenav({ color }) {
       ),
       key: "accountHeading",
       type: "group",
+    },
+    !appUser.is_super_admin && {
+      label: (
+        <NavLink to="/admin/payments">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <BsCreditCard2FrontFill />
+          </span>
+          <span className="label">Payments</span>
+        </NavLink>
+      ),
+      key: "payments",
+    },
+    appUser.is_super_admin && {
+      label: (
+        <NavLink to="/admin/superadmin/payments">
+          <span
+            className="icon"
+            style={{
+              background: color,
+            }}
+          >
+            <BsCreditCard2FrontFill />
+          </span>
+          <span className="label">Payments</span>
+        </NavLink>
+      ),
+      key: "payments",
     },
     {
       label: (

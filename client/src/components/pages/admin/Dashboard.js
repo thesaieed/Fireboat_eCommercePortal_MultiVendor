@@ -51,6 +51,7 @@ function Dashboard() {
   const [monthlySales, setMonthlySales] = useState([]);
   const [weeklySales, setWeeklySales] = useState([]);
   const [lastSevenDaySales, setLastSevenDaySales] = useState([]);
+  const [statsLoading, setStatsLoading] = useState(false);
   const { dropdownRef } = useRef(null);
   const items = [
     {
@@ -64,6 +65,7 @@ function Dashboard() {
     },
   ];
   const getTopStats = useCallback(async () => {
+    setStatsLoading(true);
     try {
       const { data } = await axios.post("http://localhost:5000/topstats", {
         vendor_id: appUser.id,
@@ -73,6 +75,7 @@ function Dashboard() {
     } catch (error) {
       console.error(error);
     }
+    setStatsLoading(false);
   }, [appUser.id, appUser.is_super_admin]);
   const getMonthlySales = useCallback(async () => {
     const { data } = await axios.post("http://localhost:5000/monthlysales", {
@@ -113,6 +116,7 @@ function Dashboard() {
       <Row className="rowgap-vbox" gutter={[12, 0]} align="stretch">
         <Col xs={24} sm={24} md={12} lg={12} xl={6} className="mb-24">
           <Card
+            loading={statsLoading}
             bordered={false}
             className="criclebox "
             style={{ height: "100%" }}
@@ -137,6 +141,7 @@ function Dashboard() {
         </Col>
         <Col xs={24} sm={24} md={12} lg={12} xl={6} className="mb-24">
           <Card
+            loading={statsLoading}
             bordered={false}
             className="criclebox "
             style={{ height: "100%" }}
@@ -158,6 +163,7 @@ function Dashboard() {
         </Col>
         <Col xs={24} sm={24} md={12} lg={12} xl={6} className="mb-24">
           <Card
+            loading={statsLoading}
             bordered={false}
             className="criclebox "
             style={{ height: "100%" }}
@@ -182,6 +188,7 @@ function Dashboard() {
         </Col>
         <Col xs={24} sm={24} md={12} lg={12} xl={6} className="mb-24">
           <Card
+            loading={statsLoading}
             bordered={false}
             className="criclebox "
             style={{ height: "100%" }}

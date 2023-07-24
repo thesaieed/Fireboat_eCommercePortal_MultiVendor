@@ -2920,11 +2920,22 @@ section.ant-layout.layout-content .ant-layout-content.content-ant {
   background: #fde3cf;
   color: #f56a00;
 }
+.text-light-danger-amount {
+  color: #f56a00;
+}
 .text-fill {
   color: #52c41a;
   background: #edf9e7;
 }
 .text-danger {
+  color: #f5222d;
+}
+.text-fill-danger {
+  background: #fde3cf;
+  color: #f56a00;
+}
+.fill-danger {
+  background: #fa8b90;
   color: #f5222d;
 }
 .logout:hover .text-danger {
