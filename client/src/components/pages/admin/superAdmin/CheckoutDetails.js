@@ -158,7 +158,7 @@ const CheckoutDetails = () => {
       console.log(error);
     }
     setStatsLoading(false);
-  }, [appUser.id]);
+  }, [transaction.vendor_id]);
   useEffect(() => {
     getPaymentStats();
   }, [getPaymentStats]);

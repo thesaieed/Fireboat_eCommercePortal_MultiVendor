@@ -335,7 +335,7 @@ const PaymentCheckout = () => {
                     name="upi_address"
                     rules={[
                       {
-                        // pattern: new RegExp("/^w.+@w+$/"),
+                        //eslint-disable-next-line
                         pattern: /^[a-zA-Z0-9\.\-_]+@[a-zA-Z0-9]+$/,
                         message: "Enter Valid UPI Address",
                       },
