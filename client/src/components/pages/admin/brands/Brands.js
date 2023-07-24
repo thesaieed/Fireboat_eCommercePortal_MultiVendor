@@ -10,7 +10,9 @@ const Brands = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [filteredBrands, setFilteredBrands] = useState([]);
   const { appUser } = useAllContext();
+  const [loading, setLoading] = useState(false);
   const getBrands = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await axios.get("http://localhost:5000/brands");
       const allVendors = await axios.get("http://localhost:5000/allvendors");
@@ -32,6 +34,7 @@ const Brands = () => {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   }, []);
   // const getBrands = async () => {
   //   try {
@@ -69,6 +72,7 @@ const Brands = () => {
             setFilteredBrands={setFilteredBrands}
             getBrands={getBrands}
             appUser={appUser}
+            loading={loading}
           />
         </Col>
       </Row>

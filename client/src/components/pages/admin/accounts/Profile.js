@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, message, Modal, Form, Input, Button } from "antd";
-import Footer from "../../layout/Footer";
-import "@splidejs/react-splide/css";
-import useAllContext from "../../../context/useAllContext";
+import Footer from "../../../layout/Footer";
+import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
 import { FcDataEncryption } from "react-icons/fc";
 import { BiSolidEditAlt } from "react-icons/bi";
-function LoginAndSecurity() {
+function Profile() {
   const { appUser, fetchUserDetails } = useAllContext();
   useEffect(() => {
     fetchUserDetails();
@@ -103,20 +102,21 @@ function LoginAndSecurity() {
 
   return (
     <>
-      <Card>
-        {" "}
-        <b>Login and security</b>
-      </Card>
-
-      <Card style={{ padding: " 30px 20px" }}>
+      <Card
+        style={{
+          padding: " 30px 20px",
+          width: "90%",
+          margin: "auto",
+          marginTop: 0,
+        }}
+      >
         <Card style={{ background: "#F5F5F5" }}>
-          <Row>
-            <Col span={20}>
-              {" "}
+          <Row justify="space-between">
+            <Col>
               <p style={{ marginBottom: "0px" }}>Name:</p>
               <b>{appUser.name}</b>
             </Col>
-            <Col span={4}>
+            <Col>
               <Button
                 onClick={() => {
                   handleEditData(appUser.name, "full_name");
@@ -147,14 +147,13 @@ function LoginAndSecurity() {
             </Col>
           </Row>
         </Card> */}
-        <Card style={{ background: "#F5F5F5" }}>
-          <Row>
-            <Col span={20}>
-              {" "}
+        <Card style={{ background: "#F5F5F5", marginTop: 20 }}>
+          <Row justify="space-between">
+            <Col>
               <p style={{ marginBottom: "0px" }}>Phone number:</p>
               <b>{appUser.phone}</b>
             </Col>
-            <Col span={4}>
+            <Col>
               <Button
                 onClick={() => {
                   handleEditData(appUser.phone, "phone_number");
@@ -166,14 +165,13 @@ function LoginAndSecurity() {
             </Col>
           </Row>
         </Card>
-        <Card style={{ background: "#F5F5F5" }}>
-          <Row>
-            <Col span={20}>
-              {" "}
+        <Card style={{ background: "#F5F5F5", marginTop: 20 }}>
+          <Row justify="space-between">
+            <Col>
               <p style={{ marginBottom: "0px" }}>Password:</p>
               <b>*********</b>
             </Col>
-            <Col span={4}>
+            <Col>
               <Button
                 onClick={() => {
                   setShowPasswordModal(true);
@@ -348,4 +346,4 @@ function LoginAndSecurity() {
   );
 }
 
-export default LoginAndSecurity;
+export default Profile;
