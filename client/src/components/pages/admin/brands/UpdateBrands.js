@@ -23,6 +23,7 @@ function UpdateBrands({
   setFilteredBrands,
   filteredBrands,
   appUser,
+  loading,
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -206,7 +207,7 @@ function UpdateBrands({
 
   return (
     // <div className="d-flex justify-content-center">
-    <Card className="">
+    <Card loading={loading}>
       <DataTable
         columns={columns}
         data={filteredBrands}

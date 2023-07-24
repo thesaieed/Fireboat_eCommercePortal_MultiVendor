@@ -30,7 +30,6 @@ import {
 } from "@ant-design/icons";
 import useAllContext from "../../../../context/useAllContext";
 import TextEditor from "./TextEditor";
-import LoadingScreen from "../../../layout/LoadingScreen";
 import StarRatings from "react-star-ratings";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
@@ -547,390 +546,378 @@ function AllProducts() {
     (product) => product.id === selectedRowId
   );
   const productImages = selectedProduct ? selectedProduct.image : [];
-  return !loading ? (
-    <>
-      <Card>
-        {/* <Header search={search} setSearch={setSearch} /> */}
-        <DataTable
-          columns={columns}
-          data={filteredProducts}
-          customStyles={customStyles}
-          // selectableRows
-          // selectableRowsHighlight
-          highlightOnHover
-          title={
-            <h2 style={{ color: "#7cb028", fontWeight: "bold" }}>
-              {appUser.is_super_admin ? "All Products" : " Your Products"}
-            </h2>
-          }
-          fixedHeader
-          fixedHeaderScrollHeight="700px"
-          pagination
-          paginationRowsPerPageOptions={[5, 10, 15, 20]}
-          subHeader
-          subHeaderComponent={
-            <div style={{ width: "20em", marginBottom: 10 }}>
-              <Input
-                prefix={<SearchOutlined />}
-                type="text"
-                placeholder="Search Products "
-                style={{ width: "100%" }}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <p className="productsscrollformore">{"Scroll for More -->"}</p>
-            </div>
-          }
-          subHeaderAlign="right"
-        />
-        <Modal
-          title="Description Preview"
-          open={descModalVisible}
-          centered
-          onCancel={() => setDescModalVisible(false)}
-          footer={null}
-        >
-          {modalDescription.length > 0 ? (
-            <div dangerouslySetInnerHTML={{ __html: modalDescription }}></div>
-          ) : (
-            " No Description Available"
-          )}
-          {/* {modalDescription} */}
-        </Modal>
+  return (
+    <Card loading={loading}>
+      {/* <Header search={search} setSearch={setSearch} /> */}
+      <DataTable
+        columns={columns}
+        data={filteredProducts}
+        customStyles={customStyles}
+        // selectableRows
+        // selectableRowsHighlight
+        highlightOnHover
+        title={
+          <h2 style={{ color: "#7cb028", fontWeight: "bold" }}>
+            {appUser.is_super_admin ? "All Products" : " Your Products"}
+          </h2>
+        }
+        fixedHeader
+        fixedHeaderScrollHeight="700px"
+        pagination
+        paginationRowsPerPageOptions={[5, 10, 15, 20]}
+        subHeader
+        subHeaderComponent={
+          <div style={{ width: "20em", marginBottom: 10 }}>
+            <Input
+              prefix={<SearchOutlined />}
+              type="text"
+              placeholder="Search Products "
+              style={{ width: "100%" }}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <p className="productsscrollformore">{"Scroll for More -->"}</p>
+          </div>
+        }
+        subHeaderAlign="right"
+      />
+      <Modal
+        title="Description Preview"
+        open={descModalVisible}
+        centered
+        onCancel={() => setDescModalVisible(false)}
+        footer={null}
+      >
+        {modalDescription.length > 0 ? (
+          <div dangerouslySetInnerHTML={{ __html: modalDescription }}></div>
+        ) : (
+          " No Description Available"
+        )}
+        {/* {modalDescription} */}
+      </Modal>
 
-        <Modal
-          // title="Edit Product"
-          open={modalVisible}
-          onCancel={closeModal}
-          footer={null}
-        >
-          <h1 style={{ textAlign: "center", color: "orange" }}>
-            Edit Product !
-          </h1>
+      <Modal
+        // title="Edit Product"
+        open={modalVisible}
+        onCancel={closeModal}
+        footer={null}
+      >
+        <h1 style={{ textAlign: "center", color: "orange" }}>Edit Product !</h1>
 
-          <Form
-            form={form}
-            name="basic"
-            labelCol={{ span: 24 }}
-            initialValues={selectedRowData}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            className="row-col"
-          >
-            <Row>
-              <Col style={{ paddingRight: ".5rem" }} span={24}>
-                <Form.Item
-                  label="Product Name"
-                  name="name"
-                  rules={[
-                    { required: true, message: "Please input product name!" },
-                  ]}
-                >
-                  <Input.TextArea placeholder="Enter product name" />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={{ paddingLeft: ".5rem" }} span={12}>
-                <Form.Item
-                  name="brand"
-                  label="Brand"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select a Brand",
-                    },
-                  ]}
-                >
-                  <Select className="ant-input " placeholder="Select a Brand">
-                    {brands.map((brand) => (
-                      <Option key={brand.id} value={brand.id}>
-                        {brand.brand}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-
-              <Col style={{ paddingLeft: ".5rem" }} span={12}>
-                <Form.Item
-                  name="category"
-                  label="Category"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select a category",
-                    },
-                  ]}
-                >
-                  <Select
-                    className="ant-input "
-                    placeholder="Select a category"
-                  >
-                    {categories.map((category) => (
-                      <Option key={category.id} value={category.id}>
-                        {category.name}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row>
-              <Col style={{ paddingRight: ".5rem" }} span={12}>
-                <Form.Item
-                  label="Price"
-                  name="price"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input product price!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Enter product price"
-                    type="number"
-                    min="0"
-                  />
-                </Form.Item>
-              </Col>
-              <Col style={{ paddingLeft: ".5rem" }} span={12}>
-                <Form.Item
-                  label="Stock Available"
-                  name="stock_available"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input the number of stock available!",
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder="Enter stock available"
-                    type="number"
-                    min="0"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24}>
-                <Row>
-                  <Col span={12} style={{ paddingRight: ".5rem" }}>
-                    <Button
-                      style={{
-                        width: "100%",
-                        background: "#52c41a",
-                        color: "#fff",
-                        marginBottom: "10px",
-                      }}
-                      type="primary"
-                      onClick={openAddImageModal}
-                      icon={<PlusOutlined />}
-                    >
-                      Add Image/s
-                    </Button>
-                  </Col>
-                  <Col span={12} style={{ paddingLeft: ".5rem" }}>
-                    <Button
-                      style={{
-                        width: "100%",
-                        background: "#52c41a",
-                        color: "#fff",
-                        marginBottom: "10px",
-                        backgroundColor: "#f72a2c",
-                      }}
-                      type="primary"
-                      onClick={openDeleteImageModal}
-                      icon={<DeleteOutlined />}
-                    >
-                      Delete image/s
-                    </Button>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            <Row>
-              <Text>Description </Text>
-
-              <Col
-                style={{
-                  padding: ".5rem",
-                  marginBottom: 15,
-                  border: "1px solid rgba(0, 0, 0, 0.1)",
-                  boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.15)",
-                  borderRadius: 7,
-                }}
-                span={24}
-              >
-                <Form.Item name="description">
-                  <TextEditor textDesc={textDesc} setTextDesc={setTextDesc} />
-                </Form.Item>
-              </Col>
-            </Row>
-            {errorMessage && (
-              <Form.Item>
-                <Alert
-                  message={errorMessage}
-                  type="error"
-                  showIcon
-                  closable
-                  onClose={() => setErrorMessage("")}
-                />
-              </Form.Item>
-            )}
-
-            <Form.Item>
-              <Button
-                style={{ width: 150 }}
-                type="primary"
-                htmlType="submit"
-                className="float-end"
-                loading={updateButtonLoading}
-              >
-                Update
-              </Button>
-              {/* </Popconfirm> */}
-            </Form.Item>
-          </Form>
-        </Modal>
-        <Modal
-          title="current product images"
-          open={addImageModalVisible}
-          onCancel={closeAddImageModal}
-          footer={null}
+        <Form
+          form={form}
+          name="basic"
+          labelCol={{ span: 24 }}
+          initialValues={selectedRowData}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          className="row-col"
         >
           <Row>
-            <Col span={8} style={{ paddingRight: ".5rem" }}>
-              {productImages.length > 0 ? (
-                <Carousel dots arrows>
-                  {productImages.map((imagePath, index) => (
-                    <div key={index}>
-                      <Image
-                        src={`http://localhost:5000/${imagePath.replace(
-                          /\\/g,
-                          "/"
-                        )}`}
-                        alt=""
-                        style={{
-                          cursor: "pointer",
-                          maxWidth: "200px",
-                          maxHeight: "200px",
-                        }}
-                      />
-                      {/* {console.log(productImages)} */}
-                    </div>
-                  ))}
-                </Carousel>
-              ) : (
-                <p>No images available for this product.</p>
-              )}
-            </Col>
-            <Col span={16} style={{ paddingLeft: ".5rem" }}>
-              <Form
-                name="addImageForm"
-                onFinish={handleImageUpload}
-                onFinishFailed={onFinishFailed}
+            <Col style={{ paddingRight: ".5rem" }} span={24}>
+              <Form.Item
+                label="Product Name"
+                name="name"
+                rules={[
+                  { required: true, message: "Please input product name!" },
+                ]}
               >
-                <Form.Item
-                  name="image"
-                  // label="Upload Image"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e) => e.fileList}
-                  rules={[{ required: true, message: "no new image selected" }]}
-                  hasFeedback
-                >
-                  <Upload.Dragger
-                    listType="picture"
-                    multiple
-                    name="image"
-                    accept="image/*"
-                    beforeUpload={() => false}
-                    iconRender={() => <Spin />}
-                    progress={{
-                      strokeWidth: 3,
-                      strokeColor: {
-                        "0%": "#f0f",
-                        100: "#ff0",
-                      },
-                      style: { top: 15 },
-                    }}
-                  >
-                    <p className="ant-upload-drag-icon">
-                      <PlusOutlined />
-                    </p>
-                    <p className="ant-upload-text">
-                      Click or Drag image to upload
-                    </p>
-                  </Upload.Dragger>
-                </Form.Item>
-                <Row justify="end">
-                  <Form.Item>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      style={{ width: "200px", marginTop: "2rem" }}
-                      icon={<UploadOutlined />}
-                      loading={uploadImagesLoading}
-                    >
-                      Upload
-                    </Button>
-                  </Form.Item>
-                </Row>
-              </Form>
+                <Input.TextArea placeholder="Enter product name" />
+              </Form.Item>
             </Col>
           </Row>
-        </Modal>
-        <Modal
-          title="Current Product Images"
-          open={deleteImageModalVisible}
-          onCancel={closeDeleteImageModal}
-          footer={null}
-        >
-          {productImages.length > 0 ? (
-            <div>
-              {productImages.map((imagePath, index) => (
-                <Checkbox
-                  style={{ padding: "10px" }}
-                  key={index}
-                  onChange={() => handleImageSelection(index)}
-                  checked={selectedImages.includes(index)}
-                >
-                  <Image
-                    src={`http://localhost:5000/${imagePath.replace(
-                      /\\/g,
-                      "/"
-                    )}`}
-                    alt=""
+          <Row>
+            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+              <Form.Item
+                name="brand"
+                label="Brand"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a Brand",
+                  },
+                ]}
+              >
+                <Select className="ant-input " placeholder="Select a Brand">
+                  {brands.map((brand) => (
+                    <Option key={brand.id} value={brand.id}>
+                      {brand.brand}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+              <Form.Item
+                name="category"
+                label="Category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a category",
+                  },
+                ]}
+              >
+                <Select className="ant-input " placeholder="Select a category">
+                  {categories.map((category) => (
+                    <Option key={category.id} value={category.id}>
+                      {category.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col style={{ paddingRight: ".5rem" }} span={12}>
+              <Form.Item
+                label="Price"
+                name="price"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input product price!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter product price"
+                  type="number"
+                  min="0"
+                />
+              </Form.Item>
+            </Col>
+            <Col style={{ paddingLeft: ".5rem" }} span={12}>
+              <Form.Item
+                label="Stock Available"
+                name="stock_available"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the number of stock available!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter stock available"
+                  type="number"
+                  min="0"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Row>
+                <Col span={12} style={{ paddingRight: ".5rem" }}>
+                  <Button
                     style={{
-                      cursor: "pointer",
-                      maxWidth: "100px",
-                      maxHeight: "100px",
+                      width: "100%",
+                      background: "#52c41a",
+                      color: "#fff",
+                      marginBottom: "10px",
                     }}
-                  />
-                </Checkbox>
-              ))}
-              <Row style={{ marginTop: "2rem" }} justify="end">
-                <Button
-                  loading={deleteImagesLoading}
-                  onClick={handleDeleteImages}
-                  danger
-                  icon={<DeleteOutlined />}
-                >
-                  Delete Selected Images
-                </Button>
+                    type="primary"
+                    onClick={openAddImageModal}
+                    icon={<PlusOutlined />}
+                  >
+                    Add Image/s
+                  </Button>
+                </Col>
+                <Col span={12} style={{ paddingLeft: ".5rem" }}>
+                  <Button
+                    style={{
+                      width: "100%",
+                      background: "#52c41a",
+                      color: "#fff",
+                      marginBottom: "10px",
+                      backgroundColor: "#f72a2c",
+                    }}
+                    type="primary"
+                    onClick={openDeleteImageModal}
+                    icon={<DeleteOutlined />}
+                  >
+                    Delete image/s
+                  </Button>
+                </Col>
               </Row>
-            </div>
-          ) : (
-            <p>No images available for this product.</p>
+            </Col>
+          </Row>
+          <Row>
+            <Text>Description </Text>
+
+            <Col
+              style={{
+                padding: ".5rem",
+                marginBottom: 15,
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+                boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.15)",
+                borderRadius: 7,
+              }}
+              span={24}
+            >
+              <Form.Item name="description">
+                <TextEditor textDesc={textDesc} setTextDesc={setTextDesc} />
+              </Form.Item>
+            </Col>
+          </Row>
+          {errorMessage && (
+            <Form.Item>
+              <Alert
+                message={errorMessage}
+                type="error"
+                showIcon
+                closable
+                onClose={() => setErrorMessage("")}
+              />
+            </Form.Item>
           )}
-        </Modal>
-      </Card>
-    </>
-  ) : (
-    <LoadingScreen />
+
+          <Form.Item>
+            <Button
+              style={{ width: 150 }}
+              type="primary"
+              htmlType="submit"
+              className="float-end"
+              loading={updateButtonLoading}
+            >
+              Update
+            </Button>
+            {/* </Popconfirm> */}
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="current product images"
+        open={addImageModalVisible}
+        onCancel={closeAddImageModal}
+        footer={null}
+      >
+        <Row>
+          <Col span={8} style={{ paddingRight: ".5rem" }}>
+            {productImages.length > 0 ? (
+              <Carousel dots arrows>
+                {productImages.map((imagePath, index) => (
+                  <div key={index}>
+                    <Image
+                      src={`http://localhost:5000/${imagePath.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      alt=""
+                      style={{
+                        cursor: "pointer",
+                        maxWidth: "200px",
+                        maxHeight: "200px",
+                      }}
+                    />
+                    {/* {console.log(productImages)} */}
+                  </div>
+                ))}
+              </Carousel>
+            ) : (
+              <p>No images available for this product.</p>
+            )}
+          </Col>
+          <Col span={16} style={{ paddingLeft: ".5rem" }}>
+            <Form
+              name="addImageForm"
+              onFinish={handleImageUpload}
+              onFinishFailed={onFinishFailed}
+            >
+              <Form.Item
+                name="image"
+                // label="Upload Image"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => e.fileList}
+                rules={[{ required: true, message: "no new image selected" }]}
+                hasFeedback
+              >
+                <Upload.Dragger
+                  listType="picture"
+                  multiple
+                  name="image"
+                  accept="image/*"
+                  beforeUpload={() => false}
+                  iconRender={() => <Spin />}
+                  progress={{
+                    strokeWidth: 3,
+                    strokeColor: {
+                      "0%": "#f0f",
+                      100: "#ff0",
+                    },
+                    style: { top: 15 },
+                  }}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <PlusOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Click or Drag image to upload
+                  </p>
+                </Upload.Dragger>
+              </Form.Item>
+              <Row justify="end">
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: "200px", marginTop: "2rem" }}
+                    icon={<UploadOutlined />}
+                    loading={uploadImagesLoading}
+                  >
+                    Upload
+                  </Button>
+                </Form.Item>
+              </Row>
+            </Form>
+          </Col>
+        </Row>
+      </Modal>
+      <Modal
+        title="Current Product Images"
+        open={deleteImageModalVisible}
+        onCancel={closeDeleteImageModal}
+        footer={null}
+      >
+        {productImages.length > 0 ? (
+          <div>
+            {productImages.map((imagePath, index) => (
+              <Checkbox
+                style={{ padding: "10px" }}
+                key={index}
+                onChange={() => handleImageSelection(index)}
+                checked={selectedImages.includes(index)}
+              >
+                <Image
+                  src={`http://localhost:5000/${imagePath.replace(/\\/g, "/")}`}
+                  alt=""
+                  style={{
+                    cursor: "pointer",
+                    maxWidth: "100px",
+                    maxHeight: "100px",
+                  }}
+                />
+              </Checkbox>
+            ))}
+            <Row style={{ marginTop: "2rem" }} justify="end">
+              <Button
+                loading={deleteImagesLoading}
+                onClick={handleDeleteImages}
+                danger
+                icon={<DeleteOutlined />}
+              >
+                Delete Selected Images
+              </Button>
+            </Row>
+          </div>
+        ) : (
+          <p>No images available for this product.</p>
+        )}
+      </Modal>
+    </Card>
   );
 }
 // return (

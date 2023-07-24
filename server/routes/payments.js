@@ -56,8 +56,8 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://6dfb-223-189-18-74.ngrok-free.app/payments/successpay",
-      furl: "https://6dfb-223-189-18-74.ngrok-free.app/payments/failedpay",
+      surl: "https://dae0-27-63-28-193.ngrok-free.app/payments/successpay",
+      furl: "https://dae0-27-63-28-193.ngrok-free.app/payments/failedpay",
     };
     const url = process.env.TESTPAYMENTURL;
 
@@ -259,4 +259,122 @@ router.post("/getpaydetails", async (req, res) => {
   }
 });
 
+router.post("/vendorpaymentstats", async (req, res) => {
+  const { vendor_id } = req.body;
+
+  const sumOfSales = await pool.query(
+    "SELECT COALESCE(SUM(amount), 0) from orders WHERE vendor_id=$1 AND payment_status='success'",
+    [vendor_id]
+  );
+  const sumOfCheckedOutAmount = await pool.query(
+    "SELECT COALESCE(SUM(amount), 0) from vendorappliedcheckouts WHERE vendor_id=$1 AND status='approved'",
+    [vendor_id]
+  );
+  const sumOfCheckedOutPendingAmount = await pool.query(
+    "SELECT COALESCE(SUM(amount), 0) from vendorappliedcheckouts WHERE vendor_id=$1 AND status='pending'",
+    [vendor_id]
+  );
+  const currentBalance =
+    sumOfSales.rows[0].coalesce -
+    sumOfCheckedOutAmount.rows[0].coalesce -
+    sumOfCheckedOutPendingAmount.rows[0].coalesce;
+  res.send({
+    totalSales: sumOfSales.rows[0].coalesce,
+    checkedOut: sumOfCheckedOutAmount.rows[0].coalesce,
+    currentBalance,
+  });
+});
+
+router.post("/initiatevendorpayment", async (req, res) => {
+  const { checkoutAmount, vendor_id, upiAddress } = req.body;
+  console.log(req.body);
+  try {
+    const sumOfSales = await pool.query(
+      "SELECT COALESCE(SUM(amount), 0) from orders WHERE vendor_id=$1 AND payment_status='success'",
+      [vendor_id]
+    );
+    // console.log(sumOfSales.rows[0].coalesce);
+    const sumOfCheckedOutAmount = await pool.query(
+      "SELECT COALESCE(SUM(amount), 0) from vendorappliedcheckouts WHERE vendor_id=$1 AND status='approved'",
+      [vendor_id]
+    );
+    // console.log(sumOfCheckedOutAmount.rows[0].coalesce);
+    const sumOfCheckedOutPendingAmount = await pool.query(
+      "SELECT COALESCE(SUM(amount), 0) from vendorappliedcheckouts WHERE vendor_id=$1 AND status!='denied'",
+      [vendor_id]
+    );
+    // console.log(sumOfCheckedOutPendingAmount.rows[0].coalesce);
+    const currentBalance =
+      sumOfSales.rows[0].coalesce - sumOfCheckedOutAmount.rows[0].coalesce;
+    console.log(currentBalance);
+    if (
+      checkoutAmount >= currentBalance ||
+      checkoutAmount === 0 ||
+      upiAddress.length < 3
+    ) {
+      res.send({ status: 403 });
+    } else {
+      const applyCheckout = await pool.query(
+        "INSERT into vendorappliedcheckouts(vendor_id, amount, upi_address) VALUES($1,$2,$3)",
+        [vendor_id, checkoutAmount, upiAddress]
+      );
+      res.send({ status: 200 });
+    }
+  } catch (err) {
+    console.log("initiate Vendor Payment Error", err);
+    res.send({ status: 500 });
+  }
+});
+router.post("/previoustransactions", async (req, res) => {
+  const { vendor_id } = req.body;
+  try {
+    const transactions = await pool.query(
+      "SELECT * from vendorappliedcheckouts where vendor_id=$1 ORDER BY created_at DESC",
+      [vendor_id]
+    );
+    res.send(transactions.rows);
+  } catch (err) {
+    console.log("previous Transactions Error", err);
+    res.send([]);
+  }
+});
+router.get("/admintransactions", async (req, res) => {
+  try {
+    const transactions = await pool.query(
+      "select vav.id, vendor_id, amount, created_at, modified_at, status, denyreason,business_name,phone, email, upi_address,transaction_id  from vendorappliedcheckouts vav join vendors v on vav.vendor_id=v.id ORDER BY created_at DESC"
+    );
+    res.send(transactions.rows);
+  } catch (err) {
+    console.log("Admin Transactions Error", err);
+    res.send([]);
+  }
+});
+router.post("/approvecheckout", async (req, res) => {
+  console.log(req.body);
+  const { transactionID, vendor_id, checkoutID } = req.body;
+  try {
+    await pool.query(
+      "UPDATE vendorappliedcheckouts SET transaction_id=$1, status='approved' WHERE vendor_id=$2 AND id=$3",
+      [transactionID, vendor_id, checkoutID]
+    );
+    res.send({ status: 200 });
+  } catch (err) {
+    console.log("approveCheckout Error", err);
+    res.send({ status: 500 });
+  }
+});
+router.post("/denycheckout", async (req, res) => {
+  console.log(req.body);
+  const { newDenialReason, vendor_id, checkoutID } = req.body;
+  try {
+    await pool.query(
+      "UPDATE vendorappliedcheckouts SET denyreason=$1, status='denied' WHERE vendor_id=$2 AND id=$3",
+      [newDenialReason, vendor_id, checkoutID]
+    );
+    res.send({ status: 200 });
+  } catch (err) {
+    console.log("approveCheckout Error", err);
+    res.send({ status: 500 });
+  }
+});
 module.exports = router;

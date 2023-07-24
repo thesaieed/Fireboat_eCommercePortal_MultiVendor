@@ -18,6 +18,9 @@ import { IconContext } from "react-icons";
 //SuperAdmin Components
 import AllVendors from "./components/pages/admin/superAdmin/allVendors";
 import ApproveVendors from "./components/pages/admin/superAdmin/approveVendors";
+import SAPaymentCheckout from "./components/pages/admin/superAdmin/SAPaymentCheckout";
+import AllUsers from "./components/pages/admin/superAdmin/allUsers";
+import CheckoutDetails from "./components/pages/admin/superAdmin/CheckoutDetails";
 //SuperAdmin Components ends
 
 //Admin Components
@@ -25,7 +28,8 @@ import Main from "./components/layout/Main";
 import AdminSignIn from "./components/pages/admin/auth/AdminSignIn";
 import AdminSignUp from "./components/pages/admin/auth/AdminSignUp";
 import Dashboard from "./components/pages/admin/Dashboard";
-import Profile from "./components/pages/admin/Profile";
+import Profile from "./components/pages/admin/accounts/Profile";
+import PaymentCheckout from "./components/pages/admin/accounts/PaymentCheckout";
 import AddProduct from "./components/pages/admin/products/AddProduct";
 import AllProducts from "./components/pages/admin/products/AllProducts";
 import AllCategories from "./components/pages/admin/categories/AllCategories";
@@ -36,7 +40,6 @@ import PendingOrders from "./components/pages/admin/orders/PendingOrders";
 import CompletedOrders from "./components/pages/admin/orders/CompletedOrders";
 import ForgotPasswordAdmin from "./components/pages/admin/auth/ForgotPasswordAdmin";
 import { ResetPasswordAdmin } from "./components/pages/admin/auth/ResetPasswordAdmin";
-import AllUsers from "./components/pages/admin/superAdmin/allUsers";
 import Updatecategories from "./components/pages/admin/categories/UpdateCategories";
 //Admin Components Ends
 
@@ -107,10 +110,13 @@ function App() {
                 <Route path="allvendors" element={<AllVendors />} />
                 <Route path="approvevendors" element={<ApproveVendors />} />
                 <Route path="allusers" element={<AllUsers />} />
+                <Route path="payments" element={<SAPaymentCheckout />} />
+                <Route path="checkoutdetails" element={<CheckoutDetails />} />
               </Route>
               <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="payments" element={<PaymentCheckout />} />
               <Route path="orders">
                 <Route index element={<AllOrders />} />
                 <Route path="allorders" element={<AllOrders />} />
