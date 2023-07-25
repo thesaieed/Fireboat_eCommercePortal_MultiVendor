@@ -592,6 +592,7 @@ app.post("/userdetails", async (req, res) => {
 app.get("/admin/productdetails", async (req, res) => {
   var { productId, userId } = req.query;
   productId = Number(productId);
+  userId = Number(userId);
   // console.log(productId);
   try {
     let productDetails = await pool.query(
@@ -627,6 +628,12 @@ app.get("/admin/productdetails", async (req, res) => {
           userReviewforProduct = [];
         }
         productDetails.rows[0].userReviewforProduct = userReviewforProduct;
+        const hasPurchased = await pool.query(
+          "SELECT id from orders where user_id=$1 AND product_id=$2 AND order_status='delivered'",
+          [userId, productId]
+        );
+        const verifiedPurchase = hasPurchased.rowCount > 0;
+        productDetails.rows[0].verifiedPurchase = verifiedPurchase;
       }
       res.send(productDetails.rows[0]);
     }
