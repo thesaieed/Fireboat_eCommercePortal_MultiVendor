@@ -6,7 +6,7 @@ import Footer from "../../../layout/Footer";
 import "@splidejs/react-splide/css";
 import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
-function UserProfile() {
+function YourOrders() {
   const navigate = useNavigate();
   const { appUser } = useAllContext();
   const formatDate = (timestamp) => {
@@ -39,11 +39,42 @@ function UserProfile() {
     }
   }, [appUser.id]);
 
+  // Helper function to group orders by order_id
+  const groupOrdersByOrderId = (orders) => {
+    const groupedOrders = [];
+    let currentOrderId = null;
+    let currentGroup = null;
+
+    for (const order of orders) {
+      if (order.order_id !== currentOrderId) {
+        // Create a new group for a new order_id and add any common info you want to set
+        currentGroup = {
+          order_id: order.order_id,
+          order_placed: formatDate(order.created_at),
+          ship_to: { ...order }, // Copy the first order's details as the common "ship to" info
+          total_amount: order.amount,
+          orders: [order],
+        };
+        groupedOrders.push(currentGroup);
+        currentOrderId = order.order_id;
+      } else {
+        // Add the order to the current group
+        currentGroup.orders.push(order);
+        currentGroup.total_amount += order.amount;
+      }
+    }
+
+    return groupedOrders;
+  };
+
+  // Process orders to group them by order_id
+  const groupedOrders = orders ? groupOrdersByOrderId(orders) : null;
+
   return (
     <Layout className="layout-default">
       <CommonNavbar handleSearch={handleSearch} />
       <Card>Your orders</Card>
-      <div>
+      {/* <div>
         {orders &&
           orders.map((order, index) => (
             <Card key={`Card${order.id}${index}`}>
@@ -66,7 +97,7 @@ function UserProfile() {
                 </div>
                 <p>
                   Contact seller:
-                  <a href={`mailto:${order.vemail}`}>&#8377;{order.vemail}</a>
+                  <a href={`mailto:${order.vemail}`}>{order.vemail}</a>
                 </p>
               </Row>
               <Row>
@@ -85,10 +116,59 @@ function UserProfile() {
               </Row>
             </Card>
           ))}
+      </div> */}
+      <div>
+        {groupedOrders &&
+          groupedOrders.map((group, index) => (
+            <div key={`GroupDiv${group.order_id}${index}`}>
+              <Card>
+                <Row style={{ textAlign: "right", display: "unset" }}>
+                  <p>Order Id: {group.order_id}</p>
+                  <p>Order placed: {group.order_placed}</p>
+                  <p>Grand Total: &#8377;{group.total_amount}</p>
+                </Row>
+                <div className="">
+                  <p>Ship to</p>
+                  <span>{group.ship_to.full_name}, </span>
+                  <span>{group.ship_to.house_no_company}, </span>
+                  <span>Near- {group.ship_to.landmark}, </span>
+                  <span>{group.ship_to.area_street_village}, </span>
+                  <span> {group.ship_to.town_city},</span>
+                  <span> {group.ship_to.state}, </span>
+                  <span> {group.ship_to.pincode}, </span>
+                  <span> {group.ship_to.phone_number}, </span>
+                  <span> {group.ship_to.country}</span>
+                </div>
+              </Card>
+              {group.orders.map((order, subIndex) => (
+                <Card key={`OrderCard${order.id}${subIndex}`}>
+                  <Row>
+                    <Col span={6}>
+                      <img
+                        src={baseImgUrl + order.image}
+                        alt={order.name}
+                        style={{ maxHeight: "200px", maxWidth: "200px" }}
+                      />
+                    </Col>
+                    <Col span={8}>
+                      <Link to={`../product/?id=${order.product_id}`}>
+                        <h4>{order.name}</h4>
+                      </Link>
+                    </Col>
+                    <Col>
+                      <p>Total: &#8377;{order.amount}</p>
+                    </Col>
+                  </Row>
+                  {/* ... Rest of the individual order details if needed */}
+                  <p>Order Status: {order.order_status}</p>
+                </Card>
+              ))}
+            </div>
+          ))}
       </div>
       <Footer />
     </Layout>
   );
 }
 
-export default UserProfile;
+export default YourOrders;
