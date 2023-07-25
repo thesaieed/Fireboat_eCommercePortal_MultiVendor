@@ -12,13 +12,19 @@
 
 import { Layout, Row, Col } from "antd";
 import {} from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 function Footer() {
   const { Footer: AntFooter } = Layout;
 
   return (
     <AntFooter style={{ background: "#fafafa" }}>
-      <Row className="justify-content-center">
+      <Row justify="center" align="middle" style={{ height: "60px" }}>
+        <Col>
+          <div className="copyright">
+            <Link to="mailto:nile.ecomportal@gmail.com">Contact Us</Link>
+          </div>
+        </Col>
         <Col>
           <div className="copyright">© NILE 2023</div>
         </Col>
