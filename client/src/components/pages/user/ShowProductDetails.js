@@ -15,6 +15,7 @@ import {
   Input,
   Avatar,
   Progress,
+  Tooltip,
 } from "antd";
 
 import StarRatings from "react-star-ratings";
@@ -25,6 +26,9 @@ import {
   DeleteFilled,
   PlusSquareFilled,
   MinusSquareFilled,
+  ExclamationCircleOutlined,
+  CheckOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import { MdShoppingCartCheckout } from "react-icons/md";
 import vendorIcon from "../../../assets/images/vendorsIcon.png";
@@ -613,51 +617,62 @@ function ShowProductDetails() {
                     </Paragraph>
                   </div>
                 )}
-              {appUser.id &&
-                productDetails.userReviewforProduct?.length === 0 && (
-                  <div>
-                    <Title level={3}>Give Rating </Title>
-                    <hr />
-                    <Text>Overall Rating : </Text>{" "}
-                    <StarRatings
-                      rating={newReview?.rating}
-                      changeRating={handleRateChange}
-                      starRatedColor="#86c61f"
-                      starHoverColor="#9dde35"
-                      numberOfStars={5}
-                      name="avgRating"
-                      starDimension="25px"
-                      starSpacing="1px"
-                    />
-                    <Input.TextArea
-                      placeholder="Product Review"
-                      rows={3}
-                      value={newReview.review}
-                      onChange={(e) => {
-                        setNewReview((prev) => {
-                          return { ...prev, review: e.target.value };
-                        });
-                      }}
-                      style={{ marginTop: 10 }}
-                    ></Input.TextArea>
-                    <Button
-                      type="primary"
-                      loading={reviewButtonLoading}
-                      style={{
-                        marginLeft: "75%",
-                        marginTop: 10,
-                        width: "25%",
-                      }}
-                      onClick={() => handleNewReviewSubmit()}
-                      disabled={newReview.rating === 0}
-                    >
-                      Submit
-                    </Button>
-                  </div>
-                )}
-              <Row style={{ marginTop: appUser.id ? 20 : 0 }}>
+              {appUser.id && productDetails.verifiedPurchase ? (
+                <div>
+                  <Title level={3}>Give Rating </Title>
+                  <hr />
+                  <Text>Overall Rating : </Text>{" "}
+                  <StarRatings
+                    rating={newReview?.rating}
+                    changeRating={handleRateChange}
+                    starRatedColor="#86c61f"
+                    starHoverColor="#9dde35"
+                    numberOfStars={5}
+                    name="avgRating"
+                    starDimension="25px"
+                    starSpacing="1px"
+                  />
+                  <Input.TextArea
+                    placeholder="Product Review"
+                    rows={3}
+                    value={newReview.review}
+                    onChange={(e) => {
+                      setNewReview((prev) => {
+                        return { ...prev, review: e.target.value };
+                      });
+                    }}
+                    style={{ marginTop: 10 }}
+                  ></Input.TextArea>
+                  <Button
+                    type="primary"
+                    loading={reviewButtonLoading}
+                    style={{
+                      marginLeft: "75%",
+                      marginTop: 10,
+                      width: "25%",
+                    }}
+                    onClick={() => handleNewReviewSubmit()}
+                    disabled={newReview.rating === 0}
+                  >
+                    Submit
+                  </Button>
+                </div>
+              ) : null}
+              <Row
+                style={{
+                  marginTop:
+                    appUser.id && productDetails.verifiedPurchase ? 20 : 0,
+                }}
+              >
                 <Col>
-                  <Title level={4}>Customer Ratings</Title>
+                  <Title level={4}>
+                    Customer Ratings{" "}
+                    {appUser.id && !productDetails.verifiedPurchase && (
+                      <Tooltip title="You need to be a Verified Purchaser to give Review to this product!">
+                        <ExclamationCircleOutlined />
+                      </Tooltip>
+                    )}
+                  </Title>
                 </Col>
               </Row>
               <hr />
@@ -794,10 +809,14 @@ function ShowProductDetails() {
                         style={{ margin: "-4px 5px 0px 0px" }}
                       />
                       {review.username}
-                    </Title>
+
+                      <span className="text-muted" style={{ marginLeft: 8 }}>
+                        <CheckCircleOutlined />
+                        Verified Buyer
+                      </span>
+                    </Title>{" "}
                     <div style={{ marginLeft: 40 }}>
                       <Row align="middle">
-                        {" "}
                         <Text strong>Rating : </Text>
                         <StarRatings
                           rating={review?.rating}

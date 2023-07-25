@@ -1,6 +1,6 @@
 import { Modal, Avatar, Typography, Pagination, Row, Col } from "antd";
 import { useState } from "react";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import StarRatings from "react-star-ratings";
 const ProductReviewsModal = ({
@@ -34,6 +34,10 @@ const ProductReviewsModal = ({
                   style={{ margin: "-4px 5px 0px 0px" }}
                 />
                 {review.username}
+                <span className="text-muted" style={{ marginLeft: 8 }}>
+                  <CheckCircleOutlined />
+                  Verified Buyer
+                </span>
               </Title>
               <div style={{ marginLeft: 40 }}>
                 <Row justify="start" align="middle" style={{ marginLeft: 0 }}>
