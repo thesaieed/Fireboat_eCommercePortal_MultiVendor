@@ -10,7 +10,6 @@ import {
   message,
   Button,
   Alert,
-  List,
   Avatar,
   Modal,
   Tooltip,
@@ -19,12 +18,14 @@ import {
   PlusOutlined,
   CloseOutlined,
   ExclamationOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import { BsCreditCard2FrontFill } from "react-icons/bs";
 import useAllContext from "../../../../context/useAllContext";
+import DataTable from "react-data-table-component";
 import axios from "axios";
 const CheckoutDetails = () => {
   const location = useLocation();
@@ -37,9 +38,10 @@ const CheckoutDetails = () => {
     minute: "numeric",
   };
   const transaction = useMemo(
-    () => location.state?.transaction || [],
-    [location.state?.transaction]
+    () => location.state?.row || [],
+    [location.state?.row]
   );
+
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [denyform] = Form.useForm();
@@ -60,6 +62,8 @@ const CheckoutDetails = () => {
     checkedOut: 0,
     currentBalance: 0,
   });
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [search, setSearch] = useState("");
   const [transactionID, setTransactionID] = useState("");
   const navigate = useNavigate();
   const onFinish = async () => {
@@ -154,6 +158,7 @@ const CheckoutDetails = () => {
         currentBalance: data.totalSales - data.checkedOut,
       });
       setTransactions(resTransactions.data);
+      setFilteredTransactions(resTransactions.data);
     } catch (error) {
       console.log(error);
     }
@@ -162,82 +167,206 @@ const CheckoutDetails = () => {
   useEffect(() => {
     getPaymentStats();
   }, [getPaymentStats]);
-  const newest = transactions.map((transaction) => {
-    if (transaction.status === "approved") {
-      return {
-        avatar: <PlusOutlined style={{ fontSize: 14 }} />,
-        title: `Approved on  ${new Date(
-          transaction.modified_at
-        ).toLocaleDateString("en-US", dateOptions)}`,
-        description: `Initiated on ${new Date(
-          transaction.created_at
-        ).toLocaleDateString("en-US", dateOptions)}`,
-        amount: transaction.amount,
-        textclass: "text-fill",
-        amountcolor: "text-success",
-      };
-    } else if (transaction.status === "pending") {
-      return {
-        avatar: <ExclamationOutlined style={{ fontSize: 16 }} />,
-        title: "Approval Pending",
-        description: `Initiated on ${new Date(
-          transaction.created_at
-        ).toLocaleDateString("en-US", dateOptions)}`,
-        amount: transaction.amount,
-        textclass: "text-light-danger",
-        amountcolor: "text-light-danger-amount",
-      };
-    } else if (transaction.status === "denied") {
-      return {
-        avatar: <CloseOutlined style={{ fontSize: 14, color: "red" }} />,
-        title: (
-          <span className="d-flex align-items-center justify-content-start">
-            Denied on
-            <span style={{ marginLeft: 4 }}>
-              {new Date(transaction.modified_at).toLocaleDateString(
+
+  const columns = [
+    {
+      name: <div style={{ width: "100%", textAlign: "start" }}>Order</div>,
+      minWidth: "330px",
+      style: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cell: (row) => (
+        <div
+          style={{
+            maxHeight: "100%",
+            minWidth: "100%",
+            overflow: "hidden",
+            lineHeight: "1.5",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "start",
+          }}
+        >
+          <div className="d-flex justify-content-start align-items-center">
+            <Button
+              type="link"
+              size="small"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+              onClick={() => {
+                navigate("/admin/superadmin/checkoutdetails", {
+                  state: { row },
+                });
+              }}
+            >
+              <strong style={{ fontSize: 14, fontWeight: 700 }}>
+                {row.order_id}
+              </strong>
+            </Button>
+            {row.status === "denied" && (
+              <Tooltip title="Reason for Denial" color={"#9edd38"}>
+                <Button
+                  shape="circle"
+                  size="small"
+                  style={{
+                    marginLeft: 5,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  danger
+                  icon={<ExclamationOutlined style={{ fontSize: 10 }} />}
+                  onClick={() => {
+                    setDenyReason(row.denyreason);
+                    setDenyReasonModalVisible(true);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </div>
+          <div style={{ marginTop: 10, marginLeft: 10 }} className="text-muted">
+            <div>
+              Initiated on{" "}
+              {new Date(row?.created_at).toLocaleDateString(
                 "en-US",
                 dateOptions
               )}
-            </span>
-            <Tooltip title="Reason for Denial" color={"#9edd38"}>
-              <Button
-                shape="circle"
-                size="small"
-                style={{
-                  marginLeft: 5,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                danger
-                icon={<ExclamationOutlined style={{ fontSize: 10 }} />}
-                onClick={() => {
-                  setDenyReason(transaction.denyreason);
-                  setDenyReasonModalVisible(true);
-                }}
+            </div>
+            {row.status !== "pending" && (
+              <div>
+                Responded on{" "}
+                {new Date(row?.modified_at).toLocaleDateString(
+                  "en-US",
+                  dateOptions
+                )}
+              </div>
+            )}
+            {row.status === "approved" && (
+              <div style={{ fontWeight: 700 }}>
+                Payment Reciept ID :{row.transaction_id}
+              </div>
+            )}
+          </div>
+        </div>
+      ),
+    },
+
+    {
+      name: <div style={{ width: "100%", textAlign: "start" }}>Status</div>,
+      selector: (row) => {
+        if (row.status === "denied") {
+          return (
+            <div>
+              <Avatar
+                size={24}
+                style={{ background: "red" }}
+                icon={
+                  <CloseOutlined style={{ fontSize: 12, color: "white" }} />
+                }
               />
-            </Tooltip>
-          </span>
-        ),
-        description: `Initiated on ${new Date(
-          transaction.created_at
-        ).toLocaleDateString("en-US", dateOptions)}`,
-        amount: transaction.amount,
-        textclass: "fill-danger",
-        amountcolor: "text-danger",
-      };
-    } else {
-      return null;
-    }
-  });
+              <span style={{ textTransform: "capitalize", marginLeft: 5 }}>
+                {row.status}
+              </span>
+            </div>
+          );
+        }
+        if (row.status === "approved") {
+          return (
+            <div>
+              <Avatar
+                size={24}
+                style={{ background: "green" }}
+                icon={<PlusOutlined style={{ fontSize: 12, color: "white" }} />}
+              />
+              <span style={{ textTransform: "capitalize", marginLeft: 5 }}>
+                {row.status}
+              </span>
+            </div>
+          );
+        }
+        if (row.status === "pending") {
+          return (
+            <div>
+              <Avatar
+                style={{ background: "orange" }}
+                size={24}
+                icon={
+                  <ExclamationOutlined
+                    style={{ fontSize: 12, color: "white" }}
+                  />
+                }
+              />
+              <span style={{ textTransform: "capitalize", marginLeft: 5 }}>
+                {row.status}
+              </span>
+            </div>
+          );
+        }
+      },
+      width: "200px",
+      style: { display: "flex", justifyContent: "start" },
+    },
+    {
+      name: (
+        <div style={{ width: "100%", textAlign: "center" }}>
+          Amount Requested
+        </div>
+      ),
+      selector: (row) => <div>&#8377; {row.amount}</div>,
+      // width: "100px",
+      style: { display: "flex", justifyContent: "center" },
+    },
+  ];
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: "bold",
+        color: "#41444a",
+        fontSize: "1rem",
+      },
+    },
+    rows: {
+      style: {
+        height: "130px",
+        width: "100%",
+      },
+    },
+    cells: {
+      style: {
+        height: "100%",
+        width: "100%",
+      },
+    },
+  };
+  useEffect(() => {
+    const result = transactions.filter((transaction) => {
+      return transaction?.order_id
+        ?.toLocaleLowerCase()
+        .match(search?.toLocaleLowerCase());
+    });
+    setFilteredTransactions(result);
+  }, [search, transactions]);
   return (
     <Card>
       <Row justify="space-evenly" align="top">
         <Col xs={24} sm={24} md={13} lg={15}>
-          <Row>
-            <Typography.Title level={4} style={{ marginLeft: 10 }}>
-              {transaction.business_name}
-            </Typography.Title>
+          <Row justify="space-between" align="middle">
+            <Col>
+              <Typography.Title level={4} style={{ marginLeft: 10 }}>
+                <span className="text-muted"> ORDER : </span>
+                {transaction.order_id}
+              </Typography.Title>
+            </Col>{" "}
+            <Col>
+              <Typography.Title level={4} style={{ marginLeft: 10 }}>
+                {transaction.business_name}
+              </Typography.Title>
+            </Col>
             <Row
               className="rowgap-vbox"
               gutter={[12, 0]}
@@ -631,36 +760,49 @@ const CheckoutDetails = () => {
                   bordered={false}
                   bodyStyle={{ paddingTop: 0 }}
                   className="header-solid h-full  ant-list-yes"
-                  title={
-                    <h6 className="font-semibold m-0">
-                      All Transactions of {transaction.business_name}
-                    </h6>
-                  }
                 >
-                  <List
-                    header={<h6>NEWEST</h6>}
-                    className="transactions-list ant-newest"
-                    itemLayout="horizontal"
-                    dataSource={newest}
-                    renderItem={(item) => (
-                      <List.Item>
-                        <List.Item.Meta
-                          avatar={
-                            <Avatar size="small" className={item.textclass}>
-                              {item.avatar}
-                            </Avatar>
-                          }
-                          title={item.title}
-                          description={item.description}
+                  <DataTable
+                    columns={columns}
+                    data={filteredTransactions}
+                    customStyles={customStyles}
+                    // selectableRows
+                    // selectableRowsHighlight
+                    highlightOnHover
+                    title={
+                      <h2
+                        style={{
+                          color: "#7cb028",
+                          fontWeight: "bold",
+                          marginTop: 20,
+                          marginBottom: 0,
+                        }}
+                      >
+                        {!appUser.is_super_admin
+                          ? "All Transactions"
+                          : " Vendor Transactions"}
+                      </h2>
+                    }
+                    fixedHeader
+                    fixedHeaderScrollHeight="700px"
+                    pagination
+                    paginationRowsPerPageOptions={[5, 10, 15, 20]}
+                    subHeader
+                    subHeaderComponent={
+                      <div style={{ width: "20em", marginBottom: 10 }}>
+                        <Input
+                          prefix={<SearchOutlined />}
+                          type="text"
+                          placeholder="Search by OrderID "
+                          style={{ width: "100%" }}
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
                         />
-                        <div className="amount">
-                          <span className={item.amountcolor}>
-                            {" "}
-                            &#8377; {item.amount}
-                          </span>
-                        </div>
-                      </List.Item>
-                    )}
+                        <p className="productsscrollformore">
+                          {"Scroll for More -->"}
+                        </p>
+                      </div>
+                    }
+                    subHeaderAlign="right"
                   />
                 </Card>
               </Col>

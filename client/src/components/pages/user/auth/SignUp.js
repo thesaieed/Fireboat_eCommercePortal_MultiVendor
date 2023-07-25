@@ -181,17 +181,21 @@ export default function SignUp() {
     ]
   );
   useEffect(() => {
-    /* global google */
-    google.accounts.id.initialize({
-      client_id:
-        "402186760945-tk052016gctjgnh0cj8ido7elii6uuur.apps.googleusercontent.com",
-      callback: handleGoogleauthCallback,
-    });
-    google.accounts.id.renderButton(
-      document.getElementById("googleLoginButton"),
-      { theme: "outline", size: "large" }
-    );
-    google.accounts.id.prompt();
+    try {
+      /* global google */
+      google.accounts.id.initialize({
+        client_id:
+          "402186760945-tk052016gctjgnh0cj8ido7elii6uuur.apps.googleusercontent.com",
+        callback: handleGoogleauthCallback,
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("googleLoginButton"),
+        { theme: "outline", size: "large" }
+      );
+      // google.accounts.id.prompt();
+    } catch (err) {
+      console.log(err);
+    }
   }, [handleGoogleauthCallback]);
   return (
     <>

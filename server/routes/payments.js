@@ -286,7 +286,7 @@ router.post("/vendorpaymentstats", async (req, res) => {
 });
 
 router.post("/initiatevendorpayment", async (req, res) => {
-  const { checkoutAmount, vendor_id, upiAddress } = req.body;
+  const { checkoutAmount, vendor_id, upiAddress, order_id } = req.body;
 
   try {
     const sumOfSales = await pool.query(
@@ -315,8 +315,8 @@ router.post("/initiatevendorpayment", async (req, res) => {
       res.send({ status: 403 });
     } else {
       const applyCheckout = await pool.query(
-        "INSERT into vendorappliedcheckouts(vendor_id, amount, upi_address) VALUES($1,$2,$3)",
-        [vendor_id, checkoutAmount, upiAddress]
+        "INSERT into vendorappliedcheckouts(vendor_id, amount, upi_address,order_id) VALUES($1,$2,$3,$4)",
+        [vendor_id, checkoutAmount, upiAddress, order_id]
       );
       res.send({ status: 200 });
     }
@@ -341,7 +341,7 @@ router.post("/previoustransactions", async (req, res) => {
 router.get("/admintransactions", async (req, res) => {
   try {
     const transactions = await pool.query(
-      "select vav.id, vendor_id, amount, created_at, modified_at, status, denyreason,business_name,phone, email, upi_address,transaction_id  from vendorappliedcheckouts vav join vendors v on vav.vendor_id=v.id ORDER BY created_at DESC"
+      "select vav.id, vav.order_id, vendor_id, amount, created_at, modified_at, status, denyreason,business_name,phone, email, upi_address,transaction_id  from vendorappliedcheckouts vav join vendors v on vav.vendor_id=v.id ORDER BY created_at DESC"
     );
     res.send(transactions.rows);
   } catch (err) {

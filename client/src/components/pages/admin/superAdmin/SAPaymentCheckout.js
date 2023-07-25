@@ -1,18 +1,23 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Row, Col, Card, Button, List, Avatar, Tooltip, Modal } from "antd";
+import { Row, Col, Card, Input, Button, Avatar, Tooltip, Modal } from "antd";
 import {
   PlusOutlined,
   CloseOutlined,
   ExclamationOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import DataTable from "react-data-table-component";
+import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
 const SAPaymentCheckout = () => {
   const [statsLoading, setStatsLoading] = useState(false);
   const [denyReason, setDenyReason] = useState("");
   const [transactions, setTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [denyReasonModalVisible, setDenyReasonModalVisible] = useState("");
-
+  const [search, setSearch] = useState("");
+  const { appUser } = useAllContext();
   const navigate = useNavigate();
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
@@ -22,6 +27,7 @@ const SAPaymentCheckout = () => {
       );
 
       setTransactions(data);
+      setFilteredTransactions(data);
     } catch (error) {
       console.log(error);
     }
@@ -39,86 +45,30 @@ const SAPaymentCheckout = () => {
     hour: "numeric",
     minute: "numeric",
   };
-  const newest = transactions.map((transaction) => {
-    if (transaction.status === "approved") {
-      return {
-        avatar: <PlusOutlined style={{ fontSize: 14 }} />,
-        title: (
-          <Button
-            type="link"
-            size="small"
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              navigate("/admin/superadmin/checkoutdetails", {
-                state: { transaction },
-              });
-            }}
-          >
-            {transaction.business_name}
-          </Button>
-        ),
-        description: (
-          <span>
-            <div>
-              Approved on -
-              {new Date(transaction.modified_at).toLocaleDateString(
-                "en-US",
-                dateOptions
-              )}
-            </div>
-            Initiated on -
-            {new Date(transaction.created_at).toLocaleDateString(
-              "en-US",
-              dateOptions
-            )}
-            <div></div>
-          </span>
-        ),
-        amount: transaction.amount,
-        textclass: "text-fill",
-        amountcolor: "text-success",
-      };
-    } else if (transaction.status === "pending") {
-      return {
-        avatar: <ExclamationOutlined style={{ fontSize: 16 }} />,
-        title: (
-          <Button
-            type="link"
-            size="small"
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              navigate("/admin/superadmin/checkoutdetails", {
-                state: { transaction },
-              });
-            }}
-          >
-            {transaction.business_name}
-          </Button>
-        ),
-        description: (
-          <span>
-            Initiated on -
-            {new Date(transaction.created_at).toLocaleDateString(
-              "en-US",
-              dateOptions
-            )}
-          </span>
-        ),
-        amount: transaction.amount,
-        textclass: "text-light-danger",
-        amountcolor: "text-light-danger-amount",
-      };
-    } else if (transaction.status === "denied") {
-      return {
-        avatar: <CloseOutlined style={{ fontSize: 14, color: "red" }} />,
-        title: (
-          <span className="d-flex align-items-center justify-content-start">
+
+  const columns = [
+    {
+      name: <div style={{ width: "100%", textAlign: "start" }}>Order</div>,
+      width: "320px",
+      style: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      cell: (row) => (
+        <div
+          style={{
+            maxHeight: "100%",
+            minWidth: "100%",
+            overflow: "hidden",
+            lineHeight: "1.5",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "start",
+          }}
+        >
+          <div className="d-flex justify-content-start align-items-center">
             <Button
               type="link"
               size="small"
@@ -128,58 +78,162 @@ const SAPaymentCheckout = () => {
               }}
               onClick={() => {
                 navigate("/admin/superadmin/checkoutdetails", {
-                  state: { transaction },
+                  state: { row },
                 });
               }}
             >
-              {transaction.business_name}
+              <strong style={{ fontSize: 14, fontWeight: 700 }}>
+                {row.order_id}
+              </strong>
             </Button>
-            <Tooltip title="Reason for Denial" color={"#9edd38"}>
-              <Button
-                shape="circle"
-                size="small"
-                style={{
-                  marginLeft: 5,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                danger
-                icon={<ExclamationOutlined style={{ fontSize: 10 }} />}
-                onClick={() => {
-                  setDenyReason(transaction.denyreason);
-                  setDenyReasonModalVisible(true);
-                }}
-              />
-            </Tooltip>
-          </span>
-        ),
-        description: (
-          <span>
+            {row.status === "denied" && (
+              <Tooltip title="Reason for Denial" color={"#9edd38"}>
+                <Button
+                  shape="circle"
+                  size="small"
+                  style={{
+                    marginLeft: 5,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  danger
+                  icon={<ExclamationOutlined style={{ fontSize: 10 }} />}
+                  onClick={() => {
+                    setDenyReason(row.denyreason);
+                    setDenyReasonModalVisible(true);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </div>
+          <div style={{ marginTop: 10, marginLeft: 10 }} className="text-muted">
             <div>
-              Denied on -
-              {new Date(transaction.modified_at).toLocaleDateString(
+              Initiated on{" "}
+              {new Date(row?.created_at).toLocaleDateString(
                 "en-US",
                 dateOptions
               )}
             </div>
-            Initiated on -
-            {new Date(transaction.created_at).toLocaleDateString(
-              "en-US",
-              dateOptions
+            {row.status !== "pending" && (
+              <div>
+                Responded on{" "}
+                {new Date(row?.modified_at).toLocaleDateString(
+                  "en-US",
+                  dateOptions
+                )}
+              </div>
             )}
-            <div></div>
-          </span>
-        ),
-        amount: transaction.amount,
-        textclass: "fill-danger",
-        amountcolor: "text-danger",
-      };
-    } else {
-      return null;
-    }
-  });
-  console.log(newest);
+            {row.status === "approved" && (
+              <div style={{ fontWeight: 700 }}>
+                Payment Reciept ID :{row.transaction_id}
+              </div>
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      name: <div style={{ width: "100%", textAlign: "center" }}>Vendor</div>,
+      selector: (row) => <div> {row.business_name}</div>,
+      // width: "100px",
+      style: { display: "flex", justifyContent: "center" },
+    },
+    {
+      name: <div style={{ width: "100%", textAlign: "start" }}>Status</div>,
+      selector: (row) => {
+        if (row.status === "denied") {
+          return (
+            <div>
+              <Avatar
+                size={24}
+                style={{ background: "red" }}
+                icon={
+                  <CloseOutlined style={{ fontSize: 12, color: "white" }} />
+                }
+              />
+              <span style={{ textTransform: "capitalize", marginLeft: 5 }}>
+                {row.status}
+              </span>
+            </div>
+          );
+        }
+        if (row.status === "approved") {
+          return (
+            <div>
+              <Avatar
+                size={24}
+                style={{ background: "green" }}
+                icon={<PlusOutlined style={{ fontSize: 12, color: "white" }} />}
+              />
+              <span style={{ textTransform: "capitalize", marginLeft: 5 }}>
+                {row.status}
+              </span>
+            </div>
+          );
+        }
+        if (row.status === "pending") {
+          return (
+            <div>
+              <Avatar
+                style={{ background: "orange" }}
+                size={24}
+                icon={
+                  <ExclamationOutlined
+                    style={{ fontSize: 12, color: "white" }}
+                  />
+                }
+              />
+              <span style={{ textTransform: "capitalize", marginLeft: 5 }}>
+                {row.status}
+              </span>
+            </div>
+          );
+        }
+      },
+      width: "200px",
+      style: { display: "flex", justifyContent: "start" },
+    },
+    {
+      name: (
+        <div style={{ width: "100%", textAlign: "center" }}>
+          Amount Requested
+        </div>
+      ),
+      selector: (row) => <div>&#8377; {row.amount}</div>,
+      // width: "100px",
+      style: { display: "flex", justifyContent: "center" },
+    },
+  ];
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: "bold",
+        color: "#41444a",
+        fontSize: "1rem",
+      },
+    },
+    rows: {
+      style: {
+        height: "130px",
+        width: "100%",
+      },
+    },
+    cells: {
+      style: {
+        height: "100%",
+        width: "100%",
+      },
+    },
+  };
+  useEffect(() => {
+    const result = transactions.filter((transaction) => {
+      return transaction?.order_id
+        ?.toLocaleLowerCase()
+        .match(search?.toLocaleLowerCase());
+    });
+    setFilteredTransactions(result);
+  }, [search, transactions]);
   return (
     <>
       <Row justify="center">
@@ -191,7 +245,7 @@ const SAPaymentCheckout = () => {
             className="header-solid h-full  ant-list-yes"
             title={<h6 className="font-semibold m-0">All Transactions</h6>}
           >
-            <List
+            {/* <List
               header={<h6>NEWEST</h6>}
               className="transactions-list ant-newest"
               itemLayout="horizontal"
@@ -215,6 +269,49 @@ const SAPaymentCheckout = () => {
                   </div>
                 </List.Item>
               )}
+            /> */}
+            <DataTable
+              columns={columns}
+              data={filteredTransactions}
+              customStyles={customStyles}
+              // selectableRows
+              // selectableRowsHighlight
+              highlightOnHover
+              title={
+                <h2
+                  style={{
+                    color: "#7cb028",
+                    fontWeight: "bold",
+                    marginTop: 20,
+                    marginBottom: 0,
+                  }}
+                >
+                  {!appUser.is_super_admin
+                    ? "All Transactions"
+                    : "All Vendor Transactiions"}
+                </h2>
+              }
+              fixedHeader
+              fixedHeaderScrollHeight="700px"
+              pagination
+              paginationRowsPerPageOptions={[5, 10, 15, 20]}
+              subHeader
+              subHeaderComponent={
+                <div style={{ width: "20em", marginBottom: 10 }}>
+                  <Input
+                    prefix={<SearchOutlined />}
+                    type="text"
+                    placeholder="Search by OrderID "
+                    style={{ width: "100%" }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <p className="productsscrollformore">
+                    {"Scroll for More -->"}
+                  </p>
+                </div>
+              }
+              subHeaderAlign="right"
             />
           </Card>
         </Col>
