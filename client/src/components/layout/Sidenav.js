@@ -11,7 +11,7 @@
 */
 
 import { Menu, Divider } from "antd";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import {
   PlusCircleOutlined,
@@ -386,19 +386,22 @@ function Sidenav({ color }) {
 
   return (
     <>
-      <div className="brand d-flex justify-content-start align-items-center">
-        <img src={logo} alt="" />
-        <span
-          style={{
-            fontSize: 35,
-            fontFamily: "poppins",
-            fontWeight: 400,
-            marginTop: 2,
-          }}
-        >
-          NILE
-        </span>
-      </div>
+      <Link to="/">
+        <div className="brand d-flex justify-content-start align-items-center">
+          <img src={logo} alt="" />
+          <span
+            style={{
+              fontSize: 35,
+              fontFamily: "poppins",
+              fontWeight: 400,
+              marginTop: 2,
+              color: "#000",
+            }}
+          >
+            NILE
+          </span>
+        </div>
+      </Link>
       <hr />
 
       <Menu

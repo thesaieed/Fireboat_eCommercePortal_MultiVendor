@@ -26,8 +26,11 @@ function LoginAndSecurity() {
   };
 
   useEffect(() => {
-    fetchUserDetails();
-  }, [appUser, fetchUserDetails]);
+    if (!appUser.id) {
+      message.info("You need to be Logged In!");
+      navigate("/auth/login");
+    } else fetchUserDetails();
+  }, [appUser, fetchUserDetails, navigate]);
   const [showModal, setShowModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   //   const [editData, setEditData] = useState(null);

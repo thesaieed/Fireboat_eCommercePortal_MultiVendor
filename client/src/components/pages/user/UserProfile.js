@@ -1,9 +1,8 @@
-import { React } from "react";
+import { React, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Card, Layout, Row, Col } from "antd";
+import { Card, Layout, Row, Col, message } from "antd";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
-import "@splidejs/react-splide/css";
 import useAllContext from "../../../context/useAllContext";
 import { BsFillBoxFill } from "react-icons/bs";
 import { FcLock } from "react-icons/fc";
@@ -12,6 +11,13 @@ import { ImLocation } from "react-icons/im";
 function UserProfile() {
   const navigate = useNavigate();
   const { appUser } = useAllContext();
+  useEffect(() => {
+    if (!appUser.id) {
+      message.info("You need to be Logged In!");
+      navigate("/auth/login");
+    }
+  }, [appUser.id, navigate]);
+
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
@@ -22,17 +28,17 @@ function UserProfile() {
         style={{ textAlign: "center", color: "green" }}
         className="profile-cards"
       >
-        <h1>Hello {appUser.name}! </h1>
+        <h1>Hello {appUser.name} ! </h1>
       </Card>
-      <Row style={{ padding: "20px" }}>
+      <Row style={{ padding: "0px" }}>
         <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-          <Link to="/yourorders">
+          <Link to="/orders">
             <Card className="profile-cards">
               <BsFillBoxFill
                 style={{ width: "50px", height: "50px", color: "green" }}
               />
               <h2>Your Orders</h2>
-              <span>Track , return or buy again</span>
+              <span>Track your Orders</span>
             </Card>
           </Link>
         </Col>
@@ -41,7 +47,7 @@ function UserProfile() {
             <Card className="profile-cards">
               <FcLock style={{ width: "50px", height: "50px" }} />
               <h2>Login & security</h2>
-              <span>Edit login, name and mobile number</span>
+              <span>Edit Login, Name and Mobile Number</span>
             </Card>
           </Link>
         </Col>
@@ -52,7 +58,7 @@ function UserProfile() {
                 style={{ width: "50px", height: "50px", color: "#AED6F1" }}
               />
               <h2>Your Address</h2>
-              <span>Edit address for orders and gifts</span>
+              <span>Edit Shippping Address for your Orders</span>
             </Card>
           </Link>
         </Col>
