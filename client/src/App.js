@@ -54,9 +54,10 @@ import { ResetPassword } from "./components/pages/user/auth/ResetPassword";
 import SignIn from "./components/pages/user/auth/SignIn";
 import SignUp from "./components/pages/user/auth/SignUp";
 import UserProfile from "./components/pages/user/UserProfile";
-import YourOrders from "./components/pages/user/UserProfileComponents/YourOrders";
 import YourAddresses from "./components/pages/user/UserProfileComponents/YourAddresses";
 import LoginAndSecurity from "./components/pages/user/UserProfileComponents/LoginAndSecurity";
+import UserOrders from "./components/pages/user/UserProfileComponents/UserOrders";
+import UserOrderDetails from "./components/pages/user/UserProfileComponents/OrderDetails";
 //User Components End
 
 function App() {
@@ -98,7 +99,9 @@ function App() {
             <Route path="/product" element={<ShowProductDetails />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/profile" element={<UserProfile />} />
-            <Route path="/yourorders" element={<YourOrders />} />
+            {/* <Route path="/yourorders" element={<YourOrders />} /> */}
+            <Route path="/orders" element={<UserOrders />} />
+            <Route path="/orderdetails" element={<UserOrderDetails />} />
             <Route path="/youraddresses" element={<YourAddresses />} />
             <Route path="/loginandsecurity" element={<LoginAndSecurity />} />
             {/* user routes end */}

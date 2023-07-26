@@ -39,11 +39,20 @@ const RightMenu = ({ mode }) => {
           icon: dashboardIcon,
         }
       : null,
-    {
-      label: <Link to="/profile">Profile</Link>,
-      key: "Profile",
-      icon: <UserOutlined />,
-    },
+    appUser.is_admin
+      ? {
+          label: <Link to="/admin/profile">Profile</Link>,
+          key: "AdminProfile",
+          icon: <UserOutlined />,
+        }
+      : null,
+    !appUser.is_admin
+      ? {
+          label: <Link to="/profile">Profile</Link>,
+          key: "AdminProfile",
+          icon: <UserOutlined />,
+        }
+      : null,
     {
       label: (
         <Button
@@ -90,8 +99,15 @@ const RightMenu = ({ mode }) => {
               ),
               key: "dashboardlink",
             },
-
-            {
+            appUser.is_admin && {
+              label: (
+                <Link to="/admin/profile">
+                  <UserOutlined /> Profile
+                </Link>
+              ),
+              key: "adminprofilelink",
+            },
+            !appUser.is_admin && {
               label: (
                 <Link to="/profile">
                   <UserOutlined /> Profile

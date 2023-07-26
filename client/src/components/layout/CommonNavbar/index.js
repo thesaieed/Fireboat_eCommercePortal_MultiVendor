@@ -136,7 +136,7 @@ const CommonNavbar = ({ handleSearch }) => {
           <RightMenu mode={"inline"} />
         </Drawer>
       </div>
-      {appUser.id && (
+      {appUser.id && !appUser.is_admin && (
         <div style={{ marginLeft: 10, marginRight: 15 }}>
           <Link to="/cart">
             <Badge
