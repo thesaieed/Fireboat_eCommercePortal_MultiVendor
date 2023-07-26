@@ -20,7 +20,7 @@ import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
 import { BiLocationPlus } from "react-icons/bi";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import { BiSolidEditAlt } from "react-icons/bi";
+import { BiSolidEditAlt, BiSolidPhone } from "react-icons/bi";
 function YourAddresses() {
   const navigate = useNavigate();
   const { appUser } = useAllContext();
@@ -68,8 +68,6 @@ function YourAddresses() {
     "Puducherry",
   ];
   const countries = ["India"];
-
-  const { Option } = Select;
   const [form] = Form.useForm();
   const isValidIndianPincode = (pincode) => {
     // Regular expression to match Indian PIN code format (6 digits)
@@ -90,10 +88,15 @@ function YourAddresses() {
     }
   }, [appUser.id]);
   useEffect(() => {
+    if (!appUser.id) {
+      message.info("You need to be Logged In!");
+      navigate("/auth/login");
+    }
+
     if (appUser.id !== null && appUser.id !== undefined) {
       getAddresses();
     }
-  }, [appUser.id, getAddresses]);
+  }, [appUser.id, getAddresses, navigate]);
 
   //editing address
   const handleEditAddress = (address) => {
@@ -180,65 +183,77 @@ function YourAddresses() {
   return (
     <Layout className="layout-default">
       <CommonNavbar handleSearch={handleSearch} />
-      <Card>Your Addresses</Card>
-      <Button
-        onClick={handleAddNewAddress}
-        type="default"
-        style={{ marginRight: 10 }}
-      >
-        <BiLocationPlus /> Add New Address
-      </Button>
-      <Row>
-        {addresses &&
-          addresses.map((address, index) => (
-            <Col key={`Col${address.id}`} xs={24} sm={12} md={8} lg={8} xl={8}>
-              <Card
-                key={`Card${address.id}${index}`}
-                style={{ margin: "20px" }}
+      <Card title="Your Addresses" style={{ minHeight: "85vh" }}>
+        <Button
+          onClick={handleAddNewAddress}
+          type="primary"
+          style={{ marginRight: 0 }}
+        >
+          <BiLocationPlus fontSize={18} /> Add New Address
+        </Button>
+        <Row>
+          {addresses &&
+            addresses.map((address, index) => (
+              <Col
+                key={`Col${address.id}`}
+                xs={24}
+                sm={12}
+                md={8}
+                lg={8}
+                xl={8}
               >
-                <b>{address.full_name}</b>
-                <p style={{ marginBottom: "0px" }}>
-                  {address.house_no_company},&nbsp;
-                  {address.area_street_village}
-                </p>
-                <p style={{ marginBottom: "0px" }}>
-                  {address.town_city},&nbsp;{address.state},&nbsp;
-                  {address.pincode}
-                </p>
-                <p style={{ marginBottom: "0px" }}>{address.country}</p>
-                <p>Phone number:&nbsp;{address.phone_number}</p>
-                <Popconfirm
-                  title="Are you sure you want to remove this address?"
-                  onConfirm={() => removeAddress(address.id)}
-                  okText="Yes"
-                  cancelText="No"
-                  okButtonProps={{
-                    style: {
-                      height: 40,
-                      // width: 40,
-                      background: "#f53131",
-                      color: "white",
-                    },
-                  }}
-                  cancelButtonProps={{
-                    style: { height: 40, width: 40 },
-                    type: "default",
-                  }}
+                <Card
+                  key={`Card${address.id}${index}`}
+                  style={{ margin: "20px 20px 20px 0" }}
                 >
-                  <Button style={{ margin: "5px" }}>
-                    <IoMdRemoveCircleOutline />
-                    remove
-                  </Button>
-                </Popconfirm>
-                <Button onClick={() => handleEditAddress(address)}>
-                  <BiSolidEditAlt />
-                  Edit
-                </Button>
-              </Card>
-            </Col>
-          ))}
-      </Row>
-
+                  <b>{address.full_name}</b>
+                  <p style={{ marginBottom: "0px" }}>
+                    {address.house_no_company},&nbsp;
+                    {address.area_street_village}
+                  </p>
+                  <p style={{ marginBottom: "0px" }}>
+                    {address.town_city},&nbsp;{address.state},&nbsp;
+                    {address.pincode}
+                  </p>
+                  <p style={{ marginBottom: "0px" }}>{address.country}</p>
+                  <p>
+                    <BiSolidPhone fontSize={18} />
+                    +91 {address.phone_number}
+                  </p>
+                  <div style={{ float: "right" }}>
+                    <Button onClick={() => handleEditAddress(address)}>
+                      <BiSolidEditAlt fontSize={16} />
+                      Edit
+                    </Button>
+                    <Popconfirm
+                      title="Are you sure you want to remove this address?"
+                      onConfirm={() => removeAddress(address.id)}
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{
+                        style: {
+                          height: 40,
+                          // width: 40,
+                          background: "#f53131",
+                          color: "white",
+                        },
+                      }}
+                      cancelButtonProps={{
+                        style: { height: 40, width: 40 },
+                        type: "default",
+                      }}
+                    >
+                      <Button danger type="link">
+                        <IoMdRemoveCircleOutline fontSize={16} />
+                        Remove
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+        </Row>
+      </Card>
       <Modal
         title={
           editAddress ? (
@@ -270,13 +285,20 @@ function YourAddresses() {
             name="country"
             rules={[{ required: true, message: "Please select a country!" }]}
           >
-            <Select placeholder="Select a Country" className="ant-input">
-              {countries.map((country) => (
-                <Option key={country} value={country}>
-                  {country}
-                </Option>
-              ))}
-            </Select>
+            <Select
+              placeholder="Select a Country"
+              className="ant-input"
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={countries.map((country) => {
+                return { value: country, label: country };
+              })}
+            ></Select>
           </Form.Item>
           <Form.Item
             label="Full Name"
@@ -392,13 +414,20 @@ function YourAddresses() {
                 name="state"
                 rules={[{ required: true, message: "Please select a state" }]}
               >
-                <Select className="ant-input" placeholder="Select a state">
-                  {states.map((state) => (
-                    <Option key={state} value={state}>
-                      {state}
-                    </Option>
-                  ))}
-                </Select>
+                <Select
+                  className="ant-input"
+                  placeholder="Select a state"
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={states.map((state) => {
+                    return { value: state, label: state };
+                  })}
+                ></Select>
               </Form.Item>
             </Col>
           </Row>

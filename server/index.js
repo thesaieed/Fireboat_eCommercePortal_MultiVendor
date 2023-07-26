@@ -1380,26 +1380,47 @@ app.get("/searchproducts", async (req, res) => {
 });
 
 //user profile routes
-app.get("/yourorders", async (req, res) => {
-  user_id = req.query.user_id;
-  // console.log(req.query);
+app.post("/allorders", async (req, res) => {
+  const { user_id } = req.body;
+  var products = [];
+  var orders = [];
   try {
-    const yourOrders = await pool.query(
-      `SELECT o.*, p.*, sa.*, v.email AS vemail
-      FROM orders o
-      JOIN products p ON o.product_id = p.id
-      JOIN shippingaddress sa ON o.address_id = sa.id
-      JOIN vendors v ON o.vendor_id = v.id
-      WHERE o.user_id = $1
-      ORDER BY o.created_at DESC;      
-      `,
-      [user_id]
+    const orderIds = await pool.query(
+      "SELECT DISTINCT order_id FROM orders where user_id=$1 AND payment_status!=$2",
+      [user_id, "In Progress"]
     );
+    // console.log(orderIds);
+    var productIds = [];
+    for (let orderId of orderIds.rows) {
+      const { order_id } = orderId;
+      try {
+        var order = await pool.query(
+          "SELECT * FROM orders WHERE user_id=$1 AND order_id=$2",
+          [user_id, order_id]
+        );
 
-    res.send(yourOrders.rows);
-    // res.send("Hello all users");
-  } catch (err) {
-    console.error(err);
+        order.rows.map((item) => {
+          productIds.push(item.product_id);
+        });
+        orders.push({ [order_id]: order.rows });
+      } catch (categoryWiseError) {
+        console.error(categoryWiseError);
+      }
+    }
+    for (const id of productIds) {
+      try {
+        const product = await pool.query(
+          "SELECT id, name FROM products WHERE id=$1",
+          [id]
+        );
+        products.push({ ...product.rows[0] });
+      } catch (error) {
+        console.error("Product IDs Error", error);
+      }
+    }
+    res.send({ orders, products });
+  } catch (allOrdersError) {
+    console.error("allOrdersError : ", allOrdersError);
     res.send([]);
   }
 });
@@ -1616,11 +1637,11 @@ app.post("/topstats", async (req, res) => {
         [vendor_id]
       );
       const sumOfWeeklySales = await pool.query(
-        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE modified_at >= date_trunc('week', CURRENT_DATE) AND modified_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week' AND payment_status='success' AND vendor_id=$1",
+        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE created_at >= date_trunc('week', CURRENT_DATE) AND created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week' AND payment_status='success' AND vendor_id=$1",
         [vendor_id]
       );
       const sumOfTodaySales = await pool.query(
-        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE vendor_id=$1 AND payment_status='success' AND date_trunc('day', modified_at) = CURRENT_DATE ",
+        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE vendor_id=$1 AND payment_status='success' AND date_trunc('day', created_at) = CURRENT_DATE ",
         [vendor_id]
       );
       const topSellingProductDetails = await pool.query(
@@ -1652,10 +1673,10 @@ app.post("/topstats", async (req, res) => {
         "SELECT COALESCE(SUM(amount), 0) from orders WHERE payment_status='success'"
       );
       const sumOfWeeklySales = await pool.query(
-        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE modified_at >= date_trunc('week', CURRENT_DATE) AND modified_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week' AND payment_status='success' "
+        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE created_at >= date_trunc('week', CURRENT_DATE) AND created_at < date_trunc('week', CURRENT_DATE) + INTERVAL '1 week' AND payment_status='success' "
       );
       const sumOfTodaySales = await pool.query(
-        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE payment_status='success' AND date_trunc('day', modified_at) = CURRENT_DATE "
+        "SELECT COALESCE(SUM(amount), 0) FROM orders WHERE payment_status='success' AND date_trunc('day', created_at) = CURRENT_DATE "
       );
       const topSellingProductDetails = await pool.query(
         "SELECT product_id, COUNT(*) FROM public.orders WHERE  payment_status='success'  GROUP BY product_id ORDER BY COUNT(*) DESC LIMIT 1"
@@ -1701,13 +1722,13 @@ app.post("/monthlysales", async (req, res) => {
   try {
     if (!is_super_admin) {
       const monthlySales = await pool.query(
-        "SELECT array_agg(COALESCE(sum, 0) ORDER BY months.month) FROM (SELECT date_trunc('month', modified_at) AS month, SUM(amount) AS sum FROM orders WHERE payment_status='success' and vendor_id=$1 GROUP BY month) AS subquery RIGHT JOIN generate_series(date_trunc('year', CURRENT_DATE), date_trunc('year', CURRENT_DATE) + INTERVAL '1 year' - INTERVAL '1 day',INTERVAL '1 month') AS months(month) ON subquery.month = months.month",
+        "SELECT array_agg(COALESCE(sum, 0) ORDER BY months.month) FROM (SELECT date_trunc('month', created_at) AS month, SUM(amount) AS sum FROM orders WHERE payment_status='success' and vendor_id=$1 GROUP BY month) AS subquery RIGHT JOIN generate_series(date_trunc('year', CURRENT_DATE), date_trunc('year', CURRENT_DATE) + INTERVAL '1 year' - INTERVAL '1 day',INTERVAL '1 month') AS months(month) ON subquery.month = months.month",
         [vendor_id]
       );
       res.send(monthlySales.rows[0].array_agg);
     } else if (is_super_admin) {
       const monthlySales = await pool.query(
-        "SELECT array_agg(COALESCE(sum, 0) ORDER BY months.month) FROM (SELECT date_trunc('month', modified_at) AS month, SUM(amount) AS sum FROM orders WHERE payment_status='success' GROUP BY month) AS subquery RIGHT JOIN generate_series(date_trunc('year', CURRENT_DATE), date_trunc('year', CURRENT_DATE) + INTERVAL '1 year' - INTERVAL '1 day',INTERVAL '1 month') AS months(month) ON subquery.month = months.month"
+        "SELECT array_agg(COALESCE(sum, 0) ORDER BY months.month) FROM (SELECT date_trunc('month', created_at) AS month, SUM(amount) AS sum FROM orders WHERE payment_status='success' GROUP BY month) AS subquery RIGHT JOIN generate_series(date_trunc('year', CURRENT_DATE), date_trunc('year', CURRENT_DATE) + INTERVAL '1 year' - INTERVAL '1 day',INTERVAL '1 month') AS months(month) ON subquery.month = months.month"
       );
       res.send(monthlySales.rows[0].array_agg);
     }
@@ -1721,13 +1742,13 @@ app.post("/weeklysales", async (req, res) => {
   try {
     if (!is_super_admin) {
       const weeklySales = await pool.query(
-        "WITH weekly_sums AS (SELECT date_trunc('week', modified_at) AS week, SUM(amount) AS sum FROM orders WHERE vendor_id=$1 AND payment_status='success' AND modified_at >= date_trunc('month', CURRENT_DATE) AND modified_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' GROUP BY week ) SELECT array_agg(COALESCE(sum, 0) ORDER BY weeks.week) AS weekly_sums FROM weekly_sums RIGHT JOIN generate_series(date_trunc('week', date_trunc('month', CURRENT_DATE)),date_trunc('week', date_trunc('month', CURRENT_DATE) + INTERVAL '1 month') - INTERVAL '1 day',INTERVAL '1 week') AS weeks(week) ON weekly_sums.week = weeks.week",
+        "WITH weekly_sums AS (SELECT date_trunc('week', created_at) AS week, SUM(amount) AS sum FROM orders WHERE vendor_id=$1 AND payment_status='success' AND created_at >= date_trunc('month', CURRENT_DATE) AND created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' GROUP BY week ) SELECT array_agg(COALESCE(sum, 0) ORDER BY weeks.week) AS weekly_sums FROM weekly_sums RIGHT JOIN generate_series(date_trunc('week', date_trunc('month', CURRENT_DATE)),date_trunc('week', date_trunc('month', CURRENT_DATE) + INTERVAL '1 month') - INTERVAL '1 day',INTERVAL '1 week') AS weeks(week) ON weekly_sums.week = weeks.week",
         [vendor_id]
       );
       res.send(weeklySales.rows[0].weekly_sums);
     } else if (is_super_admin) {
       const weeklySales = await pool.query(
-        "WITH weekly_sums AS (SELECT date_trunc('week', modified_at) AS week, SUM(amount) AS sum FROM orders WHERE  payment_status='success' AND modified_at >= date_trunc('month', CURRENT_DATE) AND modified_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' GROUP BY week ) SELECT array_agg(COALESCE(sum, 0) ORDER BY weeks.week) AS weekly_sums FROM weekly_sums RIGHT JOIN generate_series(date_trunc('week', date_trunc('month', CURRENT_DATE)),date_trunc('week', date_trunc('month', CURRENT_DATE) + INTERVAL '1 month') - INTERVAL '1 day',INTERVAL '1 week') AS weeks(week) ON weekly_sums.week = weeks.week"
+        "WITH weekly_sums AS (SELECT date_trunc('week', created_at) AS week, SUM(amount) AS sum FROM orders WHERE  payment_status='success' AND created_at >= date_trunc('month', CURRENT_DATE) AND created_at < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' GROUP BY week ) SELECT array_agg(COALESCE(sum, 0) ORDER BY weeks.week) AS weekly_sums FROM weekly_sums RIGHT JOIN generate_series(date_trunc('week', date_trunc('month', CURRENT_DATE)),date_trunc('week', date_trunc('month', CURRENT_DATE) + INTERVAL '1 month') - INTERVAL '1 day',INTERVAL '1 week') AS weeks(week) ON weekly_sums.week = weeks.week"
       );
       res.send(weeklySales.rows[0].weekly_sums);
     }
@@ -1741,13 +1762,13 @@ app.post("/lastsevendaysales", async (req, res) => {
   try {
     if (!is_super_admin) {
       const lastsevendaysales = await pool.query(
-        "WITH daily_sums AS ( SELECT date_trunc('day', modified_at) AS day,SUM(amount) AS sum FROM orders WHERE vendor_id=$1 AND payment_status='success' AND modified_at >= CURRENT_DATE - INTERVAL '6 days' AND modified_at < CURRENT_DATE + INTERVAL '1 day' GROUP BY day) SELECT array_agg(COALESCE(sum, 0) ORDER BY days.day) AS daily_sums FROM daily_sums RIGHT JOIN generate_series(CURRENT_DATE - INTERVAL '6 days',CURRENT_DATE,INTERVAL '1 day') AS days(day) ON daily_sums.day = days.day",
+        "WITH daily_sums AS ( SELECT date_trunc('day', created_at) AS day,SUM(amount) AS sum FROM orders WHERE vendor_id=$1 AND payment_status='success' AND created_at >= CURRENT_DATE - INTERVAL '6 days' AND created_at < CURRENT_DATE + INTERVAL '1 day' GROUP BY day) SELECT array_agg(COALESCE(sum, 0) ORDER BY days.day) AS daily_sums FROM daily_sums RIGHT JOIN generate_series(CURRENT_DATE - INTERVAL '6 days',CURRENT_DATE,INTERVAL '1 day') AS days(day) ON daily_sums.day = days.day",
         [vendor_id]
       );
       res.send(lastsevendaysales.rows[0].daily_sums);
     } else if (is_super_admin) {
       const lastsevendaysales = await pool.query(
-        "WITH daily_sums AS ( SELECT date_trunc('day', modified_at) AS day,SUM(amount) AS sum FROM orders WHERE  payment_status='success' AND modified_at >= CURRENT_DATE - INTERVAL '6 days' AND modified_at < CURRENT_DATE + INTERVAL '1 day' GROUP BY day) SELECT array_agg(COALESCE(sum, 0) ORDER BY days.day) AS daily_sums FROM daily_sums RIGHT JOIN generate_series(CURRENT_DATE - INTERVAL '6 days',CURRENT_DATE,INTERVAL '1 day') AS days(day) ON daily_sums.day = days.day"
+        "WITH daily_sums AS ( SELECT date_trunc('day', created_at) AS day,SUM(amount) AS sum FROM orders WHERE  payment_status='success' AND created_at >= CURRENT_DATE - INTERVAL '6 days' AND created_at < CURRENT_DATE + INTERVAL '1 day' GROUP BY day) SELECT array_agg(COALESCE(sum, 0) ORDER BY days.day) AS daily_sums FROM daily_sums RIGHT JOIN generate_series(CURRENT_DATE - INTERVAL '6 days',CURRENT_DATE,INTERVAL '1 day') AS days(day) ON daily_sums.day = days.day"
       );
       res.send(lastsevendaysales.rows[0].daily_sums);
     }

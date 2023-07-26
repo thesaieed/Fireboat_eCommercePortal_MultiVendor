@@ -56,8 +56,8 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://dae0-27-63-28-193.ngrok-free.app/payments/successpay",
-      furl: "https://dae0-27-63-28-193.ngrok-free.app/payments/failedpay",
+      surl: "https://4c88-223-239-24-109.ngrok-free.app/payments/successpay",
+      furl: "https://4c88-223-239-24-109.ngrok-free.app/payments/failedpay",
     };
     const url = process.env.TESTPAYMENTURL;
 
@@ -208,29 +208,29 @@ router.post("/failedpay", async (req, res) => {
       "SELECT transaction_id, amount, product_info, firstname,email FROM orders WHERE transaction_id=$1",
       [txnid]
     );
-    const isValidHash = payu.hasher.validateHash(hash, {
-      txnid: rows[0].transaction_id,
-      amount: Number(rows[0].amount).toFixed(2),
-      productinfo: rows[0].product_info,
-      firstname: rows[0].firstname,
-      email: rows[0].email,
-      status: status,
-    });
-    if (isValidHash) {
-      const payinfo = await pool.query(
-        "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
-        [order_id, amount, status, txnid, productinfo, mihpayid, mode]
-      );
-      await pool.query(
-        "UPDATE orders set payment_status=$1, payment_details_id=$2, order_status='Failed' where order_id=$3",
-        [status, payinfo.rows[0].id, order_id]
-      );
-    } else {
-      await pool.query(
-        "UPDATE orders set payment_status=$1 where order_id=$3",
-        ["FailedTamperedPayment", order_id]
-      );
-    }
+    // const isValidHash = payu.hasher.validateHash(hash, {
+    //   txnid: rows[0].transaction_id,
+    //   amount: Number(rows[0].amount).toFixed(2),
+    //   productinfo: rows[0].product_info,
+    //   firstname: rows[0].firstname,
+    //   email: rows[0].email,
+    //   status: status,
+    // });
+    // if (isValidHash) {
+    const payinfo = await pool.query(
+      "INSERT into payments(order_id, amount, status, transaction_id, product_info, mihpayid,mode) VALUES($1,$2,$3,$4,$5,$6,$7) returning id",
+      [order_id, amount, status, txnid, productinfo, mihpayid, mode]
+    );
+    await pool.query(
+      "UPDATE orders set payment_status=$1, payment_details_id=$2, order_status='Failed' where order_id=$3",
+      [status, payinfo.rows[0].id, order_id]
+    );
+    // } else {
+    //   await pool.query(
+    //     "UPDATE orders set payment_status=$1 where order_id=$3",
+    //     ["FailedTamperedPayment", order_id]
+    //   );
+    // }
   } catch (error) {
     console.log("Failed PAY Error", error);
   }

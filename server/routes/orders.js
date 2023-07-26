@@ -242,7 +242,7 @@ router.post("/getOrderProductDetails", async (req, res) => {
     req.body;
   try {
     const address = await pool.query(
-      "SELECT country,phone_number, pincode,house_no_company,area_street_village,landmark, town_city, state FROM shippingaddress where id=$1",
+      "SELECT full_name, phone_number, country,phone_number, pincode,house_no_company,area_street_village,landmark, town_city, state FROM shippingaddress where id=$1",
       [address_id]
     );
     const payment = await pool.query(
@@ -263,7 +263,7 @@ router.post("/getOrderProductDetails", async (req, res) => {
       [product_id, order_id]
     );
     const vendorName = await pool.query(
-      "SELECT business_name from vendors where id=$1",
+      "SELECT business_name,email from vendors where id=$1",
       [product.rows[0].vendor_id]
     );
 
@@ -279,7 +279,10 @@ router.post("/getOrderProductDetails", async (req, res) => {
         ...product.rows[0],
         ...brand.rows[0],
         order_status: deliveryDetails.rows[0]?.order_status,
-        seller: vendorName.rows[0].business_name,
+        seller: {
+          name: vendorName.rows[0].business_name,
+          email: vendorName.rows[0].email,
+        },
       },
     });
   } catch (err) {
