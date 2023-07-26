@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, message, Modal, Form, Input, Button } from "antd";
-import Footer from "../../../layout/Footer";
 import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
 import { FcDataEncryption } from "react-icons/fc";
@@ -341,7 +340,6 @@ function Profile() {
           </Form.Item>
         </Form>
       </Modal>
-      <Footer />
     </>
   );
 }

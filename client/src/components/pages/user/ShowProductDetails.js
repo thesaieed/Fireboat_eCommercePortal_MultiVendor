@@ -27,10 +27,9 @@ import {
   PlusSquareFilled,
   MinusSquareFilled,
   ExclamationCircleOutlined,
-  CheckOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
-import { MdShoppingCartCheckout } from "react-icons/md";
+// import { MdShoppingCartCheckout } from "react-icons/md";
 import vendorIcon from "../../../assets/images/vendorsIcon.png";
 import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
@@ -530,7 +529,7 @@ function ShowProductDetails() {
                 </div>
                 <Button
                   className="add-to-cart-button"
-                  type="default"
+                  type="primary"
                   onClick={handleAddToCart}
                   loading={buttonLoading}
                   icon={<ShoppingCartOutlined style={{ fontSize: 18 }} />}
@@ -538,13 +537,13 @@ function ShowProductDetails() {
                   Add to Cart
                 </Button>
 
-                <Button
+                {/* <Button
                   type="primary"
                   className="buy-now-button"
                   icon={<MdShoppingCartCheckout fontSize={20} />}
                 >
                   Buy Now
-                </Button>
+                </Button> */}
               </div>
             </Col>
           </Row>
