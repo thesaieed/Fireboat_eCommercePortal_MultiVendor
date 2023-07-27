@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-
+import { Link } from "react-router-dom";
 import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 import signinbg from "../../../../assets/images/1.png";
 import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
-
+import logo from "../../../../assets/images/logo.png";
 const { Title } = Typography;
 const { Footer, Content } = Layout;
 
@@ -60,7 +60,33 @@ function ForgotPassword() {
               lg={{ span: 8, offset: 2 }}
               xl={{ span: 7, offset: 3 }}
             >
-              <Title className="mb-15">Forgot Password</Title>
+              <div className="d-flex justify-content-start align-items-center">
+                <Link
+                  to="/"
+                  className="d-flex justify-content-start align-items-baseline"
+                >
+                  <img
+                    src={logo}
+                    alt="logo"
+                    height={55}
+                    style={{ background: "white" }}
+                  />
+                  <Title
+                    id="brand-font"
+                    level={3}
+                    style={{
+                      fontSize: 75,
+                      fontFamily: "poppins",
+                      fontWeight: 400,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    NILE
+                  </Title>
+                </Link>
+              </div>
+              <Title level={3}>Forgot Password</Title>
               <Title className="font-regular text-muted" level={5}>
                 Enter your registered email
               </Title>

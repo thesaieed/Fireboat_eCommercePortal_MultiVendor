@@ -62,7 +62,7 @@
       "controlItemBgHover": "rgba(0, 0, 0, 0.04)"
     },
     "Upload": {
-      "colorPrimaryHover": "#f59d3f",
+      "colorPrimaryHover": "#689125",
       "colorFillAlter": "rgba(0, 0, 0, 0.02)"
     },
     "Carousel": {

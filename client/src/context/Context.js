@@ -135,6 +135,15 @@ function Provider({ children }) {
       } catch (error) {
         console.error(error);
       }
+    } else {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/admin/categories"
+        );
+        setCategories(response.data.categories);
+      } catch (error) {
+        console.log(error);
+      }
     }
   }, [appUser.id]);
 

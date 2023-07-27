@@ -1,31 +1,37 @@
 import { Menu } from "antd";
 import { Link } from "react-router-dom";
 
-const LeftMenu = ({ mode }) => {
+const LeftMenu = ({ mode, randomCategories }) => {
   const items = [
     {
       label: (
-        <Link to="/">
-          <span> Home </span>
+        <Link
+          to={`/browse/?search=categoryProducts&category=${randomCategories[0]?.name}`}
+        >
+          <span> {randomCategories[0]?.name} </span>
         </Link>
       ),
-      key: "Home",
+      key: randomCategories[0]?.name,
     },
     {
       label: (
-        <Link to="/browse/?search=allProducts">
-          <span>Our Products</span>
+        <Link
+          to={`/browse/?search=categoryProducts&category=${randomCategories[1]?.name}`}
+        >
+          <span> {randomCategories[1]?.name} </span>
         </Link>
       ),
-      key: "allproducts",
+      key: randomCategories[1]?.name,
     },
     {
       label: (
-        <Link to="/aboutus">
-          <span>About Us</span>
+        <Link
+          to={`/browse/?search=categoryProducts&category=${randomCategories[2]?.name}`}
+        >
+          <span> {randomCategories[2]?.name} </span>
         </Link>
       ),
-      key: "aboutus",
+      key: randomCategories[2]?.name,
     },
   ];
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Row, Col, Typography, Layout, Card, Button, message } from "antd";
 
@@ -25,7 +25,7 @@ const Home = () => {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantity] = useState(1);
-
+  const bottomRef = useRef();
   const navigate = useNavigate();
 
   const { Paragraph, Title, Text } = Typography;
@@ -111,7 +111,6 @@ const Home = () => {
     else {
       return (
         <>
-          <hr style={{ margin: "0px 40px" }}></hr>
           <Row
             key={`RowMain${key}`}
             style={{
@@ -183,6 +182,7 @@ const Home = () => {
                   pagination: false,
                 }}
                 className="splide"
+                style={{ display: "flex" }}
               >
                 {products.map((product, index) => {
                   if (index > 8) return null;
@@ -282,6 +282,7 @@ const Home = () => {
                               type="primary"
                               shape="round"
                               icon={<ThunderboltOutlined />}
+                              style={{ color: "#fff" }}
                             >
                               Quick Buy
                             </Button>
@@ -377,6 +378,7 @@ const Home = () => {
                 pagination: false,
               }}
               className="splide"
+              style={{ display: "flex" }}
             >
               {products.map((product, index) => {
                 if (index > 4) return null;
@@ -480,6 +482,7 @@ const Home = () => {
                             type="primary"
                             shape="round"
                             icon={<ThunderboltOutlined />}
+                            style={{ color: "#fff" }}
                           >
                             Quick Buy
                           </Button>
@@ -495,14 +498,18 @@ const Home = () => {
       );
     }
   };
+  const handleScrollDown = () => {
+    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  };
   return (
     <Layout className="layout-default m-0 p-0 ">
       {loading ? (
         <LoadingScreen />
       ) : (
         <Content>
+          {" "}
+          <CommonNavbar handleSearch={handleSearch} />
           <section id="homeMainSection">
-            <CommonNavbar handleSearch={handleSearch} />
             <div className="mainHeading">
               <Title
                 level={1}
@@ -523,16 +530,24 @@ const Home = () => {
               </Button>
             </div>
             <div>
-              <DownOutlined id="homeDownArrow" />
+              <Button
+                icon={<DownOutlined />}
+                id="homeDownArrow"
+                type="link"
+                onClick={handleScrollDown}
+              />
             </div>
           </section>
-          {suggestedProducts !== undefined && suggestedProducts.length > 0 && (
-            <>{suggestedRow(suggestedProducts)}</>
-          )}
-          {allProducts.map((categoryObject) => {
-            //{Pencil: Array[...]}
-            return categoryRow(categoryObject);
-          })}
+          <div ref={bottomRef}>
+            {suggestedProducts !== undefined &&
+              suggestedProducts.length > 0 && (
+                <>{suggestedRow(suggestedProducts)}</>
+              )}
+            {allProducts.map((categoryObject) => {
+              //{Pencil: Array[...]}
+              return categoryRow(categoryObject);
+            })}
+          </div>
         </Content>
       )}
 
