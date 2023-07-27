@@ -5,8 +5,12 @@ import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 
 import signinbg from "../../../../assets/images/vendorSigin.png";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import logo from "../../../../assets/images/logo.png";
 import axios from "axios";
 import useAllContext from "../../../../context/useAllContext";
+import { FaUserAlt } from "react-icons/fa";
+import { LuShieldQuestion } from "react-icons/lu";
+import vendorIcon from "../../../../assets/images/vendorsIcon.png";
 import jwt_decode from "jwt-decode";
 const { Title } = Typography;
 const { /*Header,*/ Footer, Content } = Layout;
@@ -254,10 +258,33 @@ function AdminSignIn() {
               lg={{ span: 8, offset: 2 }}
               xl={{ span: 9, offset: 0 }}
             >
-              <Title className="mb-15">Vendor Login</Title>
-              <Title className="font-regular text-muted" level={5}>
-                Enter your email and password to login
-              </Title>
+              <div className="d-flex justify-content-start align-items-center">
+                <Link
+                  to="/"
+                  className="d-flex justify-content-start align-items-baseline"
+                >
+                  <img
+                    src={logo}
+                    alt="logo"
+                    height={55}
+                    style={{ background: "white" }}
+                  />
+                  <Title
+                    id="brand-font"
+                    level={3}
+                    style={{
+                      fontSize: 75,
+                      fontFamily: "poppins",
+                      fontWeight: 400,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    NILE
+                  </Title>
+                </Link>
+              </div>
+              <Title level={3}>Vendor Login</Title>
               <Form
                 form={form}
                 onFinish={onFinish}
@@ -341,30 +368,52 @@ function AdminSignIn() {
                 <Form.Item>
                   <div
                     id="googleLoginButton"
-                    style={{ width: "100%", textAlign: "center" }}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
                   ></div>
                 </Form.Item>
                 <div
-                  className="d-flex justify-content-end"
+                  className="d-flex justify-content-between align-items-center"
                   style={{ marginTop: -15, marginBottom: 10 }}
                 >
+                  <p
+                    className="font-semibold text-muted"
+                    style={{ marginTop: 15 }}
+                  >
+                    <Link to="/auth/login" className="text-dark font-bold">
+                      <FaUserAlt
+                        fontSize={14}
+                        style={{ marginRight: 5, marginTop: -6 }}
+                      />
+                      Login as User
+                    </Link>
+                  </p>
+
                   <Link
                     to="/auth/admin/forgotpassword"
                     className="text-dark font-bold"
+                    style={{ marginLeft: 5 }}
                   >
+                    <LuShieldQuestion fontSize={16} style={{ marginTop: -5 }} />{" "}
                     Forgot Password!
                   </Link>
                 </div>
-                <p className="font-semibold text-muted">
-                  Don't have a Vendor Account?{" "}
-                  <Link to="/auth/admin/signup" className="text-dark font-bold">
+                <p className="font-semibold text-muted d-flex justify-content-end">
+                  <Link
+                    to="/auth/admin/signup"
+                    className="text-dark font-bold"
+                    style={{ marginLeft: 5 }}
+                  >
+                    <img
+                      src={vendorIcon}
+                      height={22}
+                      width={22}
+                      style={{ marginTop: -5 }}
+                      alt="vendorIcon"
+                    />{" "}
                     Register as Vendor
-                  </Link>
-                </p>
-                <p className="font-semibold text-muted">
-                  Not a Vendor?{" "}
-                  <Link to="/auth/login" className="text-dark font-bold">
-                    Login as User
                   </Link>
                 </p>
               </Form>

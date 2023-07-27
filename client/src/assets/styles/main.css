@@ -13,9 +13,13 @@
 }
 
 .nav-header {
-  background-color: white;
+  background-color: white !important;
   border-bottom: 0;
   padding: 0 10px 0 0px;
+  height: 65px;
+  position: sticky;
+  top: 0;
+  z-index: 99990;
 }
 
 .logo {
@@ -3561,6 +3565,44 @@ div.ant-upload {
 .productShow .ant-card-body {
   background-color: #faf2fc;
 }
+.productShow {
+  margin-right: 60px;
+}
+@media (max-width: 1500px) {
+  .productShow {
+    margin-right: 45px;
+  }
+}
+@media (max-width: 1365px) {
+  .productShow {
+    margin-right: 40px;
+  }
+}
+@media (max-width: 1245px) {
+  .productShow {
+    margin-right: 35px;
+  }
+}
+@media (max-width: 1125px) {
+  .productShow {
+    margin-right: 30px;
+  }
+}
+@media (max-width: 975px) {
+  .productShow {
+    margin-right: 25px;
+  }
+}
+@media (max-width: 855px) {
+  .productShow {
+    margin-right: 20px;
+  }
+}
+@media (max-width: 576px) {
+  .productShow {
+    margin: auto !important;
+  }
+}
 .bg-light {
   background-color: #fafafa;
 }
@@ -3845,8 +3887,8 @@ div.ant-upload {
 #homeMainSection {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
+  justify-content: center;
+  height: calc(100vh - 65px);
   /* width: 100vw; */
   background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)),
     url("../images/HomeBg1.jpg");
@@ -3862,18 +3904,22 @@ div.ant-upload {
 }
 #homeBrowseButtonContainer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   width: 70%;
-  text-align: end;
+  /* text-align: end; */
+  height: fit-content;
   align-self: center;
+  margin-top: -150px;
+  /* background-color: #00369e; */
+  display: none;
 }
 #homeBrowseProductButton {
   font-family: "Montserat", sans-serif;
   letter-spacing: 2px;
   font-weight: lighters;
   color: #fff;
-  width: 200px;
-  height: 50px;
+  width: 500px;
+  height: 60px;
   background: transparent;
   border-radius: 0;
   -webkit-border-radius: 0;
@@ -3882,10 +3928,33 @@ div.ant-upload {
   -o-border-radius: 0;
 }
 #homeDownArrow {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-left: 50%;
   color: #fff;
+  position: fixed;
+  bottom: 0;
 }
+@keyframes jump {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+    -webkit-transform: translateY(-10px);
+    -moz-transform: translateY(-10px);
+    -ms-transform: translateY(-10px);
+    -o-transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+#homeDownArrow {
+  animation: jump 1s ease-in-out infinite;
+  -webkit-animation: jump 1s ease-in-out infinite;
+}
+
 .mainHeading {
   /* height: 75vh; */
   display: flex;
@@ -3949,9 +4018,7 @@ div.ant-upload {
     margin-left: 1.1em;
   }
 }
-#googleLoginButton iframe {
-  width: 100% !important;
-}
+
 .ratingModal {
   max-width: 100%;
 
@@ -4016,7 +4083,7 @@ div.slick-tracker {
 }
 .splide__arrow--prev,
 .splide__arrow--next {
-  background: lime !important;
+  background: #86c61f !important;
   margin-left: -5px !important;
   margin-right: -5px !important;
 }

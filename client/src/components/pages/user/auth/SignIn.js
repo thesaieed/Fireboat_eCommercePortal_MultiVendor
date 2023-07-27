@@ -4,11 +4,13 @@ import jwt_decode from "jwt-decode";
 import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 
 import signinbg from "../../../../assets/images/1.png";
-
+import registerIcon from "../../../../assets/images/registerIcon.png";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import vendorIcon from "../../../../assets/images/vendorsIcon.png";
+import logo from "../../../../assets/images/logo.png";
 import axios from "axios";
 import useAllContext from "../../../../context/useAllContext";
+import { LuShieldQuestion } from "react-icons/lu";
 
 const { Title } = Typography;
 const { Footer, Content } = Layout;
@@ -212,10 +214,36 @@ function SignIn() {
               lg={{ span: 8, offset: 2 }}
               xl={{ span: 7, offset: 3 }}
             >
-              <Title className="mb-15">Login</Title>
-              <Title className="font-regular text-muted" level={5}>
+              <div className="d-flex justify-content-start align-items-center">
+                <Link
+                  to="/"
+                  className="d-flex justify-content-start align-items-baseline"
+                >
+                  <img
+                    src={logo}
+                    alt="logo"
+                    height={55}
+                    style={{ background: "white" }}
+                  />
+                  <Title
+                    id="brand-font"
+                    level={3}
+                    style={{
+                      fontSize: 75,
+                      fontFamily: "poppins",
+                      fontWeight: 400,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    NILE
+                  </Title>
+                </Link>
+              </div>
+              <Title level={3}>Login</Title>
+              {/* <Title className="font-regular text-muted" level={5}>
                 Enter your email and password to login
-              </Title>
+              </Title> */}
               <Form
                 form={form}
                 onFinish={onFinish}
@@ -301,41 +329,60 @@ function SignIn() {
                   </Button>
                 </Form.Item>
 
-                <Form.Item style={{ width: "100%", textAlign: "center" }}>
-                  <div id="googleLoginButton"></div>
+                <Form.Item>
+                  <div
+                    id="googleLoginButton"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  ></div>
                 </Form.Item>
                 <div
-                  className="d-flex justify-content-end"
+                  className="d-flex justify-content-between align-items-center"
                   style={{ marginTop: -15, marginBottom: 10 }}
                 >
-                  <Link
-                    to="/auth/forgotpassword"
-                    className="text-dark font-bold"
+                  <p
+                    className="font-semibold text-muted "
+                    style={{ marginTop: 15 }}
                   >
-                    Forgot Password!
-                  </Link>
+                    <Link
+                      to="/auth/admin/login"
+                      className="text-dark font-bold "
+                    >
+                      <img
+                        src={vendorIcon}
+                        height={21}
+                        width={21}
+                        alt="vendorIcon"
+                      />
+                      Vendor Login
+                    </Link>
+                  </p>
+                  <p style={{ marginTop: 15 }}>
+                    <LuShieldQuestion
+                      fontSize={15}
+                      style={{ marginTop: -5, marginRight: 2 }}
+                    />
+                    <Link
+                      to="/auth/forgotpassword"
+                      className="text-dark font-bold"
+                    >
+                      Forgot Password!
+                    </Link>
+                  </p>
                 </div>
-
-                <p className="font-semibold text-muted">
-                  Don't have an account?{" "}
-                  <Link to="/auth/signup" className="text-dark font-bold">
-                    Sign Up
-                  </Link>
-                </p>
-
-                <p className="font-semibold text-muted ">
-                  <span style={{ marginRight: 5 }}>Are you Vendor?</span>
-                  <Link to="/auth/admin/login" className="text-dark font-bold ">
-                    <img
-                      src={vendorIcon}
-                      height={25}
-                      width={25}
-                      alt="vendorIcon"
-                    />{" "}
-                    Vendor Login
-                  </Link>
-                </p>
               </Form>
+              <p className="font-semibold text-muted d-flex justify-content-end">
+                <Link
+                  to="/auth/signup"
+                  className="text-dark font-bold"
+                  style={{ marginLeft: 5 }}
+                >
+                  <img src={registerIcon} height={20} alt="newUserIcon" /> Sign
+                  Up
+                </Link>
+              </p>
             </Col>
 
             <Col

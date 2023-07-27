@@ -251,6 +251,7 @@ function AddProduct() {
                     },
                     style: { top: 15 },
                   }}
+                  customRequest={({ onSuccess }) => onSuccess("ok")}
                 >
                   <Button
                     icon={<UploadOutlined />}

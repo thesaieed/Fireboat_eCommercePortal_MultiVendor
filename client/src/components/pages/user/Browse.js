@@ -21,7 +21,7 @@ import { FilterOutlined } from "@ant-design/icons";
 import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
 import vendorIcon from "../../../assets/images/vendorsIcon.png";
-
+import { BiError } from "react-icons/bi";
 const Browse = () => {
   const [browseProducts, setBrowseProducts] = useState([]);
   const [shownProducts, setShownProducts] = useState([]);
@@ -79,11 +79,16 @@ const Browse = () => {
     priceRangeSet(browseProducts);
     setSortAvgRating(-1);
   };
-
-  const [searchTerms] = useState(
+  const [category, setCategory] = useState(searchParams.get("category"));
+  const [searchTerms, setSearchTerms] = useState(
     searchParams.get("search")?.match(/("[^"]+"|[^"\s]+)/g)
   );
-  const [category] = useState(searchParams.get("category"));
+  useEffect(() => {
+    scrollToTop();
+    setSearchTerms(searchParams.get("search")?.match(/("[^"]+"|[^"\s]+)/g));
+    setCategory(searchParams.get("category"));
+  }, [searchParams]);
+
   const baseImgUrl = "http://localhost:5000/";
 
   const { Paragraph, Title } = Typography;
@@ -165,6 +170,7 @@ const Browse = () => {
   );
 
   const applyFilters = useCallback(() => {
+    setCurrentPage(1);
     var filteredArray = [];
 
     //Filter by category First
@@ -290,12 +296,11 @@ const Browse = () => {
         return (
           <Col
             className="gutter-row productShow"
-            xs={23}
-            sm={23}
+            xs={22}
+            sm={11}
             md={11}
             lg={11}
             xl={7}
-            // className="productCard mb-24 d-flex"
             key={index}
           >
             <Card
@@ -519,16 +524,30 @@ const Browse = () => {
               </Col>
             </Row>
             <Row
-              justify={"space-evenly"}
+              justify={"start"}
               // gutter={{
               //   xs: 8,
               //   sm: 16,
               //   md: 24,
-              //   lg: 32,
+              //   lg: 150,
               // }}
               // className="justify-content-evenly"
             >
-              {noProductMessage && <Title>No Products found !</Title>}
+              {noProductMessage && (
+                <Row
+                  style={{ width: "100vw" }}
+                  justify={"center"}
+                  align={"middle"}
+                >
+                  <Col>
+                    <Title>
+                      {" "}
+                      <BiError style={{ marginTop: -10, color: "red" }} /> No
+                      Products found !
+                    </Title>
+                  </Col>
+                </Row>
+              )}
               {!noProductMessage && showProducts()}
             </Row>
             {browseProducts.length > 9 && (

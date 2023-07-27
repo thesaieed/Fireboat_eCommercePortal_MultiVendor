@@ -405,7 +405,7 @@ function ShowProductDetails() {
                   width: "100%",
                   gap: "1rem",
                 }}
-                style={{ padding: 0 }}
+                style={{ padding: 0, display: "flex" }}
               >
                 {productDetails?.image?.map((imgurl, index) => {
                   return (
@@ -459,7 +459,7 @@ function ShowProductDetails() {
                             style={{
                               height: 25,
                               width: 25,
-                              marginRight: 5,
+                              marginRight: 7,
                             }}
                           />
                           {productDetails.brand}
@@ -467,16 +467,22 @@ function ShowProductDetails() {
                       </Descriptions.Item>
                       <Descriptions.Item>
                         <div>
-                          <img
-                            src={categoryIcon}
-                            alt="categoryIcon"
-                            style={{
-                              height: 25,
-                              width: 25,
-                              marginRight: 5,
-                            }}
-                          />
-                          {productDetails.category}
+                          <Link
+                            to={`/browse/?search=categoryProducts&category=${productDetails.category}`}
+                            style={{ color: "black" }}
+                          >
+                            <img
+                              src={categoryIcon}
+                              alt="categoryIcon"
+                              style={{
+                                height: 25,
+                                width: 25,
+                                marginRight: 8,
+                              }}
+                            />
+
+                            {productDetails.category}
+                          </Link>
                         </div>
                       </Descriptions.Item>
                       <Descriptions.Item>

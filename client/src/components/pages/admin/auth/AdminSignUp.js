@@ -18,7 +18,7 @@ import {
   LockOutlined,
   MobileOutlined,
 } from "@ant-design/icons";
-
+import logo from "../../../../assets/images/logo.png";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -221,7 +221,27 @@ export default function AdminSignUp() {
         <Content className="signupContent">
           <div className="sign-up-header vendor-sign-up-header">
             <div className="content">
-              <Title>Vendor Sign Up</Title>
+              <div className="d-flex justify-content-center align-items-center">
+                <Link
+                  to="/"
+                  className="d-flex justify-content-start align-items-baseline"
+                >
+                  <img src={logo} alt="logo" height={55} />
+                  <Title
+                    id="brand-font"
+                    level={3}
+                    style={{
+                      fontSize: 75,
+                      fontFamily: "poppins",
+                      fontWeight: 400,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    NILE
+                  </Title>
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -232,7 +252,11 @@ export default function AdminSignUp() {
           >
             <div
               id="googleLoginButton"
-              style={{ width: "100%", textAlign: "center" }}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
             ></div>
             <p className="text-center my-25 font-semibold text-muted">Or</p>
             {/* Form starts */}

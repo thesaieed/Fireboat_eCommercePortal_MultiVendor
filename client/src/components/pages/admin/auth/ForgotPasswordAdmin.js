@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
 // import signinbg from "../../../../assets/images/1.png";
 import signinbg from "../../../../assets/images/vendorSigin.png";
+import { Link } from "react-router-dom";
+import logo from "../../../../assets/images/logo.png";
 import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 const { Title } = Typography;
@@ -60,9 +62,33 @@ function ForgotPasswordAdmin() {
               lg={10}
               xl={10}
             >
-              <Title className="mb-15" level={3}>
-                Forgot Password
-              </Title>
+              <div className="d-flex justify-content-start align-items-center">
+                <Link
+                  to="/"
+                  className="d-flex justify-content-start align-items-baseline"
+                >
+                  <img
+                    src={logo}
+                    alt="logo"
+                    height={55}
+                    style={{ background: "white" }}
+                  />
+                  <Title
+                    id="brand-font"
+                    level={3}
+                    style={{
+                      fontSize: 75,
+                      fontFamily: "poppins",
+                      fontWeight: 400,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    NILE
+                  </Title>
+                </Link>
+              </div>
+              <Title level={3}>Forgot Password</Title>
               <Title className="font-regular text-muted" level={5}>
                 Enter your registered email
               </Title>

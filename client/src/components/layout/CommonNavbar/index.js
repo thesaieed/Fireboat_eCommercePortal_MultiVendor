@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import RightMenu from "./RightMenu";
-// import LeftMenu from "./LeftMenu";
+import LeftMenu from "./LeftMenu";
 import { Layout, Button, Drawer, Input, Menu, Badge } from "antd";
 import {
   MenuOutlined,
@@ -14,10 +14,13 @@ import useAllContext from "../../../context/useAllContext";
 const CommonNavbar = ({ handleSearch }) => {
   const [visible, setVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { numberOfProductsInCart, appUser } = useAllContext();
+  const { numberOfProductsInCart, appUser, categories } = useAllContext();
   const showDrawer = () => {
     setVisible(!visible);
   };
+  // const navCategories = categories;
+  const randomCategories = categories.slice(0, 3);
+
   const searchMenuItem = [
     {
       label: "",
@@ -58,7 +61,7 @@ const CommonNavbar = ({ handleSearch }) => {
   // Upto here
 
   return (
-    <Layout.Header id="commonNavbar" className="nav-header bg-none">
+    <Layout.Header id="commonNavbar" className="nav-header">
       <Button className="menuButton" type="text" onClick={showDrawer}>
         <MenuOutlined />
       </Button>
@@ -86,7 +89,9 @@ const CommonNavbar = ({ handleSearch }) => {
         </Link>
       </div>
       <div className="navbar-menu">
-        <div className="leftMenu">{/* <LeftMenu mode={"horizontal"} /> */}</div>
+        <div className="leftMenu">
+          <LeftMenu mode={"horizontal"} randomCategories={randomCategories} />
+        </div>
 
         <div
           className="rightMenu"
@@ -132,7 +137,7 @@ const CommonNavbar = ({ handleSearch }) => {
           open={visible}
           style={{ zIndex: 99999 }}
         >
-          {/* <LeftMenu mode={"inline"} /> */}
+          <LeftMenu mode={"inline"} randomCategories={randomCategories} />
           <RightMenu mode={"inline"} />
         </Drawer>
       </div>

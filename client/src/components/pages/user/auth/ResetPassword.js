@@ -1,4 +1,4 @@
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
 import {
@@ -18,6 +18,7 @@ import {
   LockOutlined,
 } from "@ant-design/icons";
 import Footer from "../../../layout/Footer";
+import logo from "../../../../assets/images/logo.png";
 export const ResetPassword = () => {
   const { Content } = Layout;
   const [isVerifying, setIsVerifying] = useState(false);
@@ -108,6 +109,27 @@ export const ResetPassword = () => {
         <Content className="signupContent ">
           <div className="sign-up-header">
             <div className="content">
+              <div className="d-flex justify-content-center align-items-center">
+                <Link
+                  to="/"
+                  className="d-flex justify-content-start align-items-baseline"
+                >
+                  <img src={logo} alt="logo" height={55} />
+                  <Title
+                    id="brand-font"
+                    level={3}
+                    style={{
+                      fontSize: 75,
+                      fontFamily: "poppins",
+                      fontWeight: 400,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    NILE
+                  </Title>
+                </Link>
+              </div>
               <Title> Reset Password</Title>
             </div>
           </div>
