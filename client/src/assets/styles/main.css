@@ -3566,7 +3566,7 @@ div.ant-upload {
   background-color: #faf2fc;
 }
 .productShow {
-  margin-right: 60px;
+  margin-right: 50px;
 }
 @media (max-width: 1500px) {
   .productShow {
@@ -3588,7 +3588,12 @@ div.ant-upload {
     margin-right: 30px;
   }
 }
-@media (max-width: 975px) {
+@media (max-width: 1000px) {
+  .productShow {
+    margin-right: 27px;
+  }
+}
+@media (max-width: 980px) {
   .productShow {
     margin-right: 25px;
   }
@@ -4090,4 +4095,30 @@ div.slick-tracker {
 /* profile styling*/
 .profile-cards {
   margin: 20px;
+}
+#aboutUsCover {
+  background: url("../images/aboutUsImg5.png") no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+#contactUsCover {
+  background: url("../images/ContactUsImg.jpg") no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+@media (max-width: 767px) {
+  #aboutUsCover {
+    display: none;
+  }
+  #contactUsCover {
+    display: none;
+  }
+  #aboutUsText {
+    min-height: 45vh;
+  }
+
+  #contactUsText {
+    min-height: 45vh;
+  }
 }

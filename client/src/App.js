@@ -8,11 +8,12 @@ import { useEffect, useMemo } from "react";
 // Common Components
 import { VerifyEmail } from "./components/pages/user/auth/VerifyEmail";
 import LoadingScreen from "./components/layout/LoadingScreen";
-
+import NotFound from "./components/pages/user/NotFound";
 import useAllContext from "./context/useAllContext";
 import { ConfigProvider } from "antd";
 import appTheme from "./eCommerseTheme.json";
 import { IconContext } from "react-icons";
+import ContactUs from "./components/pages/user/ContactUs";
 //Common Components End
 
 //SuperAdmin Components
@@ -148,27 +149,8 @@ function App() {
                 <Route index element={<Brands />} />
               </Route>
             </Route>
-            {/* Admin Routes end */}
-            <Route path="/mainadmin" element={<Main />}>
-              <Route index element={<Dashboard />} />
-            </Route>
-            <Route
-              path="*"
-              element={
-                <h1
-                  style={{
-                    fontFamily: "cursive",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100vh",
-                    fontSize: "5rem",
-                  }}
-                >
-                  ! Page Not Found
-                </h1>
-              }
-            />
+            <Route path="/aboutus" element={<ContactUs />} />
+            <Route path="*" element={<NotFound />}></Route>
           </Routes>
         </div>
       </IconContext.Provider>

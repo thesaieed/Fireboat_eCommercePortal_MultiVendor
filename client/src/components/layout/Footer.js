@@ -22,7 +22,7 @@ function Footer() {
       <Row justify="center" align="middle" style={{ height: "60px" }}>
         <Col>
           <div className="copyright">
-            <Link to="mailto:nile.ecomportal@gmail.com">Contact Us</Link>
+            <Link to="/aboutus">About Us</Link>
           </div>
         </Col>
         <Col>
