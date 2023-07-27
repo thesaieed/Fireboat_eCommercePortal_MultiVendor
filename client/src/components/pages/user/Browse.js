@@ -22,6 +22,7 @@ import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
 import vendorIcon from "../../../assets/images/vendorsIcon.png";
 import { BiError } from "react-icons/bi";
+import Footer from "../../layout/Footer";
 const Browse = () => {
   const [browseProducts, setBrowseProducts] = useState([]);
   const [shownProducts, setShownProducts] = useState([]);
@@ -567,6 +568,7 @@ const Browse = () => {
           </Content>
         </Layout>
       )}
+      <Footer />
     </Layout>
   );
 };
