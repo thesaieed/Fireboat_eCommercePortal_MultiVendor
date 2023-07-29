@@ -1,6 +1,6 @@
 import { React, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Card, Layout, Row, Col, message, Avatar } from "antd";
+import { Card, Layout, Row, Col, message } from "antd";
 import CommonNavbar from "../../layout/CommonNavbar";
 import Footer from "../../layout/Footer";
 import useAllContext from "../../../context/useAllContext";

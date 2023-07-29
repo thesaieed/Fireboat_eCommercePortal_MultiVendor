@@ -12,7 +12,6 @@
 
 import { Layout, Row, Col } from "antd";
 import {} from "@ant-design/icons";
-import { Link } from "react-router-dom";
 
 function Footer() {
   const { Footer: AntFooter } = Layout;

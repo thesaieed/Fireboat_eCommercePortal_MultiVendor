@@ -479,7 +479,7 @@ const Checkout = () => {
                         Done
                       </Button>
                     )} */}
-                  {current > 0 && current != 2 && (
+                  {current > 0 && !paymentdone && (
                     <Button
                       style={{
                         margin: "0 8px",
