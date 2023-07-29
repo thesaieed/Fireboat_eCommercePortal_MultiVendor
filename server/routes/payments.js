@@ -56,8 +56,8 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://da72-223-239-25-54.ngrok-free.app/payments/successpay",
-      furl: "https://da72-223-239-25-54.ngrok-free.app/payments/failedpay",
+      surl: "https://cc08-27-63-9-106.ngrok-free.app/payments/successpay",
+      furl: "https://cc08-27-63-9-106.ngrok-free.app/payments/failedpay",
     };
     const url = process.env.TESTPAYMENTURL;
 
@@ -247,7 +247,7 @@ router.post("/getpaydetails", async (req, res) => {
     );
     if (payid.rows.length) {
       const data = await pool.query(
-        `SELECT transaction_id,order_id,mihpayid FROM payments WHERE id=${payid.rows[0].payment_details_id}`
+        `SELECT transaction_id,order_id,mihpayid,amount FROM payments WHERE id=${payid.rows[0].payment_details_id}`
       );
       res.send(data.rows[0]);
     } else {

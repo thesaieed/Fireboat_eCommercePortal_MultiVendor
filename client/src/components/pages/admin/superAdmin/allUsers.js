@@ -338,7 +338,7 @@ function AllUsers() {
               <Input
                 prefix={<SearchOutlined />}
                 type="text"
-                placeholder="Search Vendors "
+                placeholder="Search Users"
                 style={{ width: "100%" }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}

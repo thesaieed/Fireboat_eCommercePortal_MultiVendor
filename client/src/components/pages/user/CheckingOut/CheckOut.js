@@ -491,6 +491,7 @@ const Checkout = () => {
                   )}
                   {current === 2 && paymentdone && (
                     <Button
+                      type="primary"
                       style={{
                         margin: "0 8px",
                       }}

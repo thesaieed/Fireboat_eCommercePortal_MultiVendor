@@ -24,14 +24,8 @@ const LeftMenu = ({ mode, randomCategories }) => {
       key: randomCategories[1]?.name,
     },
     {
-      label: (
-        <Link
-          to={`/browse/?search=categoryProducts&category=${randomCategories[2]?.name}`}
-        >
-          <span> {randomCategories[2]?.name} </span>
-        </Link>
-      ),
-      key: randomCategories[2]?.name,
+      label: <Link to="/aboutus">About Us</Link>,
+      key: "aboutus",
     },
   ];
 

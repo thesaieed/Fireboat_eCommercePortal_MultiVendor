@@ -21,11 +21,6 @@ function Footer() {
     <AntFooter style={{ background: "#fafafa" }}>
       <Row justify="center" align="middle" style={{ height: "60px" }}>
         <Col>
-          <div className="copyright">
-            <Link to="/aboutus">About Us</Link>
-          </div>
-        </Col>
-        <Col>
           <div className="copyright">© NILE 2023</div>
         </Col>
       </Row>

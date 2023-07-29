@@ -7,7 +7,7 @@ module.exports.sendNewOrderMailUser = async (
   products
 ) => {
   const orderdetails = products.map((product) => `${product.name}`);
-  const subject = `Your Order "${order_id}" has been Places at NILE`;
+  const subject = `Your Order "${order_id}" has been Placed at NILE`;
   const body = `<div
   class="container"
   style="max-width: 90%; margin: auto; padding-top: 20px"

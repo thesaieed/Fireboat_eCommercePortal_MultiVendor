@@ -125,6 +125,9 @@ function PaymentModeDropdown({
               <Title style={{ marginTop: 20, marginBottom: 25 }} level={3}>
                 Payment Successful
               </Title>
+              <Title level={4} style={{ color: "#86c61f" }}>
+                &#8377; {txnDetails?.amount}
+              </Title>
             </>
           )}
           {status === "fail" && (
@@ -134,6 +137,9 @@ function PaymentModeDropdown({
               />
               <Title style={{ marginTop: 20, marginBottom: 25 }} level={3}>
                 Payment Failed
+              </Title>
+              <Title level={4} style={{ color: "#f72a2c" }}>
+                &#8377; {txnDetails?.amount}
               </Title>
             </>
           )}

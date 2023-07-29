@@ -5,6 +5,7 @@ import {
   CloseOutlined,
   ExclamationOutlined,
   SearchOutlined,
+  EyeFilled,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
@@ -81,6 +82,7 @@ const SAPaymentCheckout = () => {
                   state: { row },
                 });
               }}
+              icon={<EyeFilled />}
             >
               <strong style={{ fontSize: 14, fontWeight: 700 }}>
                 {row.order_id}

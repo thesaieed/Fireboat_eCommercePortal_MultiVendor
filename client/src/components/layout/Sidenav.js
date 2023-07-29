@@ -251,7 +251,7 @@ function Sidenav({ color }) {
       ),
       key: "allProducts",
     },
-    {
+    !appUser.is_super_admin && {
       label: (
         <NavLink to="/admin/products/addproduct">
           <span
@@ -411,24 +411,6 @@ function Sidenav({ color }) {
         defaultSelectedKeys="adminDashboard"
       />
       <Menu mode="inline" className="SidebarlogoutMenu" items={logoutItem} />
-
-      {/* <div className="aside-footer">
-        <div
-          className="footer-box"
-          style={{
-            background: color,
-          }}
-        >
-          <span className="icon" style={{ color }}>
-            {dashboard}
-          </span>
-          <h6>Need Help?</h6>
-          <p>Please check our docs</p>
-          <Button type="primary" className="ant-btn-sm ant-btn-block">
-            DOCUMENTATION
-          </Button>
-        </div>
-      </div> */}
     </>
   );
 }
