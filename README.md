@@ -8,7 +8,7 @@ Using React.js on the client side which runs of port 3000.
 
 
 ## Server Details 
-Using Node.js on the client side which runs of port 5000. 
+Using Node.js on the server side which runs of port 5000. 
 
 
 
