@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { Layout, Button, Row, Col, Typography, Form, Input, Alert } from "antd";
-
+import Footer from "../../../layout/Footer";
 import signinbg from "../../../../assets/images/1.png";
 import registerIcon from "../../../../assets/images/registerIcon.png";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
@@ -13,7 +13,7 @@ import useAllContext from "../../../../context/useAllContext";
 import { LuShieldQuestion } from "react-icons/lu";
 
 const { Title } = Typography;
-const { Footer, Content } = Layout;
+const { Content } = Layout;
 
 function SignIn() {
   const navigate = useNavigate();
@@ -396,9 +396,7 @@ function SignIn() {
             </Col>
           </Row>
         </Content>
-        <Footer>
-          <p className="copyright"> Copyright © 2021</p>
-        </Footer>
+        <Footer />
       </Layout>
     </>
   );

@@ -5,9 +5,10 @@ import signinbg from "../../../../assets/images/vendorSigin.png";
 import { Link } from "react-router-dom";
 import logo from "../../../../assets/images/logo.png";
 import { UserOutlined } from "@ant-design/icons";
+import Footer from "../../../layout/Footer";
 import axios from "axios";
 const { Title } = Typography;
-const { Footer, Content } = Layout;
+const { Content } = Layout;
 
 function ForgotPasswordAdmin() {
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -185,9 +186,7 @@ function ForgotPasswordAdmin() {
             </Col>
           </Row>
         </Content>
-        <Footer>
-          <p className="copyright"> Copyright © 2021</p>
-        </Footer>
+        <Footer />
       </Layout>
     </>
   );

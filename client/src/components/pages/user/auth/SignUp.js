@@ -13,16 +13,14 @@ import {
 } from "antd";
 import logo from "../../../../assets/images/logo.png";
 import { UserOutlined, IdcardOutlined, LockOutlined } from "@ant-design/icons";
+import Footer from "../../../layout/Footer";
 
-// import logo1 from "../assets/images/logos-facebook.svg";
-// import logo2 from "../assets/images/logo-apple.svg";
-// import logo3 from "../assets/images/Google__G__Logo.svg.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAllContext from "../../../../context/useAllContext";
 
 const { Title } = Typography;
-const { /*Header,*/ Footer, Content } = Layout;
+const { Content } = Layout;
 
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -55,41 +53,15 @@ export default function SignUp() {
     setButtonLoading(true);
     try {
       const response = await axios.post("http://localhost:5000/signup", values);
-      // console.log("Responce : ", response);
-      //if signup is successfull
       if (response.data.status === 200) {
         setErrorMessage("");
         setSuccessMessage(response.data.message);
-        //keep a userToken saved locally and in database to keep loggedIn
-        // const userToken = generateRandomString(12);
-        //set userToken in local Storage
-        // localStorage.setItem("userToken", userToken);
-        // localStorage.setItem("isa", false);
-        // setUserToken(userToken);
-        // setAppUser(response.data.user);
-        //add userToken to database
-        // try {
-        //   await axios.post("http://localhost:5000/addusersloggedintokens", {
-        //     token: userToken,
-        //     id: response.data.user.id,
-        //   });
-        //   setIsValidToken(true);
-        // } catch (err) {
-        //   console.error(err);
-        // }
         form.resetFields();
-
-        //   if (response.data.user.isadmin === true) {
-        //     navigate("/admin/dashboard");
-        //   } else {
-        //     navigate("/");
-        //   }
       } else {
         setErrorMessage(response.data.message);
         setSuccessMessage("");
       }
     } catch (error) {
-      // console.error("Error : ", error);
       if (error.response?.status === 409) {
         form.resetFields();
         setErrorMessage("Email already registered!");
@@ -106,7 +78,6 @@ export default function SignUp() {
     setErrorMessage(
       "Details not submitted, check form details and try again !"
     );
-    // console.log("Failed:", errorInfo);
   };
   const handleGoogleauthCallback = useCallback(
     async (response) => {
@@ -422,9 +393,7 @@ export default function SignUp() {
             </p>
           </Card>
         </Content>
-        <Footer className="signupFooter">
-          <p className="copyright"> Copyright © 2021</p>
-        </Footer>
+        <Footer />
       </div>
     </>
   );

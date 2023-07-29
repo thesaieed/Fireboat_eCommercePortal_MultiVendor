@@ -56,8 +56,8 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://4c88-223-239-24-109.ngrok-free.app/payments/successpay",
-      furl: "https://4c88-223-239-24-109.ngrok-free.app/payments/failedpay",
+      surl: "https://da72-223-239-25-54.ngrok-free.app/payments/successpay",
+      furl: "https://da72-223-239-25-54.ngrok-free.app/payments/failedpay",
     };
     const url = process.env.TESTPAYMENTURL;
 

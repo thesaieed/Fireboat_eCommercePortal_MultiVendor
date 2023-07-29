@@ -5,8 +5,9 @@ import signinbg from "../../../../assets/images/1.png";
 import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 import logo from "../../../../assets/images/logo.png";
+import Footer from "../../../layout/Footer";
 const { Title } = Typography;
-const { Footer, Content } = Layout;
+const { Content } = Layout;
 
 function ForgotPassword() {
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -181,9 +182,7 @@ function ForgotPassword() {
             </Col>
           </Row>
         </Content>
-        <Footer>
-          <p className="copyright"> Copyright © 2021</p>
-        </Footer>
+        <Footer />
       </Layout>
     </>
   );

@@ -23,9 +23,9 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import useAllContext from "../../../../context/useAllContext";
-
+import Footer from "../../../layout/Footer";
 const { Title } = Typography;
-const { /*Header,*/ Footer, Content } = Layout;
+const { Content } = Layout;
 
 export default function AdminSignUp() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -430,9 +430,7 @@ export default function AdminSignUp() {
             </p>
           </Card>
         </Content>
-        <Footer className="signupFooter">
-          <p className="copyright"> Copyright © 2021</p>
-        </Footer>
+        <Footer />
       </div>
     </>
   );

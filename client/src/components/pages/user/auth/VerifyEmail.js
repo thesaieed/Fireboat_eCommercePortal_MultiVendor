@@ -8,6 +8,7 @@ import {
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import Footer from "../../../layout/Footer";
+
 export const VerifyEmail = () => {
   const { /*Header,*/ Content } = Layout;
   const [isVerifying, setIsVerifying] = useState(false);

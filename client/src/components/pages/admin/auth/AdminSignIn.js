@@ -12,8 +12,9 @@ import { FaUserAlt } from "react-icons/fa";
 import { LuShieldQuestion } from "react-icons/lu";
 import vendorIcon from "../../../../assets/images/vendorsIcon.png";
 import jwt_decode from "jwt-decode";
+import Footer from "../../../layout/Footer";
 const { Title } = Typography;
-const { /*Header,*/ Footer, Content } = Layout;
+const { Content } = Layout;
 
 function AdminSignIn() {
   const navigate = useNavigate();
@@ -430,9 +431,7 @@ function AdminSignIn() {
             </Col>
           </Row>
         </Content>
-        <Footer>
-          <p className="copyright"> Copyright © 2021</p>
-        </Footer>
+        <Footer />
       </Layout>
     </>
   );

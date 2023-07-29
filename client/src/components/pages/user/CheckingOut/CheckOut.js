@@ -479,7 +479,7 @@ const Checkout = () => {
                         Done
                       </Button>
                     )} */}
-                  {current > 0 && (
+                  {current > 0 && current != 2 && (
                     <Button
                       style={{
                         margin: "0 8px",
@@ -487,6 +487,16 @@ const Checkout = () => {
                       onClick={() => prev()}
                     >
                       Go Back
+                    </Button>
+                  )}
+                  {current === 2 && paymentdone && (
+                    <Button
+                      style={{
+                        margin: "0 8px",
+                      }}
+                      onClick={() => navigate("/orders")}
+                    >
+                      My Orders
                     </Button>
                   )}
                 </div>
@@ -529,7 +539,7 @@ const Checkout = () => {
                       if (gotData) next();
                       else
                         message.error(
-                          "Couldn't Complete rhe request, please try again!"
+                          "Couldn't Complete the request, please try again!"
                         );
                     }}
                     type="primary"
