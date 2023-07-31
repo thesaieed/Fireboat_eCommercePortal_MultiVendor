@@ -110,7 +110,7 @@ function ShowProductDetails() {
       console.error("review Error : ", reviewError);
     }
     setScreenLoading(false);
-  }, [appUser.id, navigate, productId, productDetails.stock_available]);
+  }, [appUser.id, navigate, productId]);
   const handleNewReviewSubmit = async () => {
     // console.log(newReview);
     setReviewButtonLoading(true);
