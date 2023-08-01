@@ -42,6 +42,7 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 
 function ShowProductDetails() {
+  const [isOutOfStock, setIsOutOfStock] = useState();
   const [suggestedProducts, setSuggestedProducts] = useState();
   const [productDetails, setProductDetails] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -87,6 +88,8 @@ function ShowProductDetails() {
         { params: { productId: productId, userId: appUser.id } }
       );
       // console.log(response.data);
+      const stockAvailable = response.data.stock_available > 0;
+      setIsOutOfStock(!stockAvailable);
       setProductDetails(response.data);
     } catch (error) {
       console.log(error);
@@ -155,7 +158,8 @@ function ShowProductDetails() {
   }, [navigate, productId, fetchProductDetails]);
 
   const incrementQuantity = () => {
-    if (quantity < 10) setQuantity((prevQuantity) => prevQuantity + 1);
+    if (quantity < 10 && productDetails.stock_available > 0)
+      setQuantity((prevQuantity) => prevQuantity + 1);
   };
 
   const decrementQuantity = () => {
@@ -450,6 +454,14 @@ function ShowProductDetails() {
                     </div>
                     <span>Price:</span>
                     <strong> &#8377; {productDetails.price}</strong>
+                    <div>
+                      {productDetails.stock_available > 0 ? (
+                        <h1 style={{ color: "green" }}>In stock</h1>
+                      ) : (
+                        <h1 style={{ color: "red" }}>Out of Stock</h1>
+                      )}
+                    </div>
+
                     <Descriptions column={1} style={{ marginTop: 25 }}>
                       <Descriptions.Item>
                         <div>
@@ -526,7 +538,10 @@ function ShowProductDetails() {
                       onClick={decrementQuantity}
                       style={{ fontSize: 30 }}
                     />
-                    <span style={{ padding: "5px" }}>{quantity}</span>
+                    {/* <span style={{ padding: "5px" }}>{quantity}</span> */}
+                    <span style={{ padding: "5px" }}>
+                      {isOutOfStock ? 0 : quantity}
+                    </span>
                     <PlusSquareFilled
                       onClick={incrementQuantity}
                       style={{ fontSize: 30 }}
@@ -539,8 +554,9 @@ function ShowProductDetails() {
                   onClick={handleAddToCart}
                   loading={buttonLoading}
                   icon={<ShoppingCartOutlined style={{ fontSize: 18 }} />}
+                  disabled={isOutOfStock}
                 >
-                  Add to Cart
+                  {isOutOfStock ? "Out of Stock" : "Add to Cart"}
                 </Button>
 
                 {/* <Button
