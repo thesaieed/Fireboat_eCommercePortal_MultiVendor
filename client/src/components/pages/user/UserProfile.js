@@ -11,13 +11,13 @@ import { CustomerServiceFilled } from "@ant-design/icons";
 // import { MdSupportAgent } from "react-icons/md";
 function UserProfile() {
   const navigate = useNavigate();
-  const { appUser } = useAllContext();
+  const { appUser, isValidToken } = useAllContext();
   useEffect(() => {
-    if (!appUser.id) {
+    if (!isValidToken && !appUser.id) {
       message.info("You need to be Logged In!");
       navigate("/auth/login");
     }
-  }, [appUser.id, navigate]);
+  }, [appUser.id, navigate, isValidToken]);
 
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);

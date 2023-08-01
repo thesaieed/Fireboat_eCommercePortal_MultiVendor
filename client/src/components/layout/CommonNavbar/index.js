@@ -135,7 +135,7 @@ const CommonNavbar = ({ handleSearch }) => {
           closable={true}
           onClose={showDrawer}
           open={visible}
-          style={{ zIndex: 99999 }}
+          style={{ zIndex: 1009 }}
         >
           <LeftMenu mode={"inline"} randomCategories={randomCategories} />
           <RightMenu mode={"inline"} />

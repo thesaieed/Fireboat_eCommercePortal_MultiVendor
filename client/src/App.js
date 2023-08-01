@@ -93,22 +93,15 @@ function App() {
                 <Route path="resetpassword" element={<ResetPasswordAdmin />} />
               </Route>
             </Route>
-
-            {/* user routes Start*/}
             <Route path="/browse" element={<Browse />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/product" element={<ShowProductDetails />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/profile" element={<UserProfile />} />
-            {/* <Route path="/yourorders" element={<YourOrders />} /> */}
             <Route path="/orders" element={<UserOrders />} />
             <Route path="/orderdetails" element={<UserOrderDetails />} />
             <Route path="/youraddresses" element={<YourAddresses />} />
             <Route path="/loginandsecurity" element={<LoginAndSecurity />} />
-            {/* user routes end */}
-
-            {/* Admin Routes start */}
-
             <Route path="/admin" element={<Main />}>
               <Route path="superadmin">
                 <Route path="allvendors" element={<AllVendors />} />

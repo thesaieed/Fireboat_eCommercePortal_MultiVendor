@@ -20,17 +20,17 @@ import { FcDataEncryption } from "react-icons/fc";
 import { BiSolidEditAlt } from "react-icons/bi";
 function LoginAndSecurity() {
   const navigate = useNavigate();
-  const { appUser, fetchUserDetails } = useAllContext();
+  const { appUser, fetchUserDetails, isValidToken } = useAllContext();
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
 
   useEffect(() => {
-    if (!appUser.id) {
+    if (!isValidToken && !appUser.id) {
       message.info("You need to be Logged In!");
       navigate("/auth/login");
     } else fetchUserDetails();
-  }, [appUser, fetchUserDetails, navigate]);
+  }, [appUser.id, fetchUserDetails, navigate, isValidToken]);
   const [showModal, setShowModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   //   const [editData, setEditData] = useState(null);

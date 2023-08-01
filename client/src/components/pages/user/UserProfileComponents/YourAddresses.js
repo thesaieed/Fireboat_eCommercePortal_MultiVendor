@@ -23,7 +23,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { BiSolidEditAlt, BiSolidPhone } from "react-icons/bi";
 function YourAddresses() {
   const navigate = useNavigate();
-  const { appUser } = useAllContext();
+  const { appUser, isValidToken } = useAllContext();
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
@@ -88,7 +88,7 @@ function YourAddresses() {
     }
   }, [appUser.id]);
   useEffect(() => {
-    if (!appUser.id) {
+    if (!isValidToken && !appUser.id) {
       message.info("You need to be Logged In!");
       navigate("/auth/login");
     }
@@ -96,7 +96,7 @@ function YourAddresses() {
     if (appUser.id !== null && appUser.id !== undefined) {
       getAddresses();
     }
-  }, [appUser.id, getAddresses, navigate]);
+  }, [appUser.id, getAddresses, navigate, isValidToken]);
 
   //editing address
   const handleEditAddress = (address) => {

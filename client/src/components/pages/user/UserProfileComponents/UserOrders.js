@@ -14,7 +14,7 @@ import axios from "axios";
 import CommonNavbar from "../../../layout/CommonNavbar";
 import Footer from "../../../layout/Footer";
 const UserOrders = () => {
-  const { appUser } = useAllContext();
+  const { appUser, isValidToken } = useAllContext();
   const [search, setSearch] = useState("");
   const [allOrders, setAllOrders] = useState();
   const [filteredOrders, setFilteredOrders] = useState();
@@ -37,14 +37,15 @@ const UserOrders = () => {
     }
     setLoading(false);
   }, [appUser.id]);
+
   useEffect(() => {
-    if (appUser.id) {
-      getAllOrders();
-    } else {
+    if (!isValidToken && !appUser.id) {
       message.info("You need to be Logged In!");
       navigate("/auth/login");
+    } else {
+      getAllOrders();
     }
-  }, [getAllOrders, appUser.id, navigate]);
+  }, [getAllOrders, appUser.id, navigate, isValidToken]);
   useEffect(() => {
     const result = allOrders?.filter((order) => {
       return Object.keys(order)[0]

@@ -280,6 +280,7 @@ const Browse = () => {
         quantity: 1,
       });
       message.success("Added to cart");
+
       updateNumberOfCartItems();
     } catch (error) {
       console.error("Error adding product to cart:", error);
@@ -307,12 +308,8 @@ const Browse = () => {
             <Card
               className="productContainer"
               hoverable
-              // style={{
-              //   width: 240,
-              // }}
               cover={
                 <img
-                  // width="100%"
                   className="productImg"
                   height={300}
                   alt="example"
@@ -509,9 +506,7 @@ const Browse = () => {
               <FilterOutlined />
               Filters
             </Button>
-            {/* <Title level={2} className="p-15">
-                All Products
-              </Title> */}
+
             <Row justify="left" style={{ marginTop: 7, marginLeft: 25 }}>
               <Col>
                 {!category?.length && (
