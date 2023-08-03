@@ -22,6 +22,7 @@ const OrderDetails = () => {
     () => location.state?.completeProductsWithAllDetails || [],
     [location.state?.completeProductsWithAllDetails]
   );
+  console.log(orderDetails);
   const { appUser } = useAllContext();
   return (
     <Card>
@@ -123,7 +124,7 @@ const OrderDetails = () => {
                             height={22}
                             alt="categoyIcon"
                           />
-                          {product?.product?.seller}
+                          {product?.product?.seller?.name}
                         </Typography.Text>
                         <Typography.Text
                           type="secondary"

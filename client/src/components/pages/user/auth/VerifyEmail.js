@@ -183,11 +183,8 @@ export const VerifyEmail = () => {
             )}
           </Card>
         </Content>
-        <div style={{ position: "absolute", bottom: 0, width: "100%" }}>
-          <div className="d-flex justify-content-center">
-            <Footer />
-          </div>
-        </div>
+
+        <Footer />
       </div>
     </>
   );
