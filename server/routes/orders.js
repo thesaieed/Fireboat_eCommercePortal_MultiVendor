@@ -12,7 +12,7 @@ router.post("/allorders", async (req, res) => {
   try {
     if (!is_super_admin) {
       const orderIds = await pool.query(
-        "SELECT DISTINCT order_id FROM orders where vendor_id=$1",
+        "SELECT DISTINCT order_id,created_at FROM orders where vendor_id=$1 ORDER BY created_at DESC",
         [vendor_id]
       );
       // console.log(orderIds);
@@ -88,7 +88,7 @@ router.post("/pending", async (req, res) => {
   try {
     if (!is_super_admin) {
       const orderIds = await pool.query(
-        "SELECT DISTINCT order_id FROM orders where vendor_id=$1 AND payment_status='success' AND order_status!='delivered'",
+        "SELECT DISTINCT order_id,created_at FROM orders where vendor_id=$1 AND payment_status='success' AND order_status!='delivered' ORDER BY created_at DESC",
         [vendor_id]
       );
       // console.log(orderIds);
@@ -122,7 +122,7 @@ router.post("/pending", async (req, res) => {
       res.send({ orders, products });
     } else if (is_super_admin) {
       const orderIds = await pool.query(
-        "SELECT DISTINCT order_id FROM orders where payment_status='success' AND order_status!='delivered'"
+        "SELECT DISTINCT order_id,created_at FROM orders where payment_status='success' AND order_status!='delivered' ORDER BY created_at DESC"
       );
       // console.log(orderIds);
       var productIds = [];
@@ -166,7 +166,7 @@ router.post("/completed", async (req, res) => {
   try {
     if (!is_super_admin) {
       const orderIds = await pool.query(
-        "SELECT DISTINCT order_id FROM orders where vendor_id=$1 AND payment_status='success' AND order_status='delivered'",
+        "SELECT DISTINCT order_id,created_at FROM orders where vendor_id=$1 AND payment_status='success' AND order_status='delivered' ORDER BY created_at DESC",
         [vendor_id]
       );
       // console.log(orderIds);
@@ -200,7 +200,7 @@ router.post("/completed", async (req, res) => {
       res.send({ orders, products });
     } else if (is_super_admin) {
       const orderIds = await pool.query(
-        "SELECT DISTINCT order_id FROM orders where payment_status='success' AND order_status='delivered'"
+        "SELECT DISTINCT order_id,created_at FROM orders where payment_status='success' AND order_status='delivered' ORDER BY created_at DESC"
       );
       // console.log(orderIds);
       var productIds = [];
@@ -242,7 +242,7 @@ router.post("/getOrderProductDetails", async (req, res) => {
     req.body;
   try {
     const address = await pool.query(
-      "SELECT full_name, phone_number, country,phone_number, pincode,house_no_company,area_street_village,landmark, town_city, state FROM shippingaddress where id=$1",
+      "SELECT full_name, phone_number, country,phone_number, pincode,house_no_company,area_street_village,landmark, town_city, state,created_at FROM shippingaddress where id=$1 ORDER BY created_at",
       [address_id]
     );
     const payment = await pool.query(

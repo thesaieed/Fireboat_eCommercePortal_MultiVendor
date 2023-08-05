@@ -1386,7 +1386,7 @@ app.post("/allorders", async (req, res) => {
   var orders = [];
   try {
     const orderIds = await pool.query(
-      "SELECT DISTINCT order_id FROM orders where user_id=$1 AND payment_status!=$2",
+      "SELECT DISTINCT order_id,created_at FROM orders where user_id=$1 AND payment_status!=$2 ORDER BY created_at DESC",
       [user_id, "In Progress"]
     );
     // console.log(orderIds);
@@ -1429,7 +1429,7 @@ app.get("/youraddresses", async (req, res) => {
   // console.log(req.query);
   try {
     const yourAddresses = await pool.query(
-      "select * from shippingaddress where user_id=$1",
+      "select * from shippingaddress where user_id=$1 ORDER BY created_at",
       [user_id]
     );
     res.send(yourAddresses.rows);
