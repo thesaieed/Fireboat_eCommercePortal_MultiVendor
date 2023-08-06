@@ -83,7 +83,7 @@ export default function SignUp() {
     async (response) => {
       // console.log(response);
       let user = jwt_decode(response.credential);
-      console.log("User:", user);
+      // console.log("User:", user);
       const values = {
         googlename: user.name,
         email: user.email,

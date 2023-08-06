@@ -11,6 +11,7 @@
 */
 
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Row, Col, Button, Space } from "antd";
 
 import { UserOutlined } from "@ant-design/icons";
@@ -51,10 +52,11 @@ function Header({ subName, onPress, appUser }) {
           >
             {toggler}
           </Button>
-          <Space>
-            <UserOutlined />
-            <span>{appUser?.name}</span>
-          </Space>
+          <Link style={{ color: "black" }} to="/admin/profile">
+            <Space>
+              <UserOutlined /> <span>{appUser?.name} </span>
+            </Space>
+          </Link>
 
           {/* <Input
             className="header-search"
