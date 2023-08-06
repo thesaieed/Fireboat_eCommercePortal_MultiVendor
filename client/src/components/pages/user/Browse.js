@@ -37,22 +37,22 @@ const Browse = () => {
   const { appUser, updateNumberOfCartItems } = useAllContext();
 
   //Filter States and functions
-  const [sortValue, setSortValue] = useState(0);
-  const [sortAvgRating, setSortAvgRating] = useState(-1);
+  const [sortValue, setSortValue] = useState(null);
+  const [sortAvgRating, setSortAvgRating] = useState(null);
   const [priceRange, setPriceRange] = useState({
-    minPrice: 0,
-    maxPrice: 10000,
+    minPrice: null,
+    maxPrice: null,
   });
   const [sliderRange, setSliderRange] = useState({
-    min: 0,
-    max: 10000,
+    min: null,
+    max: null,
   });
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  const [selectedVendors, setSelectedVendors] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState();
+  const [selectedBrands, setSelectedBrands] = useState();
+  const [selectedVendors, setSelectedVendors] = useState();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   };
@@ -133,7 +133,7 @@ const Browse = () => {
 
         // console.log(allVendors);
 
-        if (!res.data.length) {
+        if (!res.data?.length) {
           setNoProductMessage(true);
           setBrowseProducts([]);
           setShownProducts([]);
@@ -153,7 +153,7 @@ const Browse = () => {
             });
             return null;
           });
-          // console.log("prods : ", products);
+          console.log("prods : ", products);
           setNoProductMessage(false);
           setBrowseProducts(products);
           setShownProducts(products);
@@ -175,7 +175,7 @@ const Browse = () => {
     var filteredArray = [];
 
     //Filter by category First
-    if (selectedCategories.length) {
+    if (selectedCategories?.length) {
       filteredArray = browseProducts.filter(function (product) {
         return selectedCategories.includes(product.category);
       });
@@ -183,13 +183,13 @@ const Browse = () => {
       filteredArray = browseProducts;
     }
     //Filter new array by Brand
-    if (selectedBrands.length) {
+    if (selectedBrands?.length) {
       filteredArray = filteredArray.filter(function (product) {
         return selectedBrands.includes(product.brand.brand);
       });
     }
     //Filter new array by Vendor
-    if (selectedVendors.length) {
+    if (selectedVendors?.length) {
       filteredArray = filteredArray.filter(function (product) {
         return selectedVendors.includes(product.vendor.business_name);
       });
@@ -546,13 +546,13 @@ const Browse = () => {
               )}
               {!noProductMessage && showProducts()}
             </Row>
-            {browseProducts.length > 9 && (
+            {browseProducts?.length > 9 && (
               <Row justify="center">
                 <Col>
                   <Pagination
                     defaultCurrent={1}
                     current={currentPage}
-                    total={shownProducts.length}
+                    total={shownProducts?.length}
                     pageSize={9}
                     onChange={onPageChange}
                     responsive
