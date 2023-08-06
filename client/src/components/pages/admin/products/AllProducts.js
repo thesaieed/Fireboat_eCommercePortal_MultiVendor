@@ -480,6 +480,7 @@ function AllProducts() {
         setRefreshPage(true);
         message.success("Image deleted successfully");
         closeDeleteImageModal();
+        setDeleteImagesLoading(false);
         if (refreshPage) {
           setRefreshPage(false);
         }
@@ -489,8 +490,8 @@ function AllProducts() {
       }
     } catch (error) {
       console.log("server error", error);
+      setDeleteImagesLoading(true);
     }
-    setDeleteImagesLoading(true);
   };
 
   const openDeleteImageModal = () => {
