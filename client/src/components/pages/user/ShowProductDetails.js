@@ -158,8 +158,14 @@ function ShowProductDetails() {
   }, [navigate, productId, fetchProductDetails]);
 
   const incrementQuantity = () => {
-    if (quantity < 10 && productDetails.stock_available > 0)
-      setQuantity((prevQuantity) => prevQuantity + 1);
+    if (productDetails.stock_available > 0) {
+      if (quantity < productDetails.stock_available) {
+        setQuantity((prevQuantity) => prevQuantity + 1);
+      } else
+        message.info(
+          `Maximum stock available is ${productDetails.stock_available}`
+        );
+    } else message.info("Out of Stock");
   };
 
   const decrementQuantity = () => {
@@ -456,9 +462,9 @@ function ShowProductDetails() {
                     <strong> &#8377; {productDetails.price}</strong>
                     <div>
                       {productDetails.stock_available > 0 ? (
-                        <h1 style={{ color: "green" }}>In stock</h1>
+                        <strong style={{ color: "#8dc433" }}>In Stock</strong>
                       ) : (
-                        <h1 style={{ color: "red" }}>Out of Stock</h1>
+                        <strong style={{ color: "red" }}>Out of Stock</strong>
                       )}
                     </div>
 
