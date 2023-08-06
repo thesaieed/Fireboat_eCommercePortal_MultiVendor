@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1c5850fa.css",
+    "main.js": "/static/js/main.48519c7e.js",
+    "static/media/vendor-bg-signup.jpg": "/static/media/vendor-bg-signup.ac3d54fe0e2e8f896320.jpg",
+    "static/media/bg-signup.jpg": "/static/media/bg-signup.2e4d447b8e06c355d898.jpg",
+    "static/media/HomeBg1.jpg": "/static/media/HomeBg1.de461c29d0099e7d5d84.jpg",
+    "static/media/1.png": "/static/media/1.c4f38b41cb50139d1c16.png",
+    "static/media/vendorSigin.png": "/static/media/vendorSigin.4fd2aea2bfc1f9323772.png",
+    "static/media/aboutUsImg5.png": "/static/media/aboutUsImg5.d6bc452ea0db4e5f7283.png",
+    "static/media/ContactUsImg.jpg": "/static/media/ContactUsImg.66cd347e2c2606dcb0a7.jpg",
+    "static/media/vendorsIcon.png": "/static/media/vendorsIcon.0feed3c11816b07f6ab8.png",
+    "static/media/brandIcon.png": "/static/media/brandIcon.456b13755d828cfb7964.png",
+    "static/media/usersIcon.png": "/static/media/usersIcon.9b0c33ce296c267bd518.png",
+    "static/media/productsIcon.png": "/static/media/productsIcon.5d90f78372751ce6837c.png",
+    "index.html": "/index.html",
+    "main.1c5850fa.css.map": "/static/css/main.1c5850fa.css.map",
+    "main.48519c7e.js.map": "/static/js/main.48519c7e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1c5850fa.css",
+    "static/js/main.48519c7e.js"
+  ]
+}
