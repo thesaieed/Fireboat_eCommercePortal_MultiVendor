@@ -1,5 +1,5 @@
 # Fireboat_eCommercePortal
-5 Month internship project of Mr. Saieed Shafi and Mr. Danish Ayoub,  8th Semester students of GCET Jammu, under the supervision of Mr. Farhan Rafiq Bhat, CEO Fireboat Studios PVt. Ltd. 
+4 Month internship project of Mr. Saieed Shafi and Mr. Danish Ayoub,  8th Semester students of GCET Jammu, under the supervision of Mr. Farhan Rafiq Bhat, CEO Fireboat Studios PVt. Ltd. 
 
 
 ## Client Details
