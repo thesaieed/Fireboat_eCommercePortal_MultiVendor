@@ -2,8 +2,8 @@ const { sendMail } = require("./sendMail");
 
 module.exports.sendResetPasswordMail = async (email, token, is_vendor) => {
   const href = is_vendor
-    ? `http://localhost:3000/auth/admin/resetpassword?t=${token}&email=${email}&iv=${is_vendor}`
-    : `http://localhost:3000/auth/resetpassword?t=${token}&email=${email}&iv=${is_vendor}`;
+    ? `${FRNTURL}/auth/admin/resetpassword?t=${token}&email=${email}&iv=${is_vendor}`
+    : `${FRNTURL}/auth/resetpassword?t=${token}&email=${email}&iv=${is_vendor}`;
   const subject = "Reset your Password at NILE";
   const body = `<div
   class="container"

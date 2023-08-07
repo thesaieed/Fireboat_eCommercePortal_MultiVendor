@@ -9,7 +9,7 @@ module.exports.verifyEmail = async ({ token, email, isVendor = false }) => {
   <h2>Welcome to NILE.</h2>
   <p style="margin-bottom: 30px;">Please verify your email by clicking the following link: </p>
 
-  <a href="http://localhost:3000/auth/verifyEmail/?verify=${token}&iv=${isVendor}&email=${email}" style="background-color: #86c61f; border: none;
+  <a href="${FRNTURL}/auth/verifyEmail/?verify=${token}&iv=${isVendor}&email=${email}" style="background-color: #86c61f; border: none;
   color: #000000;
   padding: 15px 32px;
   text-align: center;
