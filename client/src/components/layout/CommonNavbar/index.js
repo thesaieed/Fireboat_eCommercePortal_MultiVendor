@@ -19,7 +19,7 @@ const CommonNavbar = ({ handleSearch }) => {
     setVisible(!visible);
   };
   // const navCategories = categories;
-  const randomCategories = categories.slice(0, 3);
+  const randomCategories = categories?.slice(0, 3);
 
   const searchMenuItem = [
     {

@@ -44,7 +44,7 @@ function ReviewItemsDropdown({
             <Col span={8}>
               <Image
                 style={{ maxWidth: "180px" }}
-                src={`http://localhost:5000/${item.image[0].replace(
+                src={`https://nile-server-a3fg.onrender.com/${item.image[0].replace(
                   /\\/g,
                   "/"
                 )}`}

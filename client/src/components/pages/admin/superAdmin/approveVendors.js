@@ -45,7 +45,7 @@ function AllVendors() {
     setLoading(true);
     try {
       const allVendors = await axios.post(
-        "http://localhost:5000/vendor/getapprovevendorslist",
+        "https://nile-server-a3fg.onrender.com/vendor/getapprovevendorslist",
         { is_super_admin: appUser.is_super_admin }
       );
       // console.log("allvendors : ", allVendors);
@@ -87,10 +87,10 @@ function AllVendors() {
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const approveRequest = await axios.post(
-        "http://localhost:5000/vendor/approvevendor",
+        "https://nile-server-a3fg.onrender.com/vendor/approvevendor",
         { itemId }
       );
-      // axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
+      // axios.delete(`https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`),
       const vendorApprovalStatus = approveRequest.data.status;
       //   const imageDeletionStatus = results[1].status;
 
@@ -130,10 +130,10 @@ function AllVendors() {
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const rejectRequest = await axios.post(
-        "http://localhost:5000/vendor/rejectvendor",
+        "https://nile-server-a3fg.onrender.com/vendor/rejectvendor",
         { itemId: selectedRowId, rejectionReason: rejectReason }
       );
-      // axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
+      // axios.delete(`https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`),
       const rejectStatus = rejectRequest.data.status;
       //   const imageDeletionStatus = results[1].status;
 

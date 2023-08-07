@@ -67,7 +67,7 @@ function ShowProductDetails() {
   // const { productId } = useParams();
   // console.log(productId);
   // const productId = props.match.params.id;
-  const baseImgUrl = "http://localhost:5000/";
+  const baseImgUrl = "https://nile-server-a3fg.onrender.com/";
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
   const { Title, Paragraph, Text } = Typography; // console.log(productId);
@@ -84,7 +84,7 @@ function ShowProductDetails() {
     setScreenLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:5000/admin/productdetails",
+        "https://nile-server-a3fg.onrender.com/admin/productdetails",
         { params: { productId: productId, userId: appUser.id } }
       );
       // console.log(response.data);
@@ -101,7 +101,7 @@ function ShowProductDetails() {
     }
     try {
       const response = await axios.post(
-        "http://localhost:5000/review/productreviews",
+        "https://nile-server-a3fg.onrender.com/review/productreviews",
         { product_id: productId }
       );
 
@@ -116,7 +116,7 @@ function ShowProductDetails() {
     setReviewButtonLoading(true);
     try {
       const addReviewResponse = await axios.post(
-        "http://localhost:5000/review/newreview",
+        "https://nile-server-a3fg.onrender.com/review/newreview",
         {
           ...newReview,
           user_id: appUser.id,
@@ -139,7 +139,7 @@ function ShowProductDetails() {
     setDeleteReviewButtonLoading(true);
     try {
       const deleteResponse = await axios.post(
-        "http://localhost:5000/review/deletereview",
+        "https://nile-server-a3fg.onrender.com/review/deletereview",
         { user_id: appUser.id, product_id: productId }
       );
       if (deleteResponse.data) {
@@ -188,7 +188,7 @@ function ShowProductDetails() {
     }
 
     try {
-      await axios.post("http://localhost:5000/addtocart", {
+      await axios.post("https://nile-server-a3fg.onrender.com/addtocart", {
         user_id: appUser.id,
         product_id: productId,
         quantity: quantity,
@@ -207,7 +207,7 @@ function ShowProductDetails() {
       // console.log(productDetails.brand_id);
       try {
         const response = await axios.get(
-          "http://localhost:5000/suggestedproducts",
+          "https://nile-server-a3fg.onrender.com/suggestedproducts",
           {
             params: {
               brand_id: productDetails.category_id,

@@ -24,7 +24,7 @@ const SAPaymentCheckout = () => {
     setStatsLoading(true);
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/payments/admintransactions"
+        "https://nile-server-a3fg.onrender.com/payments/admintransactions"
       );
 
       setTransactions(data);

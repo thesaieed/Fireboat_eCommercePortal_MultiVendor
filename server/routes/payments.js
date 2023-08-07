@@ -56,8 +56,8 @@ router.post("/initpayment", async (req, res) => {
       firstname: fullname,
       email,
       phone,
-      surl: "https://9b7e-117-98-118-2.ngrok-free.app/payments/successpay",
-      furl: "https://9b7e-117-98-118-2.ngrok-free.app/payments/failedpay",
+      surl: `${process.env.SURL}/payments/successpay`,
+      furl: `${process.env.SURL}/payments/failedpay`,
     };
     const url = process.env.TESTPAYMENTURL;
 
@@ -187,16 +187,16 @@ router.post("/successpay", async (req, res) => {
     //     ["SuccessfulTamperedPayment", order_id]
     //   );
     //   res.redirect(
-    //     `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`
+    //     `${process.env.FRNTURL}/checkout/?paymentdone=true&status=fail&t=${txnid}`
     //   );
     // }
     res.redirect(
-      `http://localhost:3000/checkout/?paymentdone=true&status=success&t=${txnid}`
+      `${process.env.FRNTURL}/checkout/?paymentdone=true&status=success&t=${txnid}`
     );
   } catch (paymenterror) {
     console.error("Payment Error : ", paymenterror);
     res.redirect(
-      `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`
+      `${process.env.FRNTURL}/checkout/?paymentdone=true&status=fail&t=${txnid}`
     );
   }
 });
@@ -236,7 +236,7 @@ router.post("/failedpay", async (req, res) => {
   }
 
   res.redirect(
-    `http://localhost:3000/checkout/?paymentdone=true&status=fail&t=${txnid}`
+    `${process.env.FRNTURL}/checkout/?paymentdone=true&status=fail&t=${txnid}`
   );
 });
 router.post("/getpaydetails", async (req, res) => {

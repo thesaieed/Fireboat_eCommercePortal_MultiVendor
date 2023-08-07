@@ -30,7 +30,7 @@ const Home = () => {
 
   const { Paragraph, Title, Text } = Typography;
   const { Content } = Layout;
-  const baseImgUrl = "http://localhost:5000/";
+  const baseImgUrl = "https://nile-server-a3fg.onrender.com/";
 
   //quick buy
   const handleQuickBuy = async (productId) => {
@@ -45,7 +45,7 @@ const Home = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/addtocart", {
+      await axios.post("https://nile-server-a3fg.onrender.com/addtocart", {
         user_id: appUser.id,
         product_id: productId,
         quantity: quantity,
@@ -63,7 +63,7 @@ const Home = () => {
       // console.log(productDetails.brand_id);
       try {
         const response = await axios.get(
-          "http://localhost:5000/searchproducts",
+          "https://nile-server-a3fg.onrender.com/searchproducts",
           {
             params: {
               user_id: appUser.id,
@@ -85,9 +85,13 @@ const Home = () => {
 
   const getHomeData = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/homedata");
+      const { data } = await axios.get(
+        "https://nile-server-a3fg.onrender.com/homedata"
+      );
       // console.log(data.homeData);
-      const brands = await axios.get("http://localhost:5000/brands");
+      const brands = await axios.get(
+        "https://nile-server-a3fg.onrender.com/brands"
+      );
       setBrands(brands.data);
       setAllProducts(data.homeData);
     } catch (err) {

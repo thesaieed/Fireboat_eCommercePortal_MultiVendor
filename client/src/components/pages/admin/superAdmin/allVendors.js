@@ -26,7 +26,7 @@ function AllVendors() {
     setLoading(true);
     try {
       const allVendors = await axios.post(
-        "http://localhost:5000/vendor/allvendors",
+        "https://nile-server-a3fg.onrender.com/vendor/allvendors",
         { is_super_admin: appUser.is_super_admin }
       );
       // console.log("allvendors : ", allVendors);
@@ -61,8 +61,10 @@ function AllVendors() {
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
-        axios.delete(`http://localhost:5000/vendor/editvendor/${itemId}`),
-        // axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
+        axios.delete(
+          `https://nile-server-a3fg.onrender.com/vendor/editvendor/${itemId}`
+        ),
+        // axios.delete(`https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`),
       ];
 
       const results = await axios.all(deleteRequests);
@@ -105,7 +107,7 @@ function AllVendors() {
     //     <img
     //       // width={50}
     //       // height={50}
-    //       src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
+    //       src={`https://nile-server-a3fg.onrender.com/${row.image.replace(/\\/g, "/")}`}
     //       alt=""
     //       style={{ cursor: "pointer" }}
     //       onClick={() => {
@@ -281,7 +283,7 @@ function AllVendors() {
           footer={null}
         >
           <img
-            src={`http://localhost:5000/${selectedImage.replace(/\\/g, "/")}`}
+            src={`https://nile-server-a3fg.onrender.com/${selectedImage.replace(/\\/g, "/")}`}
             alt=""
             style={{ width: "100%" }}
           />

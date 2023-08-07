@@ -110,7 +110,7 @@ const Checkout = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:5000/shippingaddress",
+        "https://nile-server-a3fg.onrender.com/shippingaddress",
         {
           params: {
             id: appUser.id,
@@ -128,9 +128,12 @@ const Checkout = () => {
   const fetchQuantity = useCallback(async () => {
     try {
       const ids = productData.map((item) => item.id);
-      const response = await axios.get("http://localhost:5000/checkout", {
-        params: { ids },
-      });
+      const response = await axios.get(
+        "https://nile-server-a3fg.onrender.com/checkout",
+        {
+          params: { ids },
+        }
+      );
       const updatedQuantity = response.data;
 
       const updatedItemDetails = itemDetails.map((item) => {
@@ -164,7 +167,9 @@ const Checkout = () => {
 
   const updateQuantityInDatabase = async (itemId, quantity) => {
     try {
-      await axios.put(`http://localhost:5000/cart/${itemId}`, { quantity });
+      await axios.put(`https://nile-server-a3fg.onrender.com/cart/${itemId}`, {
+        quantity,
+      });
     } catch (error) {
       console.error("server error", error);
     }
@@ -212,7 +217,7 @@ const Checkout = () => {
     values.id = appUser.id;
     try {
       const response = await axios.post(
-        "http://localhost:5000/addshippingaddress",
+        "https://nile-server-a3fg.onrender.com/addshippingaddress",
         values
       );
       // console.log(response.status);
@@ -390,7 +395,7 @@ const Checkout = () => {
     var { id, name, email } = appUser;
     try {
       const getdata = await axios.post(
-        "http://localhost:5000/payments/initpayment",
+        "https://nile-server-a3fg.onrender.com/payments/initpayment",
         {
           user_id: id,
           products,

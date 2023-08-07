@@ -14,10 +14,13 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
     setButtonLoading(true);
     if (values.name) {
       try {
-        const response = await axios.post("http://localhost:5000/addcategory", {
-          name: values.name,
-          vendorId: appUser.id,
-        });
+        const response = await axios.post(
+          "https://nile-server-a3fg.onrender.com/addcategory",
+          {
+            name: values.name,
+            vendorId: appUser.id,
+          }
+        );
         // console.log(response);
         if (response.data.id) {
           setSuccessMessage(`Category ${values.name} Created Successfully !`);

@@ -21,7 +21,7 @@ function ForgotPasswordAdmin() {
   const onFinish = async (values) => {
     setButtonLoading(true);
     const res = await axios.post(
-      "http://localhost:5000/sendresetpasswordlink",
+      "https://nile-server-a3fg.onrender.com/sendresetpasswordlink",
       { email: values.email, is_vendor: true }
     );
     // console.log(res.data);

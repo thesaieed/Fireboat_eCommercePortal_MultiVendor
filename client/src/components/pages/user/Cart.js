@@ -48,12 +48,17 @@ function Cart() {
       setLoading(true);
       // console.log(appUser.appUser.id)
       try {
-        const response = await axios.get("http://localhost:5000/cart", {
-          params: {
-            id: appUser.id,
-          },
-        });
-        const brandsRes = await axios.get("http://localhost:5000/brands");
+        const response = await axios.get(
+          "https://nile-server-a3fg.onrender.com/cart",
+          {
+            params: {
+              id: appUser.id,
+            },
+          }
+        );
+        const brandsRes = await axios.get(
+          "https://nile-server-a3fg.onrender.com/brands"
+        );
 
         const data1 = response.data.data1; //id, product_id,quantity from cart table
         // console.log(data1);
@@ -139,7 +144,9 @@ function Cart() {
 
   const updateQuantityInDatabase = async (itemId, quantity) => {
     try {
-      await axios.put(`http://localhost:5000/cart/${itemId}`, { quantity });
+      await axios.put(`https://nile-server-a3fg.onrender.com/cart/${itemId}`, {
+        quantity,
+      });
       // console.log("Quantity updated in the database");
     } catch (error) {
       console.error("Error updating quantity in the database:", error);
@@ -166,7 +173,9 @@ function Cart() {
     // console.log(index);
     try {
       // Make a DELETE request to your server API endpoint to delete the item from the cart
-      await axios.delete(`http://localhost:5000/cart/${itemId}`);
+      await axios.delete(
+        `https://nile-server-a3fg.onrender.com/cart/${itemId}`
+      );
 
       // Remove the deleted item from the productData state
       setProductData((prevData) =>
@@ -303,7 +312,7 @@ function Cart() {
                 <div className="d-flex justify-content-center">
                   <Image
                     style={{ maxWidth: "180px" }}
-                    src={`http://localhost:5000/${item.image[0].replace(
+                    src={`https://nile-server-a3fg.onrender.com/${item.image[0].replace(
                       /\\/g,
                       "/"
                     )}`}

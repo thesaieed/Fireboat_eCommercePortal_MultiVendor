@@ -25,9 +25,12 @@ function AllUsers() {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const allUsers = await axios.get("http://localhost:5000/allusers", {
-        is_super_admin: appUser.is_super_admin,
-      });
+      const allUsers = await axios.get(
+        "https://nile-server-a3fg.onrender.com/allusers",
+        {
+          is_super_admin: appUser.is_super_admin,
+        }
+      );
       //   console.log(allUsers.data);
       setUsers(allUsers.data);
     } catch (err) {
@@ -58,7 +61,7 @@ function AllUsers() {
 
     try {
       const results = await axios.delete(
-        `http://localhost:5000/deleteuser/${userId}`
+        `https://nile-server-a3fg.onrender.com/deleteuser/${userId}`
       );
 
       //   console.log(userId);
@@ -88,7 +91,7 @@ function AllUsers() {
     // console.log(userId);
     try {
       const results = await axios.put(
-        `http://localhost:5000/disableuser/${userId}`
+        `https://nile-server-a3fg.onrender.com/disableuser/${userId}`
       );
 
       //   console.log(userId);
@@ -120,7 +123,7 @@ function AllUsers() {
     // console.log(userId);
     try {
       const results = await axios.put(
-        `http://localhost:5000/enableuser/${userId}`
+        `https://nile-server-a3fg.onrender.com/enableuser/${userId}`
       );
 
       //   console.log(userId);

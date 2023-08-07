@@ -59,7 +59,7 @@ export default function AdminSignUp() {
     setButtonLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/vendor/newvendor",
+        "https://nile-server-a3fg.onrender.com/vendor/newvendor",
         values
       );
       // console.log("Responce : ", response);
@@ -104,7 +104,7 @@ export default function AdminSignUp() {
       };
       setButtonLoading(true);
       const res = await axios.post(
-        "http://localhost:5000/vendor/googlelogin",
+        "https://nile-server-a3fg.onrender.com/vendor/googlelogin",
         values
       );
       switch (res.data.loginStatus) {
@@ -118,11 +118,14 @@ export default function AdminSignUp() {
           setUserTokenIsAdmin(true);
           setAppUser(res.data.user);
           try {
-            await axios.post("http://localhost:5000/addusersloggedintokens", {
-              token: userToken,
-              id: res.data.user.id,
-              isvendor: true,
-            });
+            await axios.post(
+              "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
+              {
+                token: userToken,
+                id: res.data.user.id,
+                isvendor: true,
+              }
+            );
             setIsValidToken(true);
           } catch (err) {
             console.error(err);

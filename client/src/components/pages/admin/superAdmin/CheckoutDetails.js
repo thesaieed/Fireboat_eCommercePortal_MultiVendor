@@ -72,7 +72,7 @@ const CheckoutDetails = () => {
     if (transactionID.length > 0) {
       try {
         const { data } = await axios.post(
-          "http://localhost:5000/payments/approvecheckout",
+          "https://nile-server-a3fg.onrender.com/payments/approvecheckout",
           {
             transactionID,
             vendor_id: transaction.vendor_id,
@@ -108,7 +108,7 @@ const CheckoutDetails = () => {
     if (newDenialReason.length > 0) {
       try {
         const { data } = await axios.post(
-          "http://localhost:5000/payments/denycheckout",
+          "https://nile-server-a3fg.onrender.com/payments/denycheckout",
           {
             newDenialReason,
             vendor_id: transaction.vendor_id,
@@ -142,13 +142,13 @@ const CheckoutDetails = () => {
     setStatsLoading(true);
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/payments/vendorpaymentstats",
+        "https://nile-server-a3fg.onrender.com/payments/vendorpaymentstats",
         {
           vendor_id: transaction.vendor_id,
         }
       );
       const resTransactions = await axios.post(
-        "http://localhost:5000/payments/previoustransactions",
+        "https://nile-server-a3fg.onrender.com/payments/previoustransactions",
         {
           vendor_id: transaction.vendor_id,
         }

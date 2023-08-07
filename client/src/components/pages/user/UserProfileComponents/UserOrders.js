@@ -25,9 +25,12 @@ const UserOrders = () => {
   const getAllOrders = useCallback(async () => {
     setLoading(true);
     try {
-      var orders = await axios.post("http://localhost:5000/allorders", {
-        user_id: appUser.id,
-      });
+      var orders = await axios.post(
+        "https://nile-server-a3fg.onrender.com/allorders",
+        {
+          user_id: appUser.id,
+        }
+      );
 
       setAllOrders(orders.data.orders);
       setFilteredOrders(orders.data.orders);
@@ -62,7 +65,7 @@ const UserOrders = () => {
       orderProducts.map(async (product) => {
         try {
           const { data } = await axios.post(
-            "http://localhost:5000/orders/getOrderProductDetails",
+            "https://nile-server-a3fg.onrender.com/orders/getOrderProductDetails",
             {
               address_id: product.address_id,
               payment_details_id: product.payment_details_id,

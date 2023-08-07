@@ -65,12 +65,19 @@ function AllProducts() {
   const getProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/viewproducts", {
-        vendorId: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      });
-      const allVendors = await axios.get("http://localhost:5000/allvendors");
-      const brands = await axios.get("http://localhost:5000/brands");
+      const response = await axios.post(
+        "https://nile-server-a3fg.onrender.com/viewproducts",
+        {
+          vendorId: appUser.id,
+          is_super_admin: appUser.is_super_admin,
+        }
+      );
+      const allVendors = await axios.get(
+        "https://nile-server-a3fg.onrender.com/allvendors"
+      );
+      const brands = await axios.get(
+        "https://nile-server-a3fg.onrender.com/brands"
+      );
       // console.log("brands.data : ", brands.data);
       var products = [];
       response.data.map((product) => {
@@ -159,7 +166,7 @@ function AllProducts() {
       // }
 
       const response = await axios.put(
-        `http://localhost:5000/admin/updateproduct/${selectedRowId}`,
+        `https://nile-server-a3fg.onrender.com/admin/updateproduct/${selectedRowId}`,
         formData
         // {
         //   headers: {
@@ -200,8 +207,12 @@ function AllProducts() {
     const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
-        axios.delete(`http://localhost:5000/viewproducts/${itemId}`),
-        axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
+        axios.delete(
+          `https://nile-server-a3fg.onrender.com/viewproducts/${itemId}`
+        ),
+        axios.delete(
+          `https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`
+        ),
       ];
 
       const results = await axios.all(deleteRequests);
@@ -264,7 +275,10 @@ function AllProducts() {
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <Image
-                    src={`http://localhost:5000/${imgurl.replace(/\\/g, "/")}`}
+                    src={`https://nile-server-a3fg.onrender.com/${imgurl.replace(
+                      /\\/g,
+                      "/"
+                    )}`}
                     style={{
                       cursor: "pointer",
                       padding: 0,
@@ -473,7 +487,7 @@ function AllProducts() {
     };
     try {
       const response = await axios.post(
-        "http://localhost:5000/admin/deleteproductimage",
+        "https://nile-server-a3fg.onrender.com/admin/deleteproductimage",
         data
       );
       if (response.status === 200) {
@@ -518,7 +532,7 @@ function AllProducts() {
       });
 
       const response = await axios.post(
-        `http://localhost:5000/admin/addproductimage/${selectedRowId}`,
+        `https://nile-server-a3fg.onrender.com/admin/addproductimage/${selectedRowId}`,
         formData,
         {
           headers: {
@@ -803,7 +817,7 @@ function AllProducts() {
                 {productImages.map((imagePath, index) => (
                   <div key={index}>
                     <Image
-                      src={`http://localhost:5000/${imagePath.replace(
+                      src={`https://nile-server-a3fg.onrender.com/${imagePath.replace(
                         /\\/g,
                         "/"
                       )}`}
@@ -893,7 +907,10 @@ function AllProducts() {
                 checked={selectedImages.includes(index)}
               >
                 <Image
-                  src={`http://localhost:5000/${imagePath.replace(/\\/g, "/")}`}
+                  src={`https://nile-server-a3fg.onrender.com/${imagePath.replace(
+                    /\\/g,
+                    "/"
+                  )}`}
                   alt=""
                   style={{
                     cursor: "pointer",
