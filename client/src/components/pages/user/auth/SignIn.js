@@ -350,51 +350,53 @@ function SignIn() {
                     }}
                   ></div>
                 </Form.Item>
-                <div
-                  className="d-flex justify-content-between align-items-center"
-                  style={{ marginTop: -15, marginBottom: 10 }}
-                >
-                  <p
-                    className="font-semibold text-muted "
-                    style={{ marginTop: 15 }}
-                  >
-                    <Link
-                      to="/auth/admin/login"
-                      className="text-dark font-bold "
-                    >
-                      <img
-                        src={vendorIcon}
-                        height={21}
-                        width={21}
-                        alt="vendorIcon"
-                      />
-                      Vendor Login
-                    </Link>
-                  </p>
-                  <p style={{ marginTop: 15 }}>
-                    <LuShieldQuestion
-                      fontSize={15}
-                      style={{ marginTop: -5, marginRight: 2 }}
-                    />
+                <Row justify="space-between" style={{ marginTop: 15 }}>
+                  <Col xs={24} sm={12} md={12}>
+                    <p className="font-semibold text-muted ">
+                      <Link
+                        to="/auth/admin/login"
+                        className="text-dark font-bold "
+                      >
+                        <img
+                          src={vendorIcon}
+                          height={21}
+                          width={21}
+                          alt="vendorIcon"
+                        />
+                        Vendor Login
+                      </Link>
+                    </p>
+                  </Col>
+                  <Col xs={24} sm={12} md={12}>
                     <Link
                       to="/auth/forgotpassword"
                       className="text-dark font-bold"
+                      id="forgotPass"
                     >
+                      <LuShieldQuestion
+                        fontSize={15}
+                        style={{ marginRight: 2, marginLeft: 5 }}
+                      />
                       Forgot Password!
                     </Link>
-                  </p>
-                </div>
+                  </Col>
+                </Row>
+
+                <Row justify="end" style={{ marginTop: 15 }}>
+                  <Col xs={24} sm={12} md={12}>
+                    <p className="font-semibold text-muted d-flex justify-content-end">
+                      <Link
+                        to="/auth/signup"
+                        className="text-dark font-bold"
+                        style={{ marginLeft: 5 }}
+                      >
+                        <img src={registerIcon} height={20} alt="newUserIcon" />{" "}
+                        Sign Up
+                      </Link>
+                    </p>
+                  </Col>
+                </Row>
               </Form>
-              <p className="font-semibold text-muted d-flex justify-content-end">
-                <Link
-                  to="/auth/signup"
-                  className="text-dark font-bold"
-                  style={{ marginLeft: 5 }}
-                >
-                  <img src={registerIcon} height={20} alt="newUserIcon" /> Sign
-                  Up
-                </Link>
-              </p>
             </Col>
 
             <Col

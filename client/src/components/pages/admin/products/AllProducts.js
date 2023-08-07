@@ -874,7 +874,7 @@ function AllProducts() {
                   </p>
                 </Upload.Dragger>
               </Form.Item>
-              <Row justify="end">
+              <Row justify="center">
                 <Form.Item>
                   <Button
                     type="primary"

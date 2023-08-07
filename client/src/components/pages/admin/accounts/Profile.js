@@ -101,7 +101,66 @@ function Profile() {
 
   return (
     <>
-      <Card
+      <Card id="loginMainCard">
+        <Card style={{ background: "#F5F5F5", maxWidth: 500, margin: "auto" }}>
+          <Row justify="space-evenly">
+            <Col xs={24} sm={18} md={11}>
+              {" "}
+              <p style={{ marginBottom: "0px" }}>Name:</p>
+              <b>{appUser.name}</b>
+            </Col>
+            <Col xs={24} sm={3} md={3}>
+              <Button
+                onClick={() => {
+                  handleEditData(appUser.name, "full_name");
+                }}
+              >
+                <BiSolidEditAlt />
+                Edit
+              </Button>
+            </Col>
+          </Row>
+        </Card>
+        <Card style={{ background: "#F5F5F5", maxWidth: 500, margin: "auto" }}>
+          <Row justify="space-evenly">
+            <Col xs={24} sm={18} md={11}>
+              {" "}
+              <p style={{ marginBottom: "0px" }}>Phone number:</p>
+              <b>{appUser.phone}</b>
+            </Col>
+            <Col xs={24} sm={3} md={3}>
+              <Button
+                onClick={() => {
+                  handleEditData(appUser.phone, "phone_number");
+                }}
+              >
+                <BiSolidEditAlt />
+                Edit
+              </Button>
+            </Col>
+          </Row>
+        </Card>
+        <Card style={{ background: "#F5F5F5", maxWidth: 500, margin: "auto" }}>
+          <Row justify="space-evenly">
+            <Col xs={24} sm={18} md={11}>
+              {" "}
+              <p style={{ marginBottom: "0px" }}>Password:</p>
+              <b>*********</b>
+            </Col>
+            <Col xs={24} sm={3} md={3}>
+              <Button
+                onClick={() => {
+                  setShowPasswordModal(true);
+                }}
+              >
+                <BiSolidEditAlt />
+                Edit
+              </Button>
+            </Col>
+          </Row>
+        </Card>
+      </Card>
+      {/* <Card
         style={{
           padding: " 30px 20px",
           width: "90%",
@@ -127,7 +186,7 @@ function Profile() {
             </Col>
           </Row>
         </Card>
-        {/* <Card style={{ background: "#F5F5F5" }}>
+        <Card style={{ background: "#F5F5F5" }}>
           <Row>
             <Col span={20}>
               {" "}
@@ -145,7 +204,7 @@ function Profile() {
               </Button>
             </Col>
           </Row>
-        </Card> */}
+        </Card>
         <Card style={{ background: "#F5F5F5", marginTop: 20 }}>
           <Row justify="space-between">
             <Col>
@@ -182,7 +241,7 @@ function Profile() {
             </Col>
           </Row>
         </Card>
-      </Card>
+      </Card> */}
       <Modal
         title={
           <>

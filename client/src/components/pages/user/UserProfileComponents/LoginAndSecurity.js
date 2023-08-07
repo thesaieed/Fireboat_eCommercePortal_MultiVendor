@@ -126,15 +126,15 @@ function LoginAndSecurity() {
       <CommonNavbar handleSearch={handleSearch} />
       <Card>Login and security</Card>
 
-      <Card style={{ padding: " 30px 200px" }}>
-        <Card style={{ background: "#F5F5F5" }}>
-          <Row>
-            <Col span={20}>
+      <Card id="loginMainCard">
+        <Card style={{ background: "#F5F5F5", maxWidth: 500, margin: "auto" }}>
+          <Row justify="space-evenly">
+            <Col xs={24} sm={18} md={11}>
               {" "}
               <p style={{ marginBottom: "0px" }}>Name:</p>
               <b>{appUser.name}</b>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={3} md={3}>
               <Button
                 onClick={() => {
                   handleEditData(appUser.name, "full_name");
@@ -146,33 +146,14 @@ function LoginAndSecurity() {
             </Col>
           </Row>
         </Card>
-        {/* <Card style={{ background: "#F5F5F5" }}>
-          <Row>
-            <Col span={20}>
-              {" "}
-              <p style={{ marginBottom: "0px" }}>E-mail:</p>
-              <b>{appUser.email}</b>
-            </Col>
-            <Col span={4}>
-              <Button
-                onClick={() => {
-                  handleEditData(appUser.email, "email");
-                }}
-              >
-                <BiSolidEditAlt />
-                Edit
-              </Button>
-            </Col>
-          </Row>
-        </Card> */}
-        <Card style={{ background: "#F5F5F5" }}>
-          <Row>
-            <Col span={20}>
+        <Card style={{ background: "#F5F5F5", maxWidth: 500, margin: "auto" }}>
+          <Row justify="space-evenly">
+            <Col xs={24} sm={18} md={11}>
               {" "}
               <p style={{ marginBottom: "0px" }}>Phone number:</p>
               <b>{appUser.phone}</b>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={3} md={3}>
               <Button
                 onClick={() => {
                   handleEditData(appUser.phone, "phone_number");
@@ -184,14 +165,14 @@ function LoginAndSecurity() {
             </Col>
           </Row>
         </Card>
-        <Card style={{ background: "#F5F5F5" }}>
-          <Row>
-            <Col span={20}>
+        <Card style={{ background: "#F5F5F5", maxWidth: 500, margin: "auto" }}>
+          <Row justify="space-evenly">
+            <Col xs={24} sm={18} md={11}>
               {" "}
               <p style={{ marginBottom: "0px" }}>Password:</p>
               <b>*********</b>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={3} md={3}>
               <Button
                 onClick={() => {
                   setShowPasswordModal(true);

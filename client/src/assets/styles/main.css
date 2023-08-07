@@ -4122,3 +4122,9 @@ div.slick-tracker {
     min-height: 45vh;
   }
 }
+
+@media (min-width: 576px) {
+  #forgotPass {
+    float: right;
+  }
+}
