@@ -13,7 +13,7 @@ const NewBrand = ({ modalOpen, setModalOpen, getBrands, appUser }) => {
     setButtonLoading(true);
     if (values.brand) {
       try {
-        const response = await axios.post("/addbrand", {
+        const response = await axios.post("http://localhost:5000/addbrand", {
           brand: values.brand,
           vendorId: appUser.id,
         });

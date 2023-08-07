@@ -44,9 +44,10 @@ function AllVendors() {
   const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
-      const allVendors = await axios.post("/vendor/getapprovevendorslist", {
-        is_super_admin: appUser.is_super_admin,
-      });
+      const allVendors = await axios.post(
+        "http://localhost:5000/vendor/getapprovevendorslist",
+        { is_super_admin: appUser.is_super_admin }
+      );
       // console.log("allvendors : ", allVendors);
       setVendors(allVendors.data);
     } catch (err) {
@@ -85,10 +86,11 @@ function AllVendors() {
     });
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
-      const approveRequest = await axios.post("/vendor/approvevendor", {
-        itemId,
-      });
-      // axios.delete(`/deleteImage/${encodedImagePath}`),
+      const approveRequest = await axios.post(
+        "http://localhost:5000/vendor/approvevendor",
+        { itemId }
+      );
+      // axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
       const vendorApprovalStatus = approveRequest.data.status;
       //   const imageDeletionStatus = results[1].status;
 
@@ -127,11 +129,11 @@ function AllVendors() {
     });
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
-      const rejectRequest = await axios.post("/vendor/rejectvendor", {
-        itemId: selectedRowId,
-        rejectionReason: rejectReason,
-      });
-      // axios.delete(`/deleteImage/${encodedImagePath}`),
+      const rejectRequest = await axios.post(
+        "http://localhost:5000/vendor/rejectvendor",
+        { itemId: selectedRowId, rejectionReason: rejectReason }
+      );
+      // axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
       const rejectStatus = rejectRequest.data.status;
       //   const imageDeletionStatus = results[1].status;
 

@@ -23,7 +23,9 @@ const SAPaymentCheckout = () => {
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.get("/payments/admintransactions");
+      const { data } = await axios.get(
+        "http://localhost:5000/payments/admintransactions"
+      );
 
       setTransactions(data);
       setFilteredTransactions(data);

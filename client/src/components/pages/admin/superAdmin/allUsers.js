@@ -25,7 +25,7 @@ function AllUsers() {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const allUsers = await axios.get("/allusers", {
+      const allUsers = await axios.get("http://localhost:5000/allusers", {
         is_super_admin: appUser.is_super_admin,
       });
       //   console.log(allUsers.data);
@@ -57,7 +57,9 @@ function AllUsers() {
     });
 
     try {
-      const results = await axios.delete(`/deleteuser/${userId}`);
+      const results = await axios.delete(
+        `http://localhost:5000/deleteuser/${userId}`
+      );
 
       //   console.log(userId);
       if (results.status === 200) {
@@ -85,7 +87,9 @@ function AllUsers() {
     });
     // console.log(userId);
     try {
-      const results = await axios.put(`/disableuser/${userId}`);
+      const results = await axios.put(
+        `http://localhost:5000/disableuser/${userId}`
+      );
 
       //   console.log(userId);
       if (results.status === 200) {
@@ -115,7 +119,9 @@ function AllUsers() {
     });
     // console.log(userId);
     try {
-      const results = await axios.put(`/enableuser/${userId}`);
+      const results = await axios.put(
+        `http://localhost:5000/enableuser/${userId}`
+      );
 
       //   console.log(userId);
       if (results.status === 200) {

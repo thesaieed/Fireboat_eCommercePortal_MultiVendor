@@ -37,7 +37,7 @@ export const VerifyEmail = () => {
 
   const verifyToken = useCallback(async () => {
     setIsVerifying(true);
-    const res = await axios.post("/verifyEmail", {
+    const res = await axios.post("http://localhost:5000/verifyEmail", {
       token: token,
       email: email,
       isVendor: isVendor,
@@ -71,10 +71,10 @@ export const VerifyEmail = () => {
   const handleReVerify = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.post("/resendEmailverification", {
-        email: email,
-        isVendor: isVendor,
-      });
+      const res = await axios.post(
+        "http://localhost:5000/resendEmailverification",
+        { email: email, isVendor: isVendor }
+      );
       console.log(res);
       if (res.data.status === 200) {
         setMailSent(true);

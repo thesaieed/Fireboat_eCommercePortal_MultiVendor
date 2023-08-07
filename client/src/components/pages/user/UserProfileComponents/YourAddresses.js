@@ -76,7 +76,7 @@ function YourAddresses() {
   };
   const getAddresses = useCallback(async () => {
     try {
-      const response = await axios.get("/youraddresses", {
+      const response = await axios.get("http://localhost:5000/youraddresses", {
         params: {
           user_id: appUser.id,
         },
@@ -121,7 +121,7 @@ function YourAddresses() {
     values.id = appUser.id;
     try {
       const response = await axios.put(
-        `/editshippingaddress/${editAddress.id}`,
+        `http://localhost:5000/editshippingaddress/${editAddress.id}`,
         values
       );
       if (response.status === 200) {
@@ -147,7 +147,10 @@ function YourAddresses() {
     const values = form.getFieldsValue();
     values.id = appUser.id;
     try {
-      const response = await axios.post("/addshippingaddress", values);
+      const response = await axios.post(
+        "http://localhost:5000/addshippingaddress",
+        values
+      );
       // console.log(response.status);
       if (response.status === 200) {
         getAddresses();
@@ -163,7 +166,9 @@ function YourAddresses() {
     // console.log(id);
     try {
       // Make a DELETE request to your server API endpoint to delete the item from the cart
-      const response = await axios.delete(`/removeaddress/${id}`);
+      const response = await axios.delete(
+        `http://localhost:5000/removeaddress/${id}`
+      );
 
       if (response.status === 200) {
         message.success("successfully removed address");

@@ -54,7 +54,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `/editprofilename/${appUser.id}`,
+        `http://localhost:5000/editprofilename/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -71,7 +71,10 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     // console.log(values);
     try {
-      const response = await axios.put(`/editemail/${appUser.id}`, values);
+      const response = await axios.put(
+        `http://localhost:5000/editemail/${appUser.id}`,
+        values
+      );
       if (response.status === 200) {
         setShowModal(false);
         message.success("verification link sent to mail, please verify");
@@ -87,7 +90,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `/editphonenumber/${appUser.id}`,
+        `http://localhost:5000/editphonenumber/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -103,7 +106,10 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     // console.log(values);
     try {
-      const response = await axios.put(`/editpassword/${appUser.id}`, values);
+      const response = await axios.put(
+        `http://localhost:5000/editpassword/${appUser.id}`,
+        values
+      );
       if (response.status === 200) {
         setShowPasswordModal(false);
         message.success(" New password added successfully");

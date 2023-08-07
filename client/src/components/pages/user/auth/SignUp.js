@@ -52,7 +52,7 @@ export default function SignUp() {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post("/signup", values);
+      const response = await axios.post("http://localhost:5000/signup", values);
       if (response.data.status === 200) {
         setErrorMessage("");
         setSuccessMessage(response.data.message);
@@ -90,7 +90,7 @@ export default function SignUp() {
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post("/googlelogin", values);
+      const res = await axios.post("http://localhost:5000/googlelogin", values);
       switch (res.data.loginStatus) {
         case 200:
           const userToken = generateRandomString(12);
@@ -102,7 +102,7 @@ export default function SignUp() {
           setUserTokenIsAdmin(false);
           setAppUser(res.data.user);
           try {
-            await axios.post("/addusersloggedintokens", {
+            await axios.post("http://localhost:5000/addusersloggedintokens", {
               token: userToken,
               id: res.data.user.id,
               isvendor: false,

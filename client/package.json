@@ -7,7 +7,6 @@
       "@babel/preset-react"
     ]
   },
-  "proxy": "https://nile-server-a3fg.onrender.com",
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "@splidejs/react-splide": "^0.7.12",

@@ -14,7 +14,7 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
     setButtonLoading(true);
     if (values.name) {
       try {
-        const response = await axios.post("/addcategory", {
+        const response = await axios.post("http://localhost:5000/addcategory", {
           name: values.name,
           vendorId: appUser.id,
         });

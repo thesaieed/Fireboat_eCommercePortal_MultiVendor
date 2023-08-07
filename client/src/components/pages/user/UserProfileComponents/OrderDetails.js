@@ -94,7 +94,10 @@ const UserOrderDetails = () => {
                               }}
                             >
                               <Image
-                                src={`/${imgurl.replace(/\\/g, "/")}`}
+                                src={`http://localhost:5000/${imgurl.replace(
+                                  /\\/g,
+                                  "/"
+                                )}`}
                                 style={{
                                   cursor: "pointer",
                                   padding: 0,

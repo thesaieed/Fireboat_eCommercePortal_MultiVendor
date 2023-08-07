@@ -58,7 +58,10 @@ export default function AdminSignUp() {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post("/vendor/newvendor", values);
+      const response = await axios.post(
+        "http://localhost:5000/vendor/newvendor",
+        values
+      );
       // console.log("Responce : ", response);
       //if signup is successfull
       if (response.data.status === 200) {
@@ -100,7 +103,10 @@ export default function AdminSignUp() {
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post("/vendor/googlelogin", values);
+      const res = await axios.post(
+        "http://localhost:5000/vendor/googlelogin",
+        values
+      );
       switch (res.data.loginStatus) {
         case 200:
           const userToken = generateRandomString(12);
@@ -112,7 +118,7 @@ export default function AdminSignUp() {
           setUserTokenIsAdmin(true);
           setAppUser(res.data.user);
           try {
-            await axios.post("/addusersloggedintokens", {
+            await axios.post("http://localhost:5000/addusersloggedintokens", {
               token: userToken,
               id: res.data.user.id,
               isvendor: true,

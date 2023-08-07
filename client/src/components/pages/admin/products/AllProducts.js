@@ -65,12 +65,12 @@ function AllProducts() {
   const getProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.post("/viewproducts", {
+      const response = await axios.post("http://localhost:5000/viewproducts", {
         vendorId: appUser.id,
         is_super_admin: appUser.is_super_admin,
       });
-      const allVendors = await axios.get("/allvendors");
-      const brands = await axios.get("/brands");
+      const allVendors = await axios.get("http://localhost:5000/allvendors");
+      const brands = await axios.get("http://localhost:5000/brands");
       // console.log("brands.data : ", brands.data);
       var products = [];
       response.data.map((product) => {
@@ -159,7 +159,7 @@ function AllProducts() {
       // }
 
       const response = await axios.put(
-        `/admin/updateproduct/${selectedRowId}`,
+        `http://localhost:5000/admin/updateproduct/${selectedRowId}`,
         formData
         // {
         //   headers: {
@@ -200,8 +200,8 @@ function AllProducts() {
     const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
-        axios.delete(`/viewproducts/${itemId}`),
-        axios.delete(`/deleteImage/${encodedImagePath}`),
+        axios.delete(`http://localhost:5000/viewproducts/${itemId}`),
+        axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
       ];
 
       const results = await axios.all(deleteRequests);
@@ -264,7 +264,7 @@ function AllProducts() {
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <Image
-                    src={`/${imgurl.replace(/\\/g, "/")}`}
+                    src={`http://localhost:5000/${imgurl.replace(/\\/g, "/")}`}
                     style={{
                       cursor: "pointer",
                       padding: 0,
@@ -472,7 +472,10 @@ function AllProducts() {
       selectedImagePaths: selectedImagePaths,
     };
     try {
-      const response = await axios.post("/admin/deleteproductimage", data);
+      const response = await axios.post(
+        "http://localhost:5000/admin/deleteproductimage",
+        data
+      );
       if (response.status === 200) {
         setRefreshPage(true);
         message.success("Image deleted successfully");
@@ -515,7 +518,7 @@ function AllProducts() {
       });
 
       const response = await axios.post(
-        `/admin/addproductimage/${selectedRowId}`,
+        `http://localhost:5000/admin/addproductimage/${selectedRowId}`,
         formData,
         {
           headers: {
@@ -800,7 +803,10 @@ function AllProducts() {
                 {productImages.map((imagePath, index) => (
                   <div key={index}>
                     <Image
-                      src={`/${imagePath.replace(/\\/g, "/")}`}
+                      src={`http://localhost:5000/${imagePath.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
                       alt=""
                       style={{
                         cursor: "pointer",
@@ -887,7 +893,7 @@ function AllProducts() {
                 checked={selectedImages.includes(index)}
               >
                 <Image
-                  src={`/${imagePath.replace(/\\/g, "/")}`}
+                  src={`http://localhost:5000/${imagePath.replace(/\\/g, "/")}`}
                   alt=""
                   style={{
                     cursor: "pointer",

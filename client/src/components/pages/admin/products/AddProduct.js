@@ -30,7 +30,7 @@ function AddProduct() {
   //get request to get the categories available stored in db
   const getBrands = async () => {
     try {
-      const brands = await axios.get("/brands");
+      const brands = await axios.get("http://localhost:5000/brands");
       setBrands(brands.data);
     } catch (err) {
       console.log(err);
@@ -57,11 +57,15 @@ function AddProduct() {
         formData.append("image", file.originFileObj);
       });
       // console.log("formData : ", formData);
-      const response = await axios.post("/admin/addproduct", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/admin/addproduct",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (response.status === 200) {
         //add required navigation

@@ -37,7 +37,7 @@ export const ResetPassword = () => {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post("/resetpassword", {
+      const response = await axios.post("http://localhost:5000/resetpassword", {
         ...values,
         useremail: email,
         token,
@@ -81,7 +81,7 @@ export const ResetPassword = () => {
 
   const verifyToken = useCallback(async () => {
     setIsVerifying(true);
-    const res = await axios.post("/verifyresettoken", {
+    const res = await axios.post("http://localhost:5000/verifyresettoken", {
       token: token,
       useremail: email,
       //   isVendor: isVendor,

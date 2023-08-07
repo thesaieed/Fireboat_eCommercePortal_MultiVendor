@@ -20,10 +20,10 @@ function ForgotPasswordAdmin() {
 
   const onFinish = async (values) => {
     setButtonLoading(true);
-    const res = await axios.post("/sendresetpasswordlink", {
-      email: values.email,
-      is_vendor: true,
-    });
+    const res = await axios.post(
+      "http://localhost:5000/sendresetpasswordlink",
+      { email: values.email, is_vendor: true }
+    );
     // console.log(res.data);
     switch (res.data.status) {
       case 200:

@@ -35,7 +35,7 @@ function Updatecategories() {
   // const getCategories = async () => {
   //   try {
   //     const response = await axios.get(
-  //       "/updatecategories"
+  //       "http://localhost:5000/updatecategories"
   //     );
   //     setCategories(response.data);
   //     // console.log(response.data)
@@ -82,7 +82,9 @@ function Updatecategories() {
       return newLoadings;
     });
     try {
-      const response = await axios.delete(`/updatecategories/${itemId}`);
+      const response = await axios.delete(
+        `http://localhost:5000/updatecategories/${itemId}`
+      );
 
       if (response.status === 200) {
         fetchCategories((prevData) =>
@@ -117,7 +119,7 @@ function Updatecategories() {
     setEditButtonLoading(true);
     try {
       const response = await axios.put(
-        `/updatecategories/${selectedRowId}`,
+        `http://localhost:5000/updatecategories/${selectedRowId}`,
         values
       );
       if (response.status === 200) {
