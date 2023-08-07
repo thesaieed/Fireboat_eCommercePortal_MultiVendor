@@ -80,7 +80,7 @@ app.post("/login", async (req, res) => {
 
     res.send(data); //finaly send the data variable(obj)
   } catch (error) {
-    console.log("Error : ", error.message);
+    console.log(" /Login Error : ", error.message);
   }
 });
 app.post("/googlelogin", async (req, res) => {
@@ -119,7 +119,7 @@ app.post("/googlelogin", async (req, res) => {
 
     res.send(data); //finaly send the data variable(obj)
   } catch (error) {
-    console.log("Error : ", error.message);
+    console.log("Google Login Error : ", error.message);
   }
 });
 
@@ -147,7 +147,7 @@ app.post("/verifyEmail", async (req, res) => {
         // console.log("error : ", err);
         // console.log("decoded : ", decoded);
         if (err) {
-          // console.log(err);
+          console.log("verify Email token Error ", err);
           res.send({
             status: 400,
             message: "Token invalid or Expired ! ",
@@ -176,7 +176,10 @@ app.post("/verifyEmail", async (req, res) => {
                 );
               } catch (newVendorErr) {
                 newVendorError = true;
-                console.error(newVendorErr);
+                console.error(
+                  " Verify Email /Insert into new Vendor Error",
+                  newVendorErr
+                );
                 if (newVendorErr.code == 23505) {
                   res.send({
                     status: 102,
@@ -194,7 +197,7 @@ app.post("/verifyEmail", async (req, res) => {
               }
             }
           } catch (error) {
-            console.error(error);
+            console.error("/decoded token EmailVerify Error", error);
             res.send({
               status: 400,
               message: "Failed to Verify Email! ",
@@ -204,7 +207,7 @@ app.post("/verifyEmail", async (req, res) => {
       });
     }
   } catch (err) {
-    console.log();
+    console.log("/email verify", err);
     res.send({
       status: 500,
       message: "Server Error! ",
@@ -242,7 +245,7 @@ app.post("/resendEmailverification", async (req, res) => {
       // console.log(response);
     }
   } catch (error) {
-    console.log(error);
+    console.log("resend email verification", error);
     res.send({
       status: 404,
       message: "Failed to send Verification Email! ",
@@ -292,7 +295,7 @@ app.post("/signup", async (req, res) => {
       }
     } catch (err) {
       // res.send(respond);
-      console.log(err);
+      console.log("signup email send error", err);
       res.send({
         status: 404,
         message: "Failed to send Verification Email! ",
@@ -302,10 +305,10 @@ app.post("/signup", async (req, res) => {
     //   const data = { user: { id, name } };
     //   res.send(data); //send data.. it will be under res.data in client
   } catch (error) {
-    console.error(error);
+    console.error("/signup error", error);
     if (error.code == 23505) {
       //error code trying to insert duplicate value
-      // console.log("User already exists");
+      console.log("User already exists");
       res
         .status(409)
         .json({ message: "user already exists, please use SignIn" });
@@ -325,7 +328,7 @@ app.post("/addcategory", async (req, res) => {
     );
     res.send(newCategory.rows[0]);
   } catch (err) {
-    console.log(err);
+    console.log("/addcategoryerror", err);
     if (err.code == 23505) {
       res.status(409).send();
     } else {
@@ -483,7 +486,7 @@ app.post("/checkusersloggedintokens", async (req, res) => {
       res.send(false);
     }
   } catch (error) {
-    console.error(error);
+    console.error("check user loggin tokens error ", error);
     res.send(false);
   }
 });
@@ -658,7 +661,7 @@ app.post("/search", async (req, res) => {
         [searchTerms[0], user_id]
       );
     } catch (error) {
-      console.log(error);
+      console.log("/search error", error);
     }
   }
 
@@ -699,7 +702,7 @@ app.post("/search", async (req, res) => {
       );
       res.send(searchResult.rows);
     } catch (err) {
-      console.error(err);
+      console.error("search error in tsquerys", err);
       res.send([]);
     }
   }
@@ -1133,7 +1136,7 @@ app.post("/addshippingaddress", async (req, res) => {
     );
     res.sendStatus(200);
   } catch (error) {
-    console.log(error);
+    console.log("addshippingaddress error", error);
   }
 });
 
@@ -1487,7 +1490,7 @@ app.put("/editshippingaddress/:id", async (req, res) => {
     // Send a success response
     res.sendStatus(200);
   } catch (error) {
-    console.error(error);
+    console.error("edit shipping address Error", error);
   }
 });
 app.put("/editprofilename/:id", async (req, res) => {
