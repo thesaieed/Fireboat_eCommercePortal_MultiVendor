@@ -45,7 +45,9 @@ router.post("/allorders", async (req, res) => {
       }
       res.send({ orders, products });
     } else if (is_super_admin) {
-      const orderIds = await pool.query("SELECT DISTINCT order_id FROM orders");
+      const orderIds = await pool.query(
+        "SELECT DISTINCT order_id FROM orders ORDER BY created_at DESC"
+      );
       // console.log(orderIds);
       var productIds = [];
       for (let orderId of orderIds.rows) {
