@@ -109,14 +109,11 @@ const Checkout = () => {
   const fetchAddress = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:5000/shippingaddress",
-        {
-          params: {
-            id: appUser.id,
-          },
-        }
-      );
+      const response = await axios.get("/shippingaddress", {
+        params: {
+          id: appUser.id,
+        },
+      });
 
       // console.log(response.data);
       setAddress(response.data);
@@ -128,7 +125,7 @@ const Checkout = () => {
   const fetchQuantity = useCallback(async () => {
     try {
       const ids = productData.map((item) => item.id);
-      const response = await axios.get("http://localhost:5000/checkout", {
+      const response = await axios.get("/checkout", {
         params: { ids },
       });
       const updatedQuantity = response.data;
@@ -164,7 +161,7 @@ const Checkout = () => {
 
   const updateQuantityInDatabase = async (itemId, quantity) => {
     try {
-      await axios.put(`http://localhost:5000/cart/${itemId}`, { quantity });
+      await axios.put(`/cart/${itemId}`, { quantity });
     } catch (error) {
       console.error("server error", error);
     }
@@ -211,10 +208,7 @@ const Checkout = () => {
     const values = form.getFieldsValue();
     values.id = appUser.id;
     try {
-      const response = await axios.post(
-        "http://localhost:5000/addshippingaddress",
-        values
-      );
+      const response = await axios.post("/addshippingaddress", values);
       // console.log(response.status);
       if (response.status === 200) {
         fetchAddress();
@@ -389,26 +383,23 @@ const Checkout = () => {
     transactionID = `${transactionID}${Date.now()}`;
     var { id, name, email } = appUser;
     try {
-      const getdata = await axios.post(
-        "http://localhost:5000/payments/initpayment",
-        {
-          user_id: id,
-          products,
-          transactionID,
-          orderID,
-          fullname: name,
-          address_id: selectedAddress.id,
-          email,
-          phone: selectedAddress.phone_number,
-          amount: Number(
-            totalPrice +
-              deliveryCharge -
-              Math.floor(
-                (totalPrice + deliveryCharge) * (discountPercentage / 100)
-              )
-          ).toFixed(2),
-        }
-      );
+      const getdata = await axios.post("/payments/initpayment", {
+        user_id: id,
+        products,
+        transactionID,
+        orderID,
+        fullname: name,
+        address_id: selectedAddress.id,
+        email,
+        phone: selectedAddress.phone_number,
+        amount: Number(
+          totalPrice +
+            deliveryCharge -
+            Math.floor(
+              (totalPrice + deliveryCharge) * (discountPercentage / 100)
+            )
+        ).toFixed(2),
+      });
       if (getdata.data?.url?.length) {
         setPaymentFormData({
           url: getdata.data.url,

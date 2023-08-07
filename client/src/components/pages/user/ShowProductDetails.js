@@ -67,7 +67,7 @@ function ShowProductDetails() {
   // const { productId } = useParams();
   // console.log(productId);
   // const productId = props.match.params.id;
-  const baseImgUrl = "http://localhost:5000/";
+  const baseImgUrl = "/";
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
   const { Title, Paragraph, Text } = Typography; // console.log(productId);
@@ -83,10 +83,9 @@ function ShowProductDetails() {
   const fetchProductDetails = useCallback(async () => {
     setScreenLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/productdetails",
-        { params: { productId: productId, userId: appUser.id } }
-      );
+      const response = await axios.get("/admin/productdetails", {
+        params: { productId: productId, userId: appUser.id },
+      });
       // console.log(response.data);
       const stockAvailable = response.data.stock_available > 0;
       setIsOutOfStock(!stockAvailable);
@@ -100,10 +99,9 @@ function ShowProductDetails() {
       }
     }
     try {
-      const response = await axios.post(
-        "http://localhost:5000/review/productreviews",
-        { product_id: productId }
-      );
+      const response = await axios.post("/review/productreviews", {
+        product_id: productId,
+      });
 
       setAllReviews(response.data);
     } catch (reviewError) {
@@ -115,14 +113,11 @@ function ShowProductDetails() {
     // console.log(newReview);
     setReviewButtonLoading(true);
     try {
-      const addReviewResponse = await axios.post(
-        "http://localhost:5000/review/newreview",
-        {
-          ...newReview,
-          user_id: appUser.id,
-          product_id: productDetails.id,
-        }
-      );
+      const addReviewResponse = await axios.post("/review/newreview", {
+        ...newReview,
+        user_id: appUser.id,
+        product_id: productDetails.id,
+      });
       if (addReviewResponse.data) {
         message.success("Review Submitted");
         fetchProductDetails();
@@ -138,10 +133,10 @@ function ShowProductDetails() {
   const handleReviewDelete = async () => {
     setDeleteReviewButtonLoading(true);
     try {
-      const deleteResponse = await axios.post(
-        "http://localhost:5000/review/deletereview",
-        { user_id: appUser.id, product_id: productId }
-      );
+      const deleteResponse = await axios.post("/review/deletereview", {
+        user_id: appUser.id,
+        product_id: productId,
+      });
       if (deleteResponse.data) {
         message.success("Review Deleted Successfully!");
         fetchProductDetails();
@@ -188,7 +183,7 @@ function ShowProductDetails() {
     }
 
     try {
-      await axios.post("http://localhost:5000/addtocart", {
+      await axios.post("/addtocart", {
         user_id: appUser.id,
         product_id: productId,
         quantity: quantity,
@@ -206,15 +201,12 @@ function ShowProductDetails() {
     const fetchSuggestedProducts = async () => {
       // console.log(productDetails.brand_id);
       try {
-        const response = await axios.get(
-          "http://localhost:5000/suggestedproducts",
-          {
-            params: {
-              brand_id: productDetails.category_id,
-              product_id: productDetails.id,
-            },
-          }
-        );
+        const response = await axios.get("/suggestedproducts", {
+          params: {
+            brand_id: productDetails.category_id,
+            product_id: productDetails.id,
+          },
+        });
         // console.log(response.data);
         setSuggestedProducts(response.data);
       } catch (error) {

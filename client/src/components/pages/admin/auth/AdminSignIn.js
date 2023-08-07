@@ -47,7 +47,7 @@ function AdminSignIn() {
   const onFinish = async (values) => {
     // console.log("Success:", values);
     setButtonLoading(true);
-    const res = await axios.post("http://localhost:5000/vendor/login", values);
+    const res = await axios.post("/vendor/login", values);
     switch (res.data.loginStatus) {
       case 200:
         const userToken = generateRandomString(12);
@@ -59,7 +59,7 @@ function AdminSignIn() {
         setUserTokenIsAdmin(true);
         setAppUser(res.data.user);
         try {
-          await axios.post("http://localhost:5000/addusersloggedintokens", {
+          await axios.post("/addusersloggedintokens", {
             token: userToken,
             id: res.data.user.id,
             isvendor: true,
@@ -139,10 +139,7 @@ function AdminSignIn() {
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post(
-        "http://localhost:5000/vendor/googlelogin",
-        values
-      );
+      const res = await axios.post("/vendor/googlelogin", values);
       switch (res.data.loginStatus) {
         case 200:
           const userToken = generateRandomString(12);
@@ -154,7 +151,7 @@ function AdminSignIn() {
           setUserTokenIsAdmin(true);
           setAppUser(res.data.user);
           try {
-            await axios.post("http://localhost:5000/addusersloggedintokens", {
+            await axios.post("/addusersloggedintokens", {
               token: userToken,
               id: res.data.user.id,
               isvendor: true,

@@ -17,12 +17,9 @@ function Provider({ children }) {
 
   const updateNumberOfCartItems = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/numberofcartproducts",
-        {
-          userId: appUser.id,
-        }
-      );
+      const res = await axios.post("/numberofcartproducts", {
+        userId: appUser.id,
+      });
       setNumberOfProductsInCart(res.data.itemCount);
       // console.log(res);
     } catch (err) {
@@ -33,7 +30,7 @@ function Provider({ children }) {
 
   const removeSavedUserToken = async (userToken, id) => {
     try {
-      await axios.post("http://localhost:5000/removeusersloggedintokens", {
+      await axios.post("/removeusersloggedintokens", {
         userToken,
         id,
         isvendor: userTokenIsAdmin,
@@ -46,10 +43,10 @@ function Provider({ children }) {
     try {
       // console.log("isvendor: ", userTokenIsAdmin);
       // console.log("isvendorTYPE: ", typeof userTokenIsAdmin);
-      const res = await axios.post(
-        "http://localhost:5000/checkusersloggedintokens",
-        { userToken, isvendor: userTokenIsAdmin }
-      );
+      const res = await axios.post("/checkusersloggedintokens", {
+        userToken,
+        isvendor: userTokenIsAdmin,
+      });
       // console.log("async res.data : ", res.data);
       // console.log(" is Valid Tokken : ", res.data);
       setIsValidToken(res.data);
@@ -63,7 +60,7 @@ function Provider({ children }) {
 
   const fetchUserDetails = useCallback(async () => {
     try {
-      const userdata = await axios.post("http://localhost:5000/userdetails", {
+      const userdata = await axios.post("/userdetails", {
         userToken,
         isvendor: userTokenIsAdmin,
       });
@@ -71,12 +68,9 @@ function Provider({ children }) {
       setAppUser(userdata.data);
       if (!userdata.data.is_admin) {
         try {
-          const res = await axios.post(
-            "http://localhost:5000/numberofcartproducts",
-            {
-              userId: userdata.data.id,
-            }
-          );
+          const res = await axios.post("/numberofcartproducts", {
+            userId: userdata.data.id,
+          });
           setNumberOfProductsInCart(res.data.itemCount);
           // console.log(res);
         } catch (err) {
@@ -116,10 +110,8 @@ function Provider({ children }) {
   const fetchCategories = useCallback(async () => {
     if (appUser.id) {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/admin/categories"
-        );
-        const allVendors = await axios.get("http://localhost:5000/allvendors");
+        const response = await axios.get("/admin/categories");
+        const allVendors = await axios.get("/allvendors");
         var categories = [];
         response.data.categories.map((category) => {
           categories.push({
@@ -137,9 +129,7 @@ function Provider({ children }) {
       }
     } else {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/admin/categories"
-        );
+        const response = await axios.get("/admin/categories");
         setCategories(response.data.categories);
       } catch (error) {
         console.log(error);
