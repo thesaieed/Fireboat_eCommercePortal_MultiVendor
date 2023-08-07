@@ -32,7 +32,7 @@ function Profile() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinessname/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editbusinessname/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -50,7 +50,7 @@ function Profile() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `http://localhost:5000/editemail/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editemail/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -68,7 +68,7 @@ function Profile() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinessphonenumber/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editbusinessphonenumber/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -85,7 +85,7 @@ function Profile() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinesspassword/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editbusinesspassword/${appUser.id}`,
         values
       );
       if (response.status === 200) {

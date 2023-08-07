@@ -51,13 +51,13 @@ const PaymentCheckout = () => {
     setStatsLoading(true);
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/payments/vendorpaymentstats",
+        "https://nile-server-a3fg.onrender.com/payments/vendorpaymentstats",
         {
           vendor_id: appUser.id,
         }
       );
       const resTransactions = await axios.post(
-        "http://localhost:5000/payments/previoustransactions",
+        "https://nile-server-a3fg.onrender.com/payments/previoustransactions",
         {
           vendor_id: appUser.id,
         }
@@ -82,7 +82,7 @@ const PaymentCheckout = () => {
       try {
         const order_id = generateRandomString(10);
         const { data } = await axios.post(
-          "http://localhost:5000/payments/initiatevendorpayment",
+          "https://nile-server-a3fg.onrender.com/payments/initiatevendorpayment",
           {
             checkoutAmount,
             upiAddress,

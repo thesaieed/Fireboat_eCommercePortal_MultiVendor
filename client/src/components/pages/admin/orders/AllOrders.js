@@ -25,10 +25,13 @@ const AllOrders = () => {
   const getAllOrders = useCallback(async () => {
     setLoading(true);
     try {
-      var orders = await axios.post("http://localhost:5000/orders/allorders", {
-        vendor_id: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      });
+      var orders = await axios.post(
+        "https://nile-server-a3fg.onrender.com/orders/allorders",
+        {
+          vendor_id: appUser.id,
+          is_super_admin: appUser.is_super_admin,
+        }
+      );
       setAllOrders(orders.data.orders);
       setFilteredOrders(orders.data.orders);
       setOrderProducts(orders.data.products);
@@ -56,7 +59,7 @@ const AllOrders = () => {
       orderProducts.map(async (product) => {
         try {
           const { data } = await axios.post(
-            "http://localhost:5000/orders/getOrderProductDetails",
+            "https://nile-server-a3fg.onrender.com/orders/getOrderProductDetails",
             {
               address_id: product.address_id,
               payment_details_id: product.payment_details_id,
@@ -82,7 +85,7 @@ const AllOrders = () => {
     setStatusChangeLoading(true);
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/orders/changeorderstatus",
+        "https://nile-server-a3fg.onrender.com/orders/changeorderstatus",
         { vendor_id: appUser.id, newStatus: e, order_id }
       );
       if (data) {

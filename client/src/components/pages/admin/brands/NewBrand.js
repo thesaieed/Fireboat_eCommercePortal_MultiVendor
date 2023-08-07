@@ -13,10 +13,13 @@ const NewBrand = ({ modalOpen, setModalOpen, getBrands, appUser }) => {
     setButtonLoading(true);
     if (values.brand) {
       try {
-        const response = await axios.post("http://localhost:5000/addbrand", {
-          brand: values.brand,
-          vendorId: appUser.id,
-        });
+        const response = await axios.post(
+          "https://nile-server-a3fg.onrender.com/addbrand",
+          {
+            brand: values.brand,
+            vendorId: appUser.id,
+          }
+        );
         // console.log(response);
         if (response.data.id) {
           setSuccessMessage(`Brand '${values.brand}' Created Successfully !`);

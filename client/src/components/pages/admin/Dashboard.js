@@ -67,10 +67,13 @@ function Dashboard() {
   const getTopStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.post("http://localhost:5000/topstats", {
-        vendor_id: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      });
+      const { data } = await axios.post(
+        "https://nile-server-a3fg.onrender.com/topstats",
+        {
+          vendor_id: appUser.id,
+          is_super_admin: appUser.is_super_admin,
+        }
+      );
       setTopStats(data);
     } catch (error) {
       console.error(error);
@@ -78,24 +81,30 @@ function Dashboard() {
     setStatsLoading(false);
   }, [appUser.id, appUser.is_super_admin]);
   const getMonthlySales = useCallback(async () => {
-    const { data } = await axios.post("http://localhost:5000/monthlysales", {
-      vendor_id: appUser.id,
-      is_super_admin: appUser.is_super_admin,
-    });
+    const { data } = await axios.post(
+      "https://nile-server-a3fg.onrender.com/monthlysales",
+      {
+        vendor_id: appUser.id,
+        is_super_admin: appUser.is_super_admin,
+      }
+    );
 
     setMonthlySales(data);
   }, [appUser.id, appUser.is_super_admin]);
   const getWeeklySales = useCallback(async () => {
-    const { data } = await axios.post("http://localhost:5000/weeklysales", {
-      vendor_id: appUser.id,
-      is_super_admin: appUser.is_super_admin,
-    });
+    const { data } = await axios.post(
+      "https://nile-server-a3fg.onrender.com/weeklysales",
+      {
+        vendor_id: appUser.id,
+        is_super_admin: appUser.is_super_admin,
+      }
+    );
 
     setWeeklySales(data);
   }, [appUser.id, appUser.is_super_admin]);
   const getLastSevenDaySales = useCallback(async () => {
     const { data } = await axios.post(
-      "http://localhost:5000/lastsevendaysales",
+      "https://nile-server-a3fg.onrender.com/lastsevendaysales",
       {
         vendor_id: appUser.id,
         is_super_admin: appUser.is_super_admin,
@@ -230,7 +239,7 @@ function Dashboard() {
                   {topStats?.topProduct?.product?.image?.length > 0 && (
                     <Image
                       height={60}
-                      src={`http://localhost:5000/${topStats?.topProduct?.product?.image[0]}`}
+                      src={`https://nile-server-a3fg.onrender.com/${topStats?.topProduct?.product?.image[0]}`}
                     />
                   )}
                   {/* </div> */}

@@ -67,7 +67,7 @@ function UpdateBrands({
     });
     try {
       const response = await axios.delete(
-        `http://localhost:5000/updatebrands/${itemId}`
+        `https://nile-server-a3fg.onrender.com/updatebrands/${itemId}`
       );
 
       if (response.status === 200) {
@@ -102,7 +102,7 @@ function UpdateBrands({
     setEditButtonLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/updatebrands/${selectedRowId}`,
+        `https://nile-server-a3fg.onrender.com/updatebrands/${selectedRowId}`,
         values
       );
       if (response.status === 200) {

@@ -71,7 +71,7 @@ const OrderDetails = () => {
                             }}
                           >
                             <Image
-                              src={`http://localhost:5000/${imgurl.replace(
+                              src={`https://nile-server-a3fg.onrender.com/${imgurl.replace(
                                 /\\/g,
                                 "/"
                               )}`}

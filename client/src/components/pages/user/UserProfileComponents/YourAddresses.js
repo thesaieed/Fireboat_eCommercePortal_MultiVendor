@@ -76,11 +76,14 @@ function YourAddresses() {
   };
   const getAddresses = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:5000/youraddresses", {
-        params: {
-          user_id: appUser.id,
-        },
-      });
+      const response = await axios.get(
+        "https://nile-server-a3fg.onrender.com/youraddresses",
+        {
+          params: {
+            user_id: appUser.id,
+          },
+        }
+      );
       //   console.log(response.data);
       setAddresses(response.data);
     } catch (error) {
@@ -121,7 +124,7 @@ function YourAddresses() {
     values.id = appUser.id;
     try {
       const response = await axios.put(
-        `http://localhost:5000/editshippingaddress/${editAddress.id}`,
+        `https://nile-server-a3fg.onrender.com/editshippingaddress/${editAddress.id}`,
         values
       );
       if (response.status === 200) {
@@ -148,7 +151,7 @@ function YourAddresses() {
     values.id = appUser.id;
     try {
       const response = await axios.post(
-        "http://localhost:5000/addshippingaddress",
+        "https://nile-server-a3fg.onrender.com/addshippingaddress",
         values
       );
       // console.log(response.status);
@@ -167,7 +170,7 @@ function YourAddresses() {
     try {
       // Make a DELETE request to your server API endpoint to delete the item from the cart
       const response = await axios.delete(
-        `http://localhost:5000/removeaddress/${id}`
+        `https://nile-server-a3fg.onrender.com/removeaddress/${id}`
       );
 
       if (response.status === 200) {

@@ -17,7 +17,7 @@ function PaymentModeDropdown({
   const getTransactionData = useCallback(async () => {
     try {
       const txnData = await axios.post(
-        "http://localhost:5000/payments/getpaydetails",
+        "https://nile-server-a3fg.onrender.com/payments/getpaydetails",
         { user_id: appUser.id, txnid }
       );
 
@@ -63,7 +63,10 @@ function PaymentModeDropdown({
       image: (
         <Image
           style={{ maxWidth: "80px" }}
-          src={`http://localhost:5000/${item.image[0].replace(/\\/g, "/")}`}
+          src={`https://nile-server-a3fg.onrender.com/${item.image[0].replace(
+            /\\/g,
+            "/"
+          )}`}
           alt="ProductImg"
         />
       ),

@@ -35,7 +35,7 @@ function Updatecategories() {
   // const getCategories = async () => {
   //   try {
   //     const response = await axios.get(
-  //       "http://localhost:5000/updatecategories"
+  //       "https://nile-server-a3fg.onrender.com/updatecategories"
   //     );
   //     setCategories(response.data);
   //     // console.log(response.data)
@@ -83,7 +83,7 @@ function Updatecategories() {
     });
     try {
       const response = await axios.delete(
-        `http://localhost:5000/updatecategories/${itemId}`
+        `https://nile-server-a3fg.onrender.com/updatecategories/${itemId}`
       );
 
       if (response.status === 200) {
@@ -119,7 +119,7 @@ function Updatecategories() {
     setEditButtonLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/updatecategories/${selectedRowId}`,
+        `https://nile-server-a3fg.onrender.com/updatecategories/${selectedRowId}`,
         values
       );
       if (response.status === 200) {

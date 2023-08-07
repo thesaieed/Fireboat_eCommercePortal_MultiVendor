@@ -47,7 +47,10 @@ function AdminSignIn() {
   const onFinish = async (values) => {
     // console.log("Success:", values);
     setButtonLoading(true);
-    const res = await axios.post("http://localhost:5000/vendor/login", values);
+    const res = await axios.post(
+      "https://nile-server-a3fg.onrender.com/vendor/login",
+      values
+    );
     switch (res.data.loginStatus) {
       case 200:
         const userToken = generateRandomString(12);
@@ -59,11 +62,14 @@ function AdminSignIn() {
         setUserTokenIsAdmin(true);
         setAppUser(res.data.user);
         try {
-          await axios.post("http://localhost:5000/addusersloggedintokens", {
-            token: userToken,
-            id: res.data.user.id,
-            isvendor: true,
-          });
+          await axios.post(
+            "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
+            {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: true,
+            }
+          );
           setIsValidToken(true);
         } catch (err) {
           console.error(err);
@@ -140,7 +146,7 @@ function AdminSignIn() {
       };
       setButtonLoading(true);
       const res = await axios.post(
-        "http://localhost:5000/vendor/googlelogin",
+        "https://nile-server-a3fg.onrender.com/vendor/googlelogin",
         values
       );
       switch (res.data.loginStatus) {
@@ -154,11 +160,14 @@ function AdminSignIn() {
           setUserTokenIsAdmin(true);
           setAppUser(res.data.user);
           try {
-            await axios.post("http://localhost:5000/addusersloggedintokens", {
-              token: userToken,
-              id: res.data.user.id,
-              isvendor: true,
-            });
+            await axios.post(
+              "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
+              {
+                token: userToken,
+                id: res.data.user.id,
+                isvendor: true,
+              }
+            );
             setIsValidToken(true);
           } catch (err) {
             console.error(err);

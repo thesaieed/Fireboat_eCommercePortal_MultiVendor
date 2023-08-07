@@ -30,7 +30,9 @@ function AddProduct() {
   //get request to get the categories available stored in db
   const getBrands = async () => {
     try {
-      const brands = await axios.get("http://localhost:5000/brands");
+      const brands = await axios.get(
+        "https://nile-server-a3fg.onrender.com/brands"
+      );
       setBrands(brands.data);
     } catch (err) {
       console.log(err);
@@ -58,7 +60,7 @@ function AddProduct() {
       });
       // console.log("formData : ", formData);
       const response = await axios.post(
-        "http://localhost:5000/admin/addproduct",
+        "https://nile-server-a3fg.onrender.com/admin/addproduct",
         formData,
         {
           headers: {

@@ -90,7 +90,7 @@ const Browse = () => {
     setCategory(searchParams.get("category"));
   }, [searchParams]);
 
-  const baseImgUrl = "http://localhost:5000/";
+  const baseImgUrl = "https://nile-server-a3fg.onrender.com/";
 
   const { Paragraph, Title } = Typography;
 
@@ -120,16 +120,23 @@ const Browse = () => {
       setLoading(true);
       try {
         // console.log(params);
-        const res = await axios.post("http://localhost:5000/search", {
-          searchTerms: params,
-          category: category?.length ? category : null,
-          user_id: appUser.id,
-        });
+        const res = await axios.post(
+          "https://nile-server-a3fg.onrender.com/search",
+          {
+            searchTerms: params,
+            category: category?.length ? category : null,
+            user_id: appUser.id,
+          }
+        );
         // console.log("search", appUser);
-        const brands = await axios.get("http://localhost:5000/brands");
+        const brands = await axios.get(
+          "https://nile-server-a3fg.onrender.com/brands"
+        );
         // console.log("brands.data : ", brands.data);
 
-        const allVendors = await axios.get("http://localhost:5000/allvendors");
+        const allVendors = await axios.get(
+          "https://nile-server-a3fg.onrender.com/allvendors"
+        );
 
         // console.log(allVendors);
 
@@ -274,7 +281,7 @@ const Browse = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/addtocart", {
+      await axios.post("https://nile-server-a3fg.onrender.com/addtocart", {
         user_id: appUser.id,
         product_id,
         quantity: 1,

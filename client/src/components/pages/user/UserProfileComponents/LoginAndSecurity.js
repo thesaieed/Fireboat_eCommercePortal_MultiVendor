@@ -54,7 +54,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editprofilename/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editprofilename/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -72,7 +72,7 @@ function LoginAndSecurity() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `http://localhost:5000/editemail/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editemail/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -90,7 +90,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editphonenumber/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editphonenumber/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -107,7 +107,7 @@ function LoginAndSecurity() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `http://localhost:5000/editpassword/${appUser.id}`,
+        `https://nile-server-a3fg.onrender.com/editpassword/${appUser.id}`,
         values
       );
       if (response.status === 200) {

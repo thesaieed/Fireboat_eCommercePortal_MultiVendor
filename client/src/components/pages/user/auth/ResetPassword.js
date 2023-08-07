@@ -37,11 +37,14 @@ export const ResetPassword = () => {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/resetpassword", {
-        ...values,
-        useremail: email,
-        token,
-      });
+      const response = await axios.post(
+        "https://nile-server-a3fg.onrender.com/resetpassword",
+        {
+          ...values,
+          useremail: email,
+          token,
+        }
+      );
       // console.log("Responce : ", response);
       //if signup is successfull
       if (response.data.status === 200) {
@@ -81,11 +84,14 @@ export const ResetPassword = () => {
 
   const verifyToken = useCallback(async () => {
     setIsVerifying(true);
-    const res = await axios.post("http://localhost:5000/verifyresettoken", {
-      token: token,
-      useremail: email,
-      //   isVendor: isVendor,
-    });
+    const res = await axios.post(
+      "https://nile-server-a3fg.onrender.com/verifyresettoken",
+      {
+        token: token,
+        useremail: email,
+        //   isVendor: isVendor,
+      }
+    );
     // console.log(res);
     if (res.data.status === 200) {
       setIsVerified(true);
