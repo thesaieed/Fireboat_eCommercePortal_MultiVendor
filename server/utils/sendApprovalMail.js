@@ -10,7 +10,7 @@ module.exports.sendApprovalMail = async (name, email) => {
   <h2>Welcome to NILE.</h2>
   <p style="margin-bottom: 30px;">Congratulations! Your Registration has been Approved! You can now access your Admin Panel by Loggin in as Vendor in the Vendor Login Page.  </p>
 
-  <a href="${FRNTURL}/auth/admin/login" style="background-color: #86c61f; border: none;
+  <a href="${process.env.FRNTURL}/auth/admin/login" style="background-color: #86c61f; border: none;
   color: #000000;
   padding: 15px 32px;
   text-align: center;
