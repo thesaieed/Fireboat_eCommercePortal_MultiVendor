@@ -90,7 +90,7 @@ const Browse = () => {
     setCategory(searchParams.get("category"));
   }, [searchParams]);
 
-  const baseImgUrl = "http://localhost:5000/";
+  const baseImgUrl = "/";
 
   const { Paragraph, Title } = Typography;
 
@@ -120,16 +120,16 @@ const Browse = () => {
       setLoading(true);
       try {
         // console.log(params);
-        const res = await axios.post("http://localhost:5000/search", {
+        const res = await axios.post("/search", {
           searchTerms: params,
           category: category?.length ? category : null,
           user_id: appUser.id,
         });
         // console.log("search", appUser);
-        const brands = await axios.get("http://localhost:5000/brands");
+        const brands = await axios.get("/brands");
         // console.log("brands.data : ", brands.data);
 
-        const allVendors = await axios.get("http://localhost:5000/allvendors");
+        const allVendors = await axios.get("/allvendors");
 
         // console.log(allVendors);
 
@@ -274,7 +274,7 @@ const Browse = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/addtocart", {
+      await axios.post("/addtocart", {
         user_id: appUser.id,
         product_id,
         quantity: 1,

@@ -16,10 +16,10 @@ function PaymentModeDropdown({
   const [txnDetails, setTxnDetails] = useState({});
   const getTransactionData = useCallback(async () => {
     try {
-      const txnData = await axios.post(
-        "http://localhost:5000/payments/getpaydetails",
-        { user_id: appUser.id, txnid }
-      );
+      const txnData = await axios.post("/payments/getpaydetails", {
+        user_id: appUser.id,
+        txnid,
+      });
 
       setTxnDetails(txnData.data);
     } catch (err) {
@@ -63,7 +63,7 @@ function PaymentModeDropdown({
       image: (
         <Image
           style={{ maxWidth: "80px" }}
-          src={`http://localhost:5000/${item.image[0].replace(/\\/g, "/")}`}
+          src={`/${item.image[0].replace(/\\/g, "/")}`}
           alt="ProductImg"
         />
       ),

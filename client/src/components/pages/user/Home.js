@@ -30,7 +30,7 @@ const Home = () => {
 
   const { Paragraph, Title, Text } = Typography;
   const { Content } = Layout;
-  const baseImgUrl = "http://localhost:5000/";
+  const baseImgUrl = "/";
 
   //quick buy
   const handleQuickBuy = async (productId) => {
@@ -45,7 +45,7 @@ const Home = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/addtocart", {
+      await axios.post("/addtocart", {
         user_id: appUser.id,
         product_id: productId,
         quantity: quantity,
@@ -62,14 +62,11 @@ const Home = () => {
     const fetchSuggestedProducts = async () => {
       // console.log(productDetails.brand_id);
       try {
-        const response = await axios.get(
-          "http://localhost:5000/searchproducts",
-          {
-            params: {
-              user_id: appUser.id,
-            },
-          }
-        );
+        const response = await axios.get("/searchproducts", {
+          params: {
+            user_id: appUser.id,
+          },
+        });
         // console.log(response.status);
         // console.log(response.data);
         setSuggestedProducts(response.data);
@@ -85,9 +82,9 @@ const Home = () => {
 
   const getHomeData = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/homedata");
+      const { data } = await axios.get("/homedata");
       // console.log(data.homeData);
-      const brands = await axios.get("http://localhost:5000/brands");
+      const brands = await axios.get("/brands");
       setBrands(brands.data);
       setAllProducts(data.homeData);
     } catch (err) {

@@ -14,8 +14,8 @@ const Brands = () => {
   const getBrands = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/brands");
-      const allVendors = await axios.get("http://localhost:5000/allvendors");
+      const response = await axios.get("/brands");
+      const allVendors = await axios.get("/allvendors");
       var brands = [];
       response.data.map((brand) => {
         brands.push({
@@ -38,7 +38,7 @@ const Brands = () => {
   }, []);
   // const getBrands = async () => {
   //   try {
-  //     const response = await axios.get("http://localhost:5000/brands");
+  //     const response = await axios.get("/brands");
   //     setBrands(response.data);
   //     // console.log(response.data);
   //     setFilteredBrands(response.data);

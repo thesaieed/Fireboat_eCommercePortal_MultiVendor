@@ -32,7 +32,7 @@ function Profile() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinessname/${appUser.id}`,
+        `/editbusinessname/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -49,10 +49,7 @@ function Profile() {
     const values = form.getFieldsValue();
     // console.log(values);
     try {
-      const response = await axios.put(
-        `http://localhost:5000/editemail/${appUser.id}`,
-        values
-      );
+      const response = await axios.put(`/editemail/${appUser.id}`, values);
       if (response.status === 200) {
         setShowModal(false);
         message.success("verification link sent to mail, please verify");
@@ -68,7 +65,7 @@ function Profile() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinessphonenumber/${appUser.id}`,
+        `/editbusinessphonenumber/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -85,7 +82,7 @@ function Profile() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `http://localhost:5000/editbusinesspassword/${appUser.id}`,
+        `/editbusinesspassword/${appUser.id}`,
         values
       );
       if (response.status === 200) {

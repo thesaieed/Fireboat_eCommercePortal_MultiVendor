@@ -71,14 +71,11 @@ const CheckoutDetails = () => {
 
     if (transactionID.length > 0) {
       try {
-        const { data } = await axios.post(
-          "http://localhost:5000/payments/approvecheckout",
-          {
-            transactionID,
-            vendor_id: transaction.vendor_id,
-            checkoutID: transaction.id,
-          }
-        );
+        const { data } = await axios.post("/payments/approvecheckout", {
+          transactionID,
+          vendor_id: transaction.vendor_id,
+          checkoutID: transaction.id,
+        });
         setTransactionID(0);
         if (data.status === 200) {
           setSuccessMessage("Payment Updated Successfully! ");
@@ -107,14 +104,11 @@ const CheckoutDetails = () => {
     setDenyButtonLoading(true);
     if (newDenialReason.length > 0) {
       try {
-        const { data } = await axios.post(
-          "http://localhost:5000/payments/denycheckout",
-          {
-            newDenialReason,
-            vendor_id: transaction.vendor_id,
-            checkoutID: transaction.id,
-          }
-        );
+        const { data } = await axios.post("/payments/denycheckout", {
+          newDenialReason,
+          vendor_id: transaction.vendor_id,
+          checkoutID: transaction.id,
+        });
         setNewDenialReason("");
         if (data.status === 200) {
           setDenySuccessMessage("Payment Denied! ");
@@ -141,14 +135,11 @@ const CheckoutDetails = () => {
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/payments/vendorpaymentstats",
-        {
-          vendor_id: transaction.vendor_id,
-        }
-      );
+      const { data } = await axios.post("/payments/vendorpaymentstats", {
+        vendor_id: transaction.vendor_id,
+      });
       const resTransactions = await axios.post(
-        "http://localhost:5000/payments/previoustransactions",
+        "/payments/previoustransactions",
         {
           vendor_id: transaction.vendor_id,
         }

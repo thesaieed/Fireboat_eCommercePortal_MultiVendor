@@ -67,7 +67,7 @@ function Dashboard() {
   const getTopStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.post("http://localhost:5000/topstats", {
+      const { data } = await axios.post("/topstats", {
         vendor_id: appUser.id,
         is_super_admin: appUser.is_super_admin,
       });
@@ -78,7 +78,7 @@ function Dashboard() {
     setStatsLoading(false);
   }, [appUser.id, appUser.is_super_admin]);
   const getMonthlySales = useCallback(async () => {
-    const { data } = await axios.post("http://localhost:5000/monthlysales", {
+    const { data } = await axios.post("/monthlysales", {
       vendor_id: appUser.id,
       is_super_admin: appUser.is_super_admin,
     });
@@ -86,7 +86,7 @@ function Dashboard() {
     setMonthlySales(data);
   }, [appUser.id, appUser.is_super_admin]);
   const getWeeklySales = useCallback(async () => {
-    const { data } = await axios.post("http://localhost:5000/weeklysales", {
+    const { data } = await axios.post("/weeklysales", {
       vendor_id: appUser.id,
       is_super_admin: appUser.is_super_admin,
     });
@@ -94,13 +94,10 @@ function Dashboard() {
     setWeeklySales(data);
   }, [appUser.id, appUser.is_super_admin]);
   const getLastSevenDaySales = useCallback(async () => {
-    const { data } = await axios.post(
-      "http://localhost:5000/lastsevendaysales",
-      {
-        vendor_id: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      }
-    );
+    const { data } = await axios.post("/lastsevendaysales", {
+      vendor_id: appUser.id,
+      is_super_admin: appUser.is_super_admin,
+    });
 
     setLastSevenDaySales(data);
   }, [appUser.id, appUser.is_super_admin]);
@@ -230,7 +227,7 @@ function Dashboard() {
                   {topStats?.topProduct?.product?.image?.length > 0 && (
                     <Image
                       height={60}
-                      src={`http://localhost:5000/${topStats?.topProduct?.product?.image[0]}`}
+                      src={`/${topStats?.topProduct?.product?.image[0]}`}
                     />
                   )}
                   {/* </div> */}

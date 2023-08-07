@@ -71,10 +71,7 @@ const OrderDetails = () => {
                             }}
                           >
                             <Image
-                              src={`http://localhost:5000/${imgurl.replace(
-                                /\\/g,
-                                "/"
-                              )}`}
+                              src={`/${imgurl.replace(/\\/g, "/")}`}
                               style={{
                                 cursor: "pointer",
                                 padding: 0,

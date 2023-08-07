@@ -50,14 +50,11 @@ const PaymentCheckout = () => {
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/payments/vendorpaymentstats",
-        {
-          vendor_id: appUser.id,
-        }
-      );
+      const { data } = await axios.post("/payments/vendorpaymentstats", {
+        vendor_id: appUser.id,
+      });
       const resTransactions = await axios.post(
-        "http://localhost:5000/payments/previoustransactions",
+        "/payments/previoustransactions",
         {
           vendor_id: appUser.id,
         }
@@ -81,15 +78,12 @@ const PaymentCheckout = () => {
     ) {
       try {
         const order_id = generateRandomString(10);
-        const { data } = await axios.post(
-          "http://localhost:5000/payments/initiatevendorpayment",
-          {
-            checkoutAmount,
-            upiAddress,
-            vendor_id: appUser.id,
-            order_id,
-          }
-        );
+        const { data } = await axios.post("/payments/initiatevendorpayment", {
+          checkoutAmount,
+          upiAddress,
+          vendor_id: appUser.id,
+          order_id,
+        });
         setCheckoutAmount(0);
         if (data.status === 200) {
           setSuccessMessage(

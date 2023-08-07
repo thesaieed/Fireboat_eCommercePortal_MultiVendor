@@ -25,7 +25,7 @@ const AllOrders = () => {
   const getAllOrders = useCallback(async () => {
     setLoading(true);
     try {
-      var orders = await axios.post("http://localhost:5000/orders/allorders", {
+      var orders = await axios.post("/orders/allorders", {
         vendor_id: appUser.id,
         is_super_admin: appUser.is_super_admin,
       });
@@ -55,16 +55,13 @@ const AllOrders = () => {
     const completeProductsWithAllDetails = await Promise.all(
       orderProducts.map(async (product) => {
         try {
-          const { data } = await axios.post(
-            "http://localhost:5000/orders/getOrderProductDetails",
-            {
-              address_id: product.address_id,
-              payment_details_id: product.payment_details_id,
-              user_id: product.user_id,
-              product_id: product.product_id,
-              order_id,
-            }
-          );
+          const { data } = await axios.post("/orders/getOrderProductDetails", {
+            address_id: product.address_id,
+            payment_details_id: product.payment_details_id,
+            user_id: product.user_id,
+            product_id: product.product_id,
+            order_id,
+          });
           return { ...product, ...data };
         } catch (error) {
           console.error(error);
@@ -81,10 +78,11 @@ const AllOrders = () => {
     const order_id = Object.keys(row)[0];
     setStatusChangeLoading(true);
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/orders/changeorderstatus",
-        { vendor_id: appUser.id, newStatus: e, order_id }
-      );
+      const { data } = await axios.post("/orders/changeorderstatus", {
+        vendor_id: appUser.id,
+        newStatus: e,
+        order_id,
+      });
       if (data) {
         message.success("Order Status Updated");
         getAllOrders();

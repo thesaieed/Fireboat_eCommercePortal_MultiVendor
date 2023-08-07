@@ -25,10 +25,9 @@ function AllVendors() {
   const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
-      const allVendors = await axios.post(
-        "http://localhost:5000/vendor/allvendors",
-        { is_super_admin: appUser.is_super_admin }
-      );
+      const allVendors = await axios.post("/vendor/allvendors", {
+        is_super_admin: appUser.is_super_admin,
+      });
       // console.log("allvendors : ", allVendors);
       setVendors(allVendors.data);
     } catch (err) {
@@ -61,8 +60,8 @@ function AllVendors() {
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
-        axios.delete(`http://localhost:5000/vendor/editvendor/${itemId}`),
-        // axios.delete(`http://localhost:5000/deleteImage/${encodedImagePath}`),
+        axios.delete(`/vendor/editvendor/${itemId}`),
+        // axios.delete(`/deleteImage/${encodedImagePath}`),
       ];
 
       const results = await axios.all(deleteRequests);
@@ -105,7 +104,7 @@ function AllVendors() {
     //     <img
     //       // width={50}
     //       // height={50}
-    //       src={`http://localhost:5000/${row.image.replace(/\\/g, "/")}`}
+    //       src={`/${row.image.replace(/\\/g, "/")}`}
     //       alt=""
     //       style={{ cursor: "pointer" }}
     //       onClick={() => {
@@ -281,7 +280,7 @@ function AllVendors() {
           footer={null}
         >
           <img
-            src={`http://localhost:5000/${selectedImage.replace(/\\/g, "/")}`}
+            src={`/${selectedImage.replace(/\\/g, "/")}`}
             alt=""
             style={{ width: "100%" }}
           />

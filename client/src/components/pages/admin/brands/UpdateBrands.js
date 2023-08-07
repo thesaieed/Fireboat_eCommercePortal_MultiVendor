@@ -66,9 +66,7 @@ function UpdateBrands({
       return newLoadings;
     });
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/updatebrands/${itemId}`
-      );
+      const response = await axios.delete(`/updatebrands/${itemId}`);
 
       if (response.status === 200) {
         getBrands();
@@ -102,7 +100,7 @@ function UpdateBrands({
     setEditButtonLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/updatebrands/${selectedRowId}`,
+        `/updatebrands/${selectedRowId}`,
         values
       );
       if (response.status === 200) {

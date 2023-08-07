@@ -25,7 +25,7 @@ const UserOrders = () => {
   const getAllOrders = useCallback(async () => {
     setLoading(true);
     try {
-      var orders = await axios.post("http://localhost:5000/allorders", {
+      var orders = await axios.post("/allorders", {
         user_id: appUser.id,
       });
 
@@ -61,16 +61,13 @@ const UserOrders = () => {
     const completeProductsWithAllDetails = await Promise.all(
       orderProducts.map(async (product) => {
         try {
-          const { data } = await axios.post(
-            "http://localhost:5000/orders/getOrderProductDetails",
-            {
-              address_id: product.address_id,
-              payment_details_id: product.payment_details_id,
-              user_id: product.user_id,
-              product_id: product.product_id,
-              order_id,
-            }
-          );
+          const { data } = await axios.post("/orders/getOrderProductDetails", {
+            address_id: product.address_id,
+            payment_details_id: product.payment_details_id,
+            user_id: product.user_id,
+            product_id: product.product_id,
+            order_id,
+          });
           return { ...product, ...data };
         } catch (error) {
           console.error(error);
