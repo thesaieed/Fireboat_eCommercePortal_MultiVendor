@@ -1,5 +1,5 @@
 const { sendMail } = require("./sendMail");
-
+require("dotenv").config();
 module.exports.verifyEmail = async ({ token, email, isVendor = false }) => {
   const subject = "Verify your Email with NILE";
   const body = `<div

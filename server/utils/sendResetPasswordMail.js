@@ -1,5 +1,5 @@
 const { sendMail } = require("./sendMail");
-
+require("dotenv").config();
 module.exports.sendResetPasswordMail = async (email, token, is_vendor) => {
   const href = is_vendor
     ? `${FRNTURL}/auth/admin/resetpassword?t=${token}&email=${email}&iv=${is_vendor}`

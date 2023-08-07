@@ -1,5 +1,5 @@
 const { sendMail } = require("./sendMail");
-
+require("dotenv").config();
 module.exports.sendNewOrderMailVendor = async (
   business_name,
   email,
