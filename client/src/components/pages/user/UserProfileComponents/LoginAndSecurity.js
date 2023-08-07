@@ -24,6 +24,9 @@ function LoginAndSecurity() {
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
+  useEffect(() => {
+    fetchUserDetails();
+  }, [appUser, fetchUserDetails]);
 
   useEffect(() => {
     if (!isValidToken && !appUser.id) {
@@ -193,17 +196,24 @@ function LoginAndSecurity() {
         }
         open={showModal}
         onOk={() => {
-          // Call the appropriate onOk function based on the editType
-          if (editType === "full_name") {
-            handleNameEditOk();
-          } else if (editType === "email") {
-            handleEmailEditOk();
-          } else if (editType === "phone_number") {
-            handlePhoneEditOk();
-          }
+          form
+            .validateFields()
+            .then(() => {
+              // Call the appropriate onOk function based on the editType
+              if (editType === "full_name") {
+                handleNameEditOk();
+              } else if (editType === "email") {
+                handleEmailEditOk();
+              } else if (editType === "phone_number") {
+                handlePhoneEditOk();
+              }
+            })
+            .catch((errorInfo) => {
+              console.log("Form validation failed:", errorInfo);
+            });
         }}
         onCancel={handleModalCancel}
-        okText={"Edit"}
+        okText={"Update"}
       >
         <Form
           form={form}
