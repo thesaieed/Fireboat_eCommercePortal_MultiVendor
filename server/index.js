@@ -112,9 +112,9 @@ app.post("/googlelogin", async (req, res) => {
         "INSERT INTO users(name, email, isemailverified) VALUES ($1, $2, $3) RETURNING *",
         [googlename, email, email_verified]
       );
-      const { id, name, isadmin } = newUser.rows[0];
+      const { id, name, isadmin,isactive } = newUser.rows[0];
       // console.log("Invalid Credentials");
-      data = { loginStatus: 200, user: { id, name, isadmin } }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
+      data = { loginStatus: 200, user: { id, name, isadmin,isactive } }; //if user exists but password doesnt matchm set only the variable too 401 (forbidden)
     }
 
     res.send(data); //finaly send the data variable(obj)
