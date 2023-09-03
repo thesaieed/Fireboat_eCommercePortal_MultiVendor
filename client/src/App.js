@@ -69,8 +69,8 @@ function App() {
     validateUserToken();
   }, [validateUserToken, userToken, currentURL]);
 
-  return isLoading ? (
-    <LoadingScreen />
+  return isLoading ? ( <ConfigProvider theme={appTheme}>
+    <LoadingScreen />  </ConfigProvider>
   ) : (
     <ConfigProvider theme={appTheme}>
       <IconContext.Provider value={{ style: { verticalAlign: "middle" } }}>
