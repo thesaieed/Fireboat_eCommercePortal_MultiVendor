@@ -468,7 +468,6 @@ app.post("/checkusersloggedintokens", async (req, res) => {
     : (isvendor = isvendor);
   // console.log("isVendorType after :", typeof isvendor);
   try {
-    // console.log("isVendor : ", isvendor);
     var user;
     if (!isvendor) {
       user = await pool.query(

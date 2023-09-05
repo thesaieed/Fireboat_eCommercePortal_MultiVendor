@@ -69,84 +69,92 @@ function App() {
     validateUserToken();
   }, [validateUserToken, userToken, currentURL]);
 
-  return isLoading ? ( <ConfigProvider theme={appTheme}>
-    <LoadingScreen />  </ConfigProvider>
-  ) : (
+  return (
     <ConfigProvider theme={appTheme}>
-      <IconContext.Provider value={{ style: { verticalAlign: "middle" } }}>
-        <div className="App">
-          <Routes>
-            <Route index element={<Home />} />
-            <Route path="auth">
-              <Route path="signup" element={<SignUp />} />
-              <Route path="login" element={<SignIn />} />
-              <Route path="verifyemail" element={<VerifyEmail />}></Route>
-              <Route path="forgotpassword" element={<ForgotPassword />}></Route>
-              <Route path="resetpassword" element={<ResetPassword />}></Route>
-              <Route path="admin">
-                <Route path="signup" element={<AdminSignUp />} />
-                <Route path="login" element={<AdminSignIn />} />
+      {isLoading ? (
+        <LoadingScreen />
+      ) : (
+        <IconContext.Provider value={{ style: { verticalAlign: "middle" } }}>
+          <div className="App">
+            <Routes>
+              <Route index element={<Home />} />
+              <Route path="auth">
+                <Route path="signup" element={<SignUp />} />
+                <Route path="login" element={<SignIn />} />
+                <Route path="verifyemail" element={<VerifyEmail />}></Route>
                 <Route
                   path="forgotpassword"
-                  element={<ForgotPasswordAdmin />}
-                />
-                <Route path="resetpassword" element={<ResetPasswordAdmin />} />
+                  element={<ForgotPassword />}
+                ></Route>
+                <Route path="resetpassword" element={<ResetPassword />}></Route>
+                <Route path="admin">
+                  <Route path="signup" element={<AdminSignUp />} />
+                  <Route path="login" element={<AdminSignIn />} />
+                  <Route
+                    path="forgotpassword"
+                    element={<ForgotPasswordAdmin />}
+                  />
+                  <Route
+                    path="resetpassword"
+                    element={<ResetPasswordAdmin />}
+                  />
+                </Route>
               </Route>
-            </Route>
-            <Route path="/browse" element={<Browse />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/product" element={<ShowProductDetails />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/profile" element={<UserProfile />} />
-            <Route path="/orders" element={<UserOrders />} />
-            <Route path="/orderdetails" element={<UserOrderDetails />} />
-            <Route path="/youraddresses" element={<YourAddresses />} />
-            <Route path="/loginandsecurity" element={<LoginAndSecurity />} />
-            <Route path="/admin" element={<Main />}>
-              <Route path="superadmin">
-                <Route path="allvendors" element={<AllVendors />} />
-                <Route path="approvevendors" element={<ApproveVendors />} />
-                <Route path="allusers" element={<AllUsers />} />
-                <Route path="payments" element={<SAPaymentCheckout />} />
-                <Route path="checkoutdetails" element={<CheckoutDetails />} />
+              <Route path="/browse" element={<Browse />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/product" element={<ShowProductDetails />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/orders" element={<UserOrders />} />
+              <Route path="/orderdetails" element={<UserOrderDetails />} />
+              <Route path="/youraddresses" element={<YourAddresses />} />
+              <Route path="/loginandsecurity" element={<LoginAndSecurity />} />
+              <Route path="/admin" element={<Main />}>
+                <Route path="superadmin">
+                  <Route path="allvendors" element={<AllVendors />} />
+                  <Route path="approvevendors" element={<ApproveVendors />} />
+                  <Route path="allusers" element={<AllUsers />} />
+                  <Route path="payments" element={<SAPaymentCheckout />} />
+                  <Route path="checkoutdetails" element={<CheckoutDetails />} />
+                </Route>
+                <Route index element={<Dashboard />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="payments" element={<PaymentCheckout />} />
+                <Route path="orders">
+                  <Route index element={<AllOrders />} />
+                  <Route path="allorders" element={<AllOrders />} />
+                  <Route path="orderdetails" element={<OrderDetails />} />
+                  <Route path="completed" element={<CompletedOrders />} />
+                  <Route path="pending" element={<PendingOrders />} />
+                  <Route path="*" element={<AllOrders />} />
+                </Route>
+                <Route path="products">
+                  <Route path="addproduct" element={<AddProduct />} />
+                  <Route index element={<AddProduct />} />
+                  <Route path="allproducts" element={<AllProducts />} />
+                  <Route path="*" element={<AddProduct />} />
+                </Route>
+                <Route path="categories">
+                  <Route
+                    index
+                    element={
+                      <>
+                        <AllCategories /> <Updatecategories />
+                      </>
+                    }
+                  />
+                </Route>
+                <Route path="brands">
+                  <Route index element={<Brands />} />
+                </Route>
               </Route>
-              <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="payments" element={<PaymentCheckout />} />
-              <Route path="orders">
-                <Route index element={<AllOrders />} />
-                <Route path="allorders" element={<AllOrders />} />
-                <Route path="orderdetails" element={<OrderDetails />} />
-                <Route path="completed" element={<CompletedOrders />} />
-                <Route path="pending" element={<PendingOrders />} />
-                <Route path="*" element={<AllOrders />} />
-              </Route>
-              <Route path="products">
-                <Route path="addproduct" element={<AddProduct />} />
-                <Route index element={<AddProduct />} />
-                <Route path="allproducts" element={<AllProducts />} />
-                <Route path="*" element={<AddProduct />} />
-              </Route>
-              <Route path="categories">
-                <Route
-                  index
-                  element={
-                    <>
-                      <AllCategories /> <Updatecategories />
-                    </>
-                  }
-                />
-              </Route>
-              <Route path="brands">
-                <Route index element={<Brands />} />
-              </Route>
-            </Route>
-            <Route path="/aboutus" element={<ContactUs />} />
-            <Route path="*" element={<NotFound />}></Route>
-          </Routes>
-        </div>
-      </IconContext.Provider>
+              <Route path="/aboutus" element={<ContactUs />} />
+              <Route path="*" element={<NotFound />}></Route>
+            </Routes>
+          </div>
+        </IconContext.Provider>
+      )}
     </ConfigProvider>
   );
 }
