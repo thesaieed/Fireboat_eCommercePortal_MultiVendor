@@ -14,7 +14,7 @@ import axios from "axios";
 import CommonNavbar from "../../../layout/CommonNavbar";
 import Footer from "../../../layout/Footer";
 const UserOrders = () => {
-  const { appUser, isValidToken } = useAllContext();
+  const { appUser, isValidToken, api } = useAllContext();
   const [search, setSearch] = useState("");
   const [allOrders, setAllOrders] = useState();
   const [filteredOrders, setFilteredOrders] = useState();
@@ -25,12 +25,9 @@ const UserOrders = () => {
   const getAllOrders = useCallback(async () => {
     setLoading(true);
     try {
-      var orders = await axios.post(
-        "https://nile-server-a3fg.onrender.com/allorders",
-        {
-          user_id: appUser.id,
-        }
-      );
+      var orders = await axios.post(`${api}/allorders`, {
+        user_id: appUser.id,
+      });
 
       setAllOrders(orders.data.orders);
       setFilteredOrders(orders.data.orders);
@@ -39,7 +36,7 @@ const UserOrders = () => {
       console.log(err);
     }
     setLoading(false);
-  }, [appUser.id]);
+  }, [appUser.id, api]);
 
   useEffect(() => {
     if (!isValidToken && !appUser.id) {
@@ -65,7 +62,7 @@ const UserOrders = () => {
       orderProducts.map(async (product) => {
         try {
           const { data } = await axios.post(
-            "https://nile-server-a3fg.onrender.com/orders/getOrderProductDetails",
+            `${api}/orders/getOrderProductDetails`,
             {
               address_id: product.address_id,
               payment_details_id: product.payment_details_id,

@@ -26,7 +26,8 @@ import brandIcon from "../../../assets/images/brandIcon.png";
 import categoryIcon from "../../../assets/images/categoryIcon.png";
 import { MdShoppingCartCheckout } from "react-icons/md";
 function Cart() {
-  const { appUser, updateNumberOfCartItems, isValidToken } = useAllContext();
+  const { appUser, updateNumberOfCartItems, isValidToken, api } =
+    useAllContext();
   const [productData, setProductData] = useState([]);
   const { Paragraph, Title } = Typography;
   const [productLinks, setProductLinks] = useState([]);
@@ -48,17 +49,12 @@ function Cart() {
       setLoading(true);
       // console.log(appUser.appUser.id)
       try {
-        const response = await axios.get(
-          "https://nile-server-a3fg.onrender.com/cart",
-          {
-            params: {
-              id: appUser.id,
-            },
-          }
-        );
-        const brandsRes = await axios.get(
-          "https://nile-server-a3fg.onrender.com/brands"
-        );
+        const response = await axios.get(`${api}/cart`, {
+          params: {
+            id: appUser.id,
+          },
+        });
+        const brandsRes = await axios.get(`${api}/brands`);
 
         const data1 = response.data.data1; //id, product_id,quantity from cart table
         // console.log(data1);
@@ -107,7 +103,7 @@ function Cart() {
     if (appUser.id) {
       fetchData();
     }
-  }, [appUser.id]);
+  }, [appUser.id, api]);
 
   const incrementQuantity = (index) => {
     setProductData((prevData) => {
@@ -144,7 +140,7 @@ function Cart() {
 
   const updateQuantityInDatabase = async (itemId, quantity) => {
     try {
-      await axios.put(`https://nile-server-a3fg.onrender.com/cart/${itemId}`, {
+      await axios.put(`${api}/cart/${itemId}`, {
         quantity,
       });
       // console.log("Quantity updated in the database");
@@ -173,9 +169,7 @@ function Cart() {
     // console.log(index);
     try {
       // Make a DELETE request to your server API endpoint to delete the item from the cart
-      await axios.delete(
-        `https://nile-server-a3fg.onrender.com/cart/${itemId}`
-      );
+      await axios.delete(`${api}/cart/${itemId}`);
 
       // Remove the deleted item from the productData state
       setProductData((prevData) =>
@@ -312,10 +306,7 @@ function Cart() {
                 <div className="d-flex justify-content-center">
                   <Image
                     style={{ maxWidth: "180px" }}
-                    src={`https://nile-server-a3fg.onrender.com/${item.image[0].replace(
-                      /\\/g,
-                      "/"
-                    )}`}
+                    src={`${api}/${item.image[0].replace(/\\/g, "/")}`}
                     alt="ProductImg"
                   />
                 </div>

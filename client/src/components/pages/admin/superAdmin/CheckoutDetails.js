@@ -45,7 +45,7 @@ const CheckoutDetails = () => {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [denyform] = Form.useForm();
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [denyErrorMessage, setDenyErrorMessage] = useState("");
@@ -71,14 +71,11 @@ const CheckoutDetails = () => {
 
     if (transactionID.length > 0) {
       try {
-        const { data } = await axios.post(
-          "https://nile-server-a3fg.onrender.com/payments/approvecheckout",
-          {
-            transactionID,
-            vendor_id: transaction.vendor_id,
-            checkoutID: transaction.id,
-          }
-        );
+        const { data } = await axios.post(`${api}/payments/approvecheckout`, {
+          transactionID,
+          vendor_id: transaction.vendor_id,
+          checkoutID: transaction.id,
+        });
         setTransactionID(0);
         if (data.status === 200) {
           setSuccessMessage("Payment Updated Successfully! ");
@@ -107,14 +104,11 @@ const CheckoutDetails = () => {
     setDenyButtonLoading(true);
     if (newDenialReason.length > 0) {
       try {
-        const { data } = await axios.post(
-          "https://nile-server-a3fg.onrender.com/payments/denycheckout",
-          {
-            newDenialReason,
-            vendor_id: transaction.vendor_id,
-            checkoutID: transaction.id,
-          }
-        );
+        const { data } = await axios.post(`${api}/payments/denycheckout`, {
+          newDenialReason,
+          vendor_id: transaction.vendor_id,
+          checkoutID: transaction.id,
+        });
         setNewDenialReason("");
         if (data.status === 200) {
           setDenySuccessMessage("Payment Denied! ");
@@ -141,14 +135,11 @@ const CheckoutDetails = () => {
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.post(
-        "https://nile-server-a3fg.onrender.com/payments/vendorpaymentstats",
-        {
-          vendor_id: transaction.vendor_id,
-        }
-      );
+      const { data } = await axios.post(`${api}/payments/vendorpaymentstats`, {
+        vendor_id: transaction.vendor_id,
+      });
       const resTransactions = await axios.post(
-        "https://nile-server-a3fg.onrender.com/payments/previoustransactions",
+        `${api}/payments/previoustransactions`,
         {
           vendor_id: transaction.vendor_id,
         }
@@ -163,7 +154,7 @@ const CheckoutDetails = () => {
       console.log(error);
     }
     setStatsLoading(false);
-  }, [transaction.vendor_id]);
+  }, [transaction.vendor_id, api]);
   useEffect(() => {
     getPaymentStats();
   }, [getPaymentStats]);

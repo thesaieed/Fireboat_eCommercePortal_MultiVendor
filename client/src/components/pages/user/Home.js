@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { Row, Col, Typography, Layout, Card, Button, message } from "antd";
 
@@ -18,7 +18,7 @@ import categoryIcon from "../../../assets/images/categoryIcon.png";
 import { PiShootingStarFill } from "react-icons/pi";
 
 const Home = () => {
-  const { appUser, updateNumberOfCartItems } = useAllContext();
+  const { appUser, updateNumberOfCartItems, api } = useAllContext();
   const [suggestedProducts, setSuggestedProducts] = useState();
   const [responseStatus, setResponseStatus] = useState();
   const [allProducts, setAllProducts] = useState([]);
@@ -30,7 +30,7 @@ const Home = () => {
 
   const { Paragraph, Title, Text } = Typography;
   const { Content } = Layout;
-  const baseImgUrl = "https://nile-server-a3fg.onrender.com/";
+  const baseImgUrl = `${api}/`;
 
   //quick buy
   const handleQuickBuy = async (productId) => {
@@ -45,7 +45,7 @@ const Home = () => {
     }
 
     try {
-      await axios.post("https://nile-server-a3fg.onrender.com/addtocart", {
+      await axios.post(`${api}/addtocart`, {
         user_id: appUser.id,
         product_id: productId,
         quantity: quantity,
@@ -62,14 +62,11 @@ const Home = () => {
     const fetchSuggestedProducts = async () => {
       // console.log(productDetails.brand_id);
       try {
-        const response = await axios.get(
-          "https://nile-server-a3fg.onrender.com/searchproducts",
-          {
-            params: {
-              user_id: appUser.id,
-            },
-          }
-        );
+        const response = await axios.get(`${api}/searchproducts`, {
+          params: {
+            user_id: appUser.id,
+          },
+        });
         // console.log(response.status);
         // console.log(response.data);
         setSuggestedProducts(response.data);
@@ -81,28 +78,24 @@ const Home = () => {
     if (appUser) {
       fetchSuggestedProducts();
     }
-  }, [appUser.id, appUser]);
+  }, [appUser.id, appUser, api]);
 
-  const getHomeData = async () => {
+  const getHomeData = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        "https://nile-server-a3fg.onrender.com/homedata"
-      );
+      const { data } = await axios.get(`${api}/homedata`);
       // console.log(data.homeData);
-      const brands = await axios.get(
-        "https://nile-server-a3fg.onrender.com/brands"
-      );
+      const brands = await axios.get(`${api}/brands`);
       setBrands(brands.data);
       setAllProducts(data.homeData);
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
-  };
+  }, [api]);
 
   useEffect(() => {
     getHomeData();
-  }, []);
+  }, [getHomeData]);
 
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);

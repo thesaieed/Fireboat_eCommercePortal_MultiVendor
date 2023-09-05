@@ -6,6 +6,7 @@ import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 import logo from "../../../../assets/images/logo.png";
 import Footer from "../../../layout/Footer";
+import useAllContext from "../../../../context/useAllContext";
 const { Title } = Typography;
 const { Content } = Layout;
 
@@ -14,15 +15,14 @@ function ForgotPassword() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [errorDescription, setErrorDescription] = useState();
-
+  const { api } = useAllContext();
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
     setButtonLoading(true);
-    const res = await axios.post(
-      "https://nile-server-a3fg.onrender.com/sendresetpasswordlink",
-      { email: values.email }
-    );
+    const res = await axios.post(`${api}/sendresetpasswordlink`, {
+      email: values.email,
+    });
     // console.log(res.data);
     switch (res.data.status) {
       case 200:

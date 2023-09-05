@@ -19,11 +19,12 @@ import {
 } from "@ant-design/icons";
 import logo from "../../../../assets/images/logo.png";
 import Footer from "../../../layout/Footer";
+import useAllContext from "../../../../context/useAllContext";
 export const ResetPasswordAdmin = () => {
   const { Content } = Layout;
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-
+  const { api } = useAllContext();
   const [form] = Form.useForm();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -38,15 +39,12 @@ export const ResetPasswordAdmin = () => {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/resetpassword",
-        {
-          ...values,
-          useremail: email,
-          token,
-          is_vendor: true,
-        }
-      );
+      const response = await axios.post(`${api}/resetpassword`, {
+        ...values,
+        useremail: email,
+        token,
+        is_vendor: true,
+      });
       // console.log("Responce : ", response);
       //if signup is successfull
       if (response.data.status === 200) {
@@ -86,14 +84,11 @@ export const ResetPasswordAdmin = () => {
 
   const verifyToken = useCallback(async () => {
     setIsVerifying(true);
-    const res = await axios.post(
-      "https://nile-server-a3fg.onrender.com/verifyresettoken",
-      {
-        token: token,
-        useremail: email,
-        is_vendor: isVendor,
-      }
-    );
+    const res = await axios.post(`${api}/verifyresettoken`, {
+      token: token,
+      useremail: email,
+      is_vendor: isVendor,
+    });
     // console.log(res);
     if (res.data.status === 200) {
       setIsVerified(true);
@@ -102,7 +97,7 @@ export const ResetPasswordAdmin = () => {
       setIsVerified(false);
     }
     setIsVerifying(false);
-  }, [email, token, isVendor]);
+  }, [email, token, isVendor, api]);
 
   useEffect(() => {
     verifyToken();

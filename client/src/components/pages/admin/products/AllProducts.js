@@ -46,7 +46,7 @@ function AllProducts() {
   const [form] = Form.useForm();
   const [modalDescription, setModalDescription] = useState([]);
   const [textDesc, setTextDesc] = useState("");
-  const { categories, fetchCategories, appUser } = useAllContext();
+  const { categories, fetchCategories, appUser, api } = useAllContext();
   const [selectedRowData, setSelectedRowData] = useState({});
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [refreshPage, setRefreshPage] = useState(false);
@@ -65,19 +65,12 @@ function AllProducts() {
   const getProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/viewproducts",
-        {
-          vendorId: appUser.id,
-          is_super_admin: appUser.is_super_admin,
-        }
-      );
-      const allVendors = await axios.get(
-        "https://nile-server-a3fg.onrender.com/allvendors"
-      );
-      const brands = await axios.get(
-        "https://nile-server-a3fg.onrender.com/brands"
-      );
+      const response = await axios.post(`${api}/viewproducts`, {
+        vendorId: appUser.id,
+        is_super_admin: appUser.is_super_admin,
+      });
+      const allVendors = await axios.get(`${api}/allvendors`);
+      const brands = await axios.get(`${api}/brands`);
       // console.log("brands.data : ", brands.data);
       var products = [];
       response.data.map((product) => {
@@ -102,7 +95,7 @@ function AllProducts() {
       console.log(error);
     }
     setLoading(false);
-  }, [appUser.id, appUser.is_super_admin]);
+  }, [appUser.id, appUser.is_super_admin, api]);
   useEffect(() => {
     // setLoading(true);
     getProducts();
@@ -166,7 +159,7 @@ function AllProducts() {
       // }
 
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/admin/updateproduct/${selectedRowId}`,
+        `${api}/admin/updateproduct/${selectedRowId}`,
         formData
         // {
         //   headers: {
@@ -207,12 +200,8 @@ function AllProducts() {
     const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
-        axios.delete(
-          `https://nile-server-a3fg.onrender.com/viewproducts/${itemId}`
-        ),
-        axios.delete(
-          `https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`
-        ),
+        axios.delete(`${api}/viewproducts/${itemId}`),
+        axios.delete(`${api}/deleteImage/${encodedImagePath}`),
       ];
 
       const results = await axios.all(deleteRequests);
@@ -275,10 +264,7 @@ function AllProducts() {
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <Image
-                    src={`https://nile-server-a3fg.onrender.com/${imgurl.replace(
-                      /\\/g,
-                      "/"
-                    )}`}
+                    src={`${api}/${imgurl.replace(/\\/g, "/")}`}
                     style={{
                       cursor: "pointer",
                       padding: 0,
@@ -487,7 +473,7 @@ function AllProducts() {
     };
     try {
       const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/admin/deleteproductimage",
+        `${api}/admin/deleteproductimage`,
         data
       );
       if (response.status === 200) {
@@ -532,7 +518,7 @@ function AllProducts() {
       });
 
       const response = await axios.post(
-        `https://nile-server-a3fg.onrender.com/admin/addproductimage/${selectedRowId}`,
+        `${api}/admin/addproductimage/${selectedRowId}`,
         formData,
         {
           headers: {
@@ -817,10 +803,7 @@ function AllProducts() {
                 {productImages.map((imagePath, index) => (
                   <div key={index}>
                     <Image
-                      src={`https://nile-server-a3fg.onrender.com/${imagePath.replace(
-                        /\\/g,
-                        "/"
-                      )}`}
+                      src={`${api}/${imagePath.replace(/\\/g, "/")}`}
                       alt=""
                       style={{
                         cursor: "pointer",
@@ -907,10 +890,7 @@ function AllProducts() {
                 checked={selectedImages.includes(index)}
               >
                 <Image
-                  src={`https://nile-server-a3fg.onrender.com/${imagePath.replace(
-                    /\\/g,
-                    "/"
-                  )}`}
+                  src={`${api}/${imagePath.replace(/\\/g, "/")}`}
                   alt=""
                   style={{
                     cursor: "pointer",

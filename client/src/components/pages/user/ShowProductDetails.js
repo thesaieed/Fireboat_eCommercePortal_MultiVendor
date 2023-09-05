@@ -47,7 +47,7 @@ function ShowProductDetails() {
   const [productDetails, setProductDetails] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
-  const { appUser, updateNumberOfCartItems } = useAllContext();
+  const { appUser, updateNumberOfCartItems, api } = useAllContext();
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);
   const [screenLoading, setScreenLoading] = useState(false);
@@ -67,7 +67,7 @@ function ShowProductDetails() {
   // const { productId } = useParams();
   // console.log(productId);
   // const productId = props.match.params.id;
-  const baseImgUrl = "https://nile-server-a3fg.onrender.com/";
+  const baseImgUrl = `${api}/`;
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
   const { Title, Paragraph, Text } = Typography; // console.log(productId);
@@ -83,10 +83,9 @@ function ShowProductDetails() {
   const fetchProductDetails = useCallback(async () => {
     setScreenLoading(true);
     try {
-      const response = await axios.get(
-        "https://nile-server-a3fg.onrender.com/admin/productdetails",
-        { params: { productId: productId, userId: appUser.id } }
-      );
+      const response = await axios.get(`${api}/admin/productdetails`, {
+        params: { productId: productId, userId: appUser.id },
+      });
       // console.log(response.data);
       const stockAvailable = response.data.stock_available > 0;
       setIsOutOfStock(!stockAvailable);
@@ -100,29 +99,25 @@ function ShowProductDetails() {
       }
     }
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/review/productreviews",
-        { product_id: productId }
-      );
+      const response = await axios.post(`${api}/review/productreviews`, {
+        product_id: productId,
+      });
 
       setAllReviews(response.data);
     } catch (reviewError) {
       console.error("review Error : ", reviewError);
     }
     setScreenLoading(false);
-  }, [appUser.id, navigate, productId]);
+  }, [appUser.id, navigate, productId, api]);
   const handleNewReviewSubmit = async () => {
     // console.log(newReview);
     setReviewButtonLoading(true);
     try {
-      const addReviewResponse = await axios.post(
-        "https://nile-server-a3fg.onrender.com/review/newreview",
-        {
-          ...newReview,
-          user_id: appUser.id,
-          product_id: productDetails.id,
-        }
-      );
+      const addReviewResponse = await axios.post(`${api}/review/newreview`, {
+        ...newReview,
+        user_id: appUser.id,
+        product_id: productDetails.id,
+      });
       if (addReviewResponse.data) {
         message.success("Review Submitted");
         fetchProductDetails();
@@ -138,10 +133,10 @@ function ShowProductDetails() {
   const handleReviewDelete = async () => {
     setDeleteReviewButtonLoading(true);
     try {
-      const deleteResponse = await axios.post(
-        "https://nile-server-a3fg.onrender.com/review/deletereview",
-        { user_id: appUser.id, product_id: productId }
-      );
+      const deleteResponse = await axios.post(`${api}/review/deletereview`, {
+        user_id: appUser.id,
+        product_id: productId,
+      });
       if (deleteResponse.data) {
         message.success("Review Deleted Successfully!");
         fetchProductDetails();
@@ -188,7 +183,7 @@ function ShowProductDetails() {
     }
 
     try {
-      await axios.post("https://nile-server-a3fg.onrender.com/addtocart", {
+      await axios.post(`${api}/addtocart`, {
         user_id: appUser.id,
         product_id: productId,
         quantity: quantity,
@@ -206,15 +201,12 @@ function ShowProductDetails() {
     const fetchSuggestedProducts = async () => {
       // console.log(productDetails.brand_id);
       try {
-        const response = await axios.get(
-          "https://nile-server-a3fg.onrender.com/suggestedproducts",
-          {
-            params: {
-              brand_id: productDetails.category_id,
-              product_id: productDetails.id,
-            },
-          }
-        );
+        const response = await axios.get(`${api}/suggestedproducts`, {
+          params: {
+            brand_id: productDetails.category_id,
+            product_id: productDetails.id,
+          },
+        });
         // console.log(response.data);
         setSuggestedProducts(response.data);
       } catch (error) {
@@ -224,7 +216,7 @@ function ShowProductDetails() {
     if (productDetails) {
       fetchSuggestedProducts();
     }
-  }, [productDetails]);
+  }, [productDetails, api]);
   // console.log(suggestedProducts);
 
   //check
@@ -604,6 +596,7 @@ function ShowProductDetails() {
                   <div>
                     <Title level={3}>Your Rating </Title>
                     <hr />
+
                     <div className="d-flex justify-content-start align-items-center">
                       <StarRatings
                         rating={productDetails.userReviewforProduct?.rating}

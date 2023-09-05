@@ -9,18 +9,15 @@ const NewCategory = ({ modalOpen, setModalOpen }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
-  const { fetchCategories, appUser } = useAllContext();
+  const { fetchCategories, appUser, api } = useAllContext();
   const onFinish = async (values) => {
     setButtonLoading(true);
     if (values.name) {
       try {
-        const response = await axios.post(
-          "https://nile-server-a3fg.onrender.com/addcategory",
-          {
-            name: values.name,
-            vendorId: appUser.id,
-          }
-        );
+        const response = await axios.post(`${api}/addcategory`, {
+          name: values.name,
+          vendorId: appUser.id,
+        });
         // console.log(response);
         if (response.data.id) {
           setSuccessMessage(`Category ${values.name} Created Successfully !`);

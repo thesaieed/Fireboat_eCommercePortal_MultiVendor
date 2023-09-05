@@ -7,6 +7,7 @@ function ReviewItemsDropdown({
   onIncrement,
   onDecrement,
   placeOrder,
+  api,
 }) {
   //   console.log(itemDetails);
   const [estimatedDelivery, setEstimatedDelivery] = useState(null);
@@ -44,10 +45,7 @@ function ReviewItemsDropdown({
             <Col span={8}>
               <Image
                 style={{ maxWidth: "180px" }}
-                src={`https://nile-server-a3fg.onrender.com/${item.image[0].replace(
-                  /\\/g,
-                  "/"
-                )}`}
+                src={`${api}/${item.image[0].replace(/\\/g, "/")}`}
                 alt="ProductImg"
               />
             </Col>

@@ -34,7 +34,7 @@ const Browse = () => {
   const [cartButtonLoading, setCartButtonLoading] = useState([]);
 
   const navigate = useNavigate();
-  const { appUser, updateNumberOfCartItems } = useAllContext();
+  const { appUser, updateNumberOfCartItems, api } = useAllContext();
 
   //Filter States and functions
   const [sortValue, setSortValue] = useState(null);
@@ -90,7 +90,7 @@ const Browse = () => {
     setCategory(searchParams.get("category"));
   }, [searchParams]);
 
-  const baseImgUrl = "https://nile-server-a3fg.onrender.com/";
+  const baseImgUrl = `${api}/`;
 
   const { Paragraph, Title } = Typography;
 
@@ -120,23 +120,16 @@ const Browse = () => {
       setLoading(true);
       try {
         // console.log(params);
-        const res = await axios.post(
-          "https://nile-server-a3fg.onrender.com/search",
-          {
-            searchTerms: params,
-            category: category?.length ? category : null,
-            user_id: appUser.id,
-          }
-        );
+        const res = await axios.post(`${api}/search`, {
+          searchTerms: params,
+          category: category?.length ? category : null,
+          user_id: appUser.id,
+        });
         // console.log("search", appUser);
-        const brands = await axios.get(
-          "https://nile-server-a3fg.onrender.com/brands"
-        );
+        const brands = await axios.get(`${api}/brands`);
         // console.log("brands.data : ", brands.data);
 
-        const allVendors = await axios.get(
-          "https://nile-server-a3fg.onrender.com/allvendors"
-        );
+        const allVendors = await axios.get(`${api}/allvendors`);
 
         // console.log(allVendors);
 
@@ -160,7 +153,7 @@ const Browse = () => {
             });
             return null;
           });
-          console.log("prods : ", products);
+          // console.log("prods : ", products);
           setNoProductMessage(false);
           setBrowseProducts(products);
           setShownProducts(products);
@@ -174,7 +167,7 @@ const Browse = () => {
       }
       setLoading(false);
     },
-    [category, appUser.id]
+    [category, appUser.id, api]
   );
 
   const applyFilters = useCallback(() => {
@@ -281,7 +274,7 @@ const Browse = () => {
     }
 
     try {
-      await axios.post("https://nile-server-a3fg.onrender.com/addtocart", {
+      await axios.post(`${api}/addtocart`, {
         user_id: appUser.id,
         product_id,
         quantity: 1,

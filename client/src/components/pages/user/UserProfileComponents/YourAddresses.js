@@ -23,7 +23,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { BiSolidEditAlt, BiSolidPhone } from "react-icons/bi";
 function YourAddresses() {
   const navigate = useNavigate();
-  const { appUser, isValidToken } = useAllContext();
+  const { appUser, isValidToken, api } = useAllContext();
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
@@ -76,20 +76,17 @@ function YourAddresses() {
   };
   const getAddresses = useCallback(async () => {
     try {
-      const response = await axios.get(
-        "https://nile-server-a3fg.onrender.com/youraddresses",
-        {
-          params: {
-            user_id: appUser.id,
-          },
-        }
-      );
+      const response = await axios.get(`${api}/youraddresses`, {
+        params: {
+          user_id: appUser.id,
+        },
+      });
       //   console.log(response.data);
       setAddresses(response.data);
     } catch (error) {
       console.log(error);
     }
-  }, [appUser.id]);
+  }, [appUser.id, api]);
   useEffect(() => {
     if (!isValidToken && !appUser.id) {
       message.info("You need to be Logged In!");
@@ -124,7 +121,7 @@ function YourAddresses() {
     values.id = appUser.id;
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editshippingaddress/${editAddress.id}`,
+        `${api}/editshippingaddress/${editAddress.id}`,
         values
       );
       if (response.status === 200) {
@@ -150,10 +147,7 @@ function YourAddresses() {
     const values = form.getFieldsValue();
     values.id = appUser.id;
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/addshippingaddress",
-        values
-      );
+      const response = await axios.post(`${api}/addshippingaddress`, values);
       // console.log(response.status);
       if (response.status === 200) {
         getAddresses();
@@ -169,9 +163,7 @@ function YourAddresses() {
     // console.log(id);
     try {
       // Make a DELETE request to your server API endpoint to delete the item from the cart
-      const response = await axios.delete(
-        `https://nile-server-a3fg.onrender.com/removeaddress/${id}`
-      );
+      const response = await axios.delete(`${api}/removeaddress/${id}`);
 
       if (response.status === 200) {
         message.success("successfully removed address");

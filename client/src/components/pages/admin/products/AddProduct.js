@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import {
   Alert,
   Button,
@@ -22,26 +22,25 @@ import TextEditor from "./TextEditor";
 function AddProduct() {
   const [errorMessage, setErrorMessage] = useState("");
   const [form] = Form.useForm();
-  const { categories, fetchCategories, appUser } = useAllContext();
+  const { categories, fetchCategories, appUser, api } = useAllContext();
   const [brands, setBrands] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [textDesc, setTextDesc] = useState();
 
   //get request to get the categories available stored in db
-  const getBrands = async () => {
+  const getBrands = useCallback(async () => {
     try {
-      const brands = await axios.get(
-        "https://nile-server-a3fg.onrender.com/brands"
-      );
+      const brands = await axios.get(`${api}/brands`);
       setBrands(brands.data);
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [api]);
+
   useEffect(() => {
     getBrands();
     fetchCategories();
-  }, [fetchCategories]);
+  }, [fetchCategories, api, getBrands]);
 
   const onFinish = async (values) => {
     setButtonLoading(true);
@@ -59,15 +58,11 @@ function AddProduct() {
         formData.append("image", file.originFileObj);
       });
       // console.log("formData : ", formData);
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/admin/addproduct",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${api}/admin/addproduct`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.status === 200) {
         //add required navigation

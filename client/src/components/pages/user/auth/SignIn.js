@@ -25,6 +25,7 @@ function SignIn() {
     setUserToken,
     isValidToken,
     setUserTokenIsAdmin,
+    api,
   } = useAllContext();
 
   useEffect(() => {
@@ -42,10 +43,7 @@ function SignIn() {
   const onFinish = async (values) => {
     // console.log("Success:", values);
     setButtonLoading(true);
-    const res = await axios.post(
-      "https://nile-server-a3fg.onrender.com/login",
-      values
-    );
+    const res = await axios.post(`${api}/login`, values);
     // console.log(res.data);
     switch (res.data.loginStatus) {
       case 200:
@@ -64,14 +62,11 @@ function SignIn() {
         setUserTokenIsAdmin(false);
         setAppUser(res.data.user);
         try {
-          await axios.post(
-            "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
-            {
-              token: userToken,
-              id: res.data.user.id,
-              isvendor: false,
-            }
-          );
+          await axios.post(`${api}/addusersloggedintokens`, {
+            token: userToken,
+            id: res.data.user.id,
+            isvendor: false,
+          });
           setIsValidToken(true);
         } catch (err) {
           console.error(err);
@@ -122,10 +117,7 @@ function SignIn() {
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post(
-        "https://nile-server-a3fg.onrender.com/googlelogin",
-        values
-      );
+      const res = await axios.post(`${api}/googlelogin`, values);
       switch (res.data.loginStatus) {
         case 200:
           //check if user disabled
@@ -143,14 +135,11 @@ function SignIn() {
           setUserTokenIsAdmin(false);
           setAppUser(res.data.user);
           try {
-            await axios.post(
-              "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
-              {
-                token: userToken,
-                id: res.data.user.id,
-                isvendor: false,
-              }
-            );
+            await axios.post(`${api}/addusersloggedintokens`, {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: false,
+            });
             setIsValidToken(true);
           } catch (err) {
             console.error(err);
@@ -186,6 +175,7 @@ function SignIn() {
       setButtonLoading(false);
     },
     [
+      api,
       form,
       generateRandomString,
       setAppUser,

@@ -35,6 +35,7 @@ export default function AdminSignUp() {
   const [form] = Form.useForm();
   const {
     isValidToken,
+    api,
     appUser,
     setAppUser,
     generateRandomString,
@@ -58,10 +59,7 @@ export default function AdminSignUp() {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/vendor/newvendor",
-        values
-      );
+      const response = await axios.post(`${api}/vendor/newvendor`, values);
       // console.log("Responce : ", response);
       //if signup is successfull
       if (response.data.status === 200) {
@@ -96,17 +94,14 @@ export default function AdminSignUp() {
     async (response) => {
       // console.log("Success:", values);
       let user = jwt_decode(response.credential);
-      console.log("User:", user);
+      // console.log("User:", user);
       const values = {
         googlename: user.name,
         email: user.email,
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post(
-        "https://nile-server-a3fg.onrender.com/vendor/googlelogin",
-        values
-      );
+      const res = await axios.post(`${api}/vendor/googlelogin`, values);
       switch (res.data.loginStatus) {
         case 200:
           const userToken = generateRandomString(12);
@@ -118,14 +113,11 @@ export default function AdminSignUp() {
           setUserTokenIsAdmin(true);
           setAppUser(res.data.user);
           try {
-            await axios.post(
-              "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
-              {
-                token: userToken,
-                id: res.data.user.id,
-                isvendor: true,
-              }
-            );
+            await axios.post(`${api}/addusersloggedintokens`, {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: true,
+            });
             setIsValidToken(true);
           } catch (err) {
             console.error(err);
@@ -192,6 +184,7 @@ export default function AdminSignUp() {
       setButtonLoading(false);
     },
     [
+      api,
       form,
       generateRandomString,
       setAppUser,

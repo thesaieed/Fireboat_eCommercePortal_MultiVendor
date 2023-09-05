@@ -5,7 +5,7 @@ import axios from "axios";
 import { FcDataEncryption } from "react-icons/fc";
 import { BiSolidEditAlt } from "react-icons/bi";
 function Profile() {
-  const { appUser, fetchUserDetails } = useAllContext();
+  const { appUser, fetchUserDetails, api } = useAllContext();
   useEffect(() => {
     fetchUserDetails();
   }, [appUser, fetchUserDetails]);
@@ -32,7 +32,7 @@ function Profile() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editbusinessname/${appUser.id}`,
+        `${api}/editbusinessname/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -50,7 +50,7 @@ function Profile() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editemail/${appUser.id}`,
+        `${api}/editemail/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -68,7 +68,7 @@ function Profile() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editbusinessphonenumber/${appUser.id}`,
+        `${api}/editbusinessphonenumber/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -85,7 +85,7 @@ function Profile() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editbusinesspassword/${appUser.id}`,
+        `${api}/editbusinesspassword/${appUser.id}`,
         values
       );
       if (response.status === 200) {
