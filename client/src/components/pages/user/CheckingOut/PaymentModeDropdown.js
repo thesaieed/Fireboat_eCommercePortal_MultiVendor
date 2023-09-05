@@ -10,22 +10,22 @@ function PaymentModeDropdown({
   itemDetails,
   txnid,
   appUser,
+  api,
 }) {
   const { Text, Title } = Typography;
-
   const [txnDetails, setTxnDetails] = useState({});
   const getTransactionData = useCallback(async () => {
     try {
-      const txnData = await axios.post(
-        "https://nile-server-a3fg.onrender.com/payments/getpaydetails",
-        { user_id: appUser.id, txnid }
-      );
+      const txnData = await axios.post(`${api}/payments/getpaydetails`, {
+        user_id: appUser.id,
+        txnid,
+      });
 
       setTxnDetails(txnData.data);
     } catch (err) {
       console.log(err);
     }
-  }, [appUser.id, txnid]);
+  }, [appUser.id, txnid, api]);
   useEffect(() => {
     if (txnid?.length && appUser.id) {
       getTransactionData();
@@ -63,10 +63,7 @@ function PaymentModeDropdown({
       image: (
         <Image
           style={{ maxWidth: "80px" }}
-          src={`https://nile-server-a3fg.onrender.com/${item.image[0].replace(
-            /\\/g,
-            "/"
-          )}`}
+          src={`${api}/${item.image[0].replace(/\\/g, "/")}`}
           alt="ProductImg"
         />
       ),

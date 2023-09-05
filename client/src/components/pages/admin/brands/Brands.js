@@ -9,17 +9,13 @@ const Brands = () => {
   const [brands, setBrands] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [filteredBrands, setFilteredBrands] = useState([]);
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const [loading, setLoading] = useState(false);
   const getBrands = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "https://nile-server-a3fg.onrender.com/brands"
-      );
-      const allVendors = await axios.get(
-        "https://nile-server-a3fg.onrender.com/allvendors"
-      );
+      const response = await axios.get(`${api}/brands`);
+      const allVendors = await axios.get(`${api}/allvendors`);
       var brands = [];
       response.data.map((brand) => {
         brands.push({
@@ -39,10 +35,10 @@ const Brands = () => {
       console.log(error);
     }
     setLoading(false);
-  }, []);
+  }, [api]);
   // const getBrands = async () => {
   //   try {
-  //     const response = await axios.get("https://nile-server-a3fg.onrender.com/brands");
+  //     const response = await axios.get("${api}/brands");
   //     setBrands(response.data);
   //     // console.log(response.data);
   //     setFilteredBrands(response.data);
@@ -60,6 +56,7 @@ const Brands = () => {
             Add New Brand
           </Button>
           <NewBrand
+            api={api}
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
             getBrands={getBrands}
@@ -70,6 +67,7 @@ const Brands = () => {
       <Row justify="center" align="middle">
         <Col className="mt-20 cardAddProduct">
           <UpdateBrands
+            api={api}
             brands={brands}
             setBrands={setBrands}
             filteredBrands={filteredBrands}

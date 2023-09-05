@@ -46,7 +46,7 @@ import axios from "axios";
 const { Meta } = Card;
 function Dashboard() {
   const { Title, Text } = Typography;
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const [topStats, setTopStats] = useState({});
   const [monthlySales, setMonthlySales] = useState([]);
   const [weeklySales, setWeeklySales] = useState([]);
@@ -67,52 +67,40 @@ function Dashboard() {
   const getTopStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.post(
-        "https://nile-server-a3fg.onrender.com/topstats",
-        {
-          vendor_id: appUser.id,
-          is_super_admin: appUser.is_super_admin,
-        }
-      );
+      const { data } = await axios.post(`${api}/topstats`, {
+        vendor_id: appUser.id,
+        is_super_admin: appUser.is_super_admin,
+      });
       setTopStats(data);
     } catch (error) {
       console.error(error);
     }
     setStatsLoading(false);
-  }, [appUser.id, appUser.is_super_admin]);
+  }, [appUser.id, appUser.is_super_admin, api]);
   const getMonthlySales = useCallback(async () => {
-    const { data } = await axios.post(
-      "https://nile-server-a3fg.onrender.com/monthlysales",
-      {
-        vendor_id: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      }
-    );
+    const { data } = await axios.post(`${api}/monthlysales`, {
+      vendor_id: appUser.id,
+      is_super_admin: appUser.is_super_admin,
+    });
 
     setMonthlySales(data);
-  }, [appUser.id, appUser.is_super_admin]);
+  }, [appUser.id, appUser.is_super_admin, api]);
   const getWeeklySales = useCallback(async () => {
-    const { data } = await axios.post(
-      "https://nile-server-a3fg.onrender.com/weeklysales",
-      {
-        vendor_id: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      }
-    );
+    const { data } = await axios.post(`${api}/weeklysales`, {
+      vendor_id: appUser.id,
+      is_super_admin: appUser.is_super_admin,
+    });
 
     setWeeklySales(data);
-  }, [appUser.id, appUser.is_super_admin]);
+  }, [appUser.id, api, appUser.is_super_admin]);
   const getLastSevenDaySales = useCallback(async () => {
-    const { data } = await axios.post(
-      "https://nile-server-a3fg.onrender.com/lastsevendaysales",
-      {
-        vendor_id: appUser.id,
-        is_super_admin: appUser.is_super_admin,
-      }
-    );
+    const { data } = await axios.post(`${api}/lastsevendaysales`, {
+      vendor_id: appUser.id,
+      is_super_admin: appUser.is_super_admin,
+    });
 
     setLastSevenDaySales(data);
-  }, [appUser.id, appUser.is_super_admin]);
+  }, [appUser.id, appUser.is_super_admin, api]);
   useEffect(() => {
     getTopStats();
     getMonthlySales();
@@ -239,7 +227,7 @@ function Dashboard() {
                   {topStats?.topProduct?.product?.image?.length > 0 && (
                     <Image
                       height={60}
-                      src={`https://nile-server-a3fg.onrender.com/${topStats?.topProduct?.product?.image[0]}`}
+                      src={`${api}/${topStats?.topProduct?.product?.image[0]}`}
                     />
                   )}
                   {/* </div> */}

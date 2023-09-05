@@ -45,19 +45,16 @@ const PaymentCheckout = () => {
   const [form] = Form.useForm();
   const { Title } = Typography;
   const [search, setSearch] = useState("");
-  const { appUser, generateRandomString } = useAllContext();
+  const { appUser, generateRandomString, api } = useAllContext();
 
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.post(
-        "https://nile-server-a3fg.onrender.com/payments/vendorpaymentstats",
-        {
-          vendor_id: appUser.id,
-        }
-      );
+      const { data } = await axios.post(`${api}/payments/vendorpaymentstats`, {
+        vendor_id: appUser.id,
+      });
       const resTransactions = await axios.post(
-        "https://nile-server-a3fg.onrender.com/payments/previoustransactions",
+        `${api}/payments/previoustransactions`,
         {
           vendor_id: appUser.id,
         }
@@ -69,7 +66,7 @@ const PaymentCheckout = () => {
       console.log(error);
     }
     setStatsLoading(false);
-  }, [appUser.id]);
+  }, [appUser.id, api]);
 
   const onFinish = async () => {
     setButtonLoading(true);
@@ -82,7 +79,7 @@ const PaymentCheckout = () => {
       try {
         const order_id = generateRandomString(10);
         const { data } = await axios.post(
-          "https://nile-server-a3fg.onrender.com/payments/initiatevendorpayment",
+          `${api}/payments/initiatevendorpayment`,
           {
             checkoutAmount,
             upiAddress,

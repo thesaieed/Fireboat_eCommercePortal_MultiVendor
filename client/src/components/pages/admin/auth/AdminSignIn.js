@@ -27,6 +27,7 @@ function AdminSignIn() {
     setUserToken,
     isValidToken,
     setUserTokenIsAdmin,
+    api,
   } = useAllContext();
 
   useEffect(() => {
@@ -47,10 +48,7 @@ function AdminSignIn() {
   const onFinish = async (values) => {
     // console.log("Success:", values);
     setButtonLoading(true);
-    const res = await axios.post(
-      "https://nile-server-a3fg.onrender.com/vendor/login",
-      values
-    );
+    const res = await axios.post(`${api}/vendor/login`, values);
     switch (res.data.loginStatus) {
       case 200:
         const userToken = generateRandomString(12);
@@ -62,14 +60,11 @@ function AdminSignIn() {
         setUserTokenIsAdmin(true);
         setAppUser(res.data.user);
         try {
-          await axios.post(
-            "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
-            {
-              token: userToken,
-              id: res.data.user.id,
-              isvendor: true,
-            }
-          );
+          await axios.post(`${api}/addusersloggedintokens`, {
+            token: userToken,
+            id: res.data.user.id,
+            isvendor: true,
+          });
           setIsValidToken(true);
         } catch (err) {
           console.error(err);
@@ -138,17 +133,14 @@ function AdminSignIn() {
     async (response) => {
       // console.log("Success:", values);
       let user = jwt_decode(response.credential);
-      console.log("User:", user);
+      // console.log("User:", user);
       const values = {
         googlename: user.name,
         email: user.email,
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post(
-        "https://nile-server-a3fg.onrender.com/vendor/googlelogin",
-        values
-      );
+      const res = await axios.post(`${api}/vendor/googlelogin`, values);
       switch (res.data.loginStatus) {
         case 200:
           const userToken = generateRandomString(12);
@@ -160,14 +152,11 @@ function AdminSignIn() {
           setUserTokenIsAdmin(true);
           setAppUser(res.data.user);
           try {
-            await axios.post(
-              "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
-              {
-                token: userToken,
-                id: res.data.user.id,
-                isvendor: true,
-              }
-            );
+            await axios.post(`${api}/addusersloggedintokens`, {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: true,
+            });
             setIsValidToken(true);
           } catch (err) {
             console.error(err);
@@ -228,6 +217,7 @@ function AdminSignIn() {
       setButtonLoading(false);
     },
     [
+      api,
       navigate,
       form,
       generateRandomString,

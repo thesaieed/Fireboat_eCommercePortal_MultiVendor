@@ -17,7 +17,7 @@ function AllVendors() {
   const [search, setSearch] = useState("");
   const [vendors, setVendors] = useState([]);
   const [filteredVendors, setFilteredVendors] = useState([]);
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState([]);
   const navigate = useNavigate();
@@ -25,17 +25,16 @@ function AllVendors() {
   const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
-      const allVendors = await axios.post(
-        "https://nile-server-a3fg.onrender.com/vendor/allvendors",
-        { is_super_admin: appUser.is_super_admin }
-      );
+      const allVendors = await axios.post(`${api}/vendor/allvendors`, {
+        is_super_admin: appUser.is_super_admin,
+      });
       // console.log("allvendors : ", allVendors);
       setVendors(allVendors.data);
     } catch (err) {
       setVendors([]);
     }
     setLoading(false);
-  }, [appUser.is_super_admin]);
+  }, [appUser.is_super_admin, api]);
   useEffect(() => {
     if (!appUser.is_super_admin) {
       navigate("/admin/dashboard");
@@ -61,10 +60,8 @@ function AllVendors() {
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
-        axios.delete(
-          `https://nile-server-a3fg.onrender.com/vendor/editvendor/${itemId}`
-        ),
-        // axios.delete(`https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`),
+        axios.delete(`${api}/vendor/editvendor/${itemId}`),
+        // axios.delete(`${api}/deleteImage/${encodedImagePath}`),
       ];
 
       const results = await axios.all(deleteRequests);
@@ -107,7 +104,7 @@ function AllVendors() {
     //     <img
     //       // width={50}
     //       // height={50}
-    //       src={`https://nile-server-a3fg.onrender.com/${row.image.replace(/\\/g, "/")}`}
+    //       src={`${api}/${row.image.replace(/\\/g, "/")}`}
     //       alt=""
     //       style={{ cursor: "pointer" }}
     //       onClick={() => {
@@ -283,7 +280,7 @@ function AllVendors() {
           footer={null}
         >
           <img
-            src={`https://nile-server-a3fg.onrender.com/${selectedImage.replace(/\\/g, "/")}`}
+            src={`${api}/${selectedImage.replace(/\\/g, "/")}`}
             alt=""
             style={{ width: "100%" }}
           />

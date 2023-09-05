@@ -19,8 +19,10 @@ import {
 } from "@ant-design/icons";
 import Footer from "../../../layout/Footer";
 import logo from "../../../../assets/images/logo.png";
+import useAllContext from "../../../../context/useAllContext";
 export const ResetPassword = () => {
   const { Content } = Layout;
+  const { api } = useAllContext();
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
@@ -37,14 +39,11 @@ export const ResetPassword = () => {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/resetpassword",
-        {
-          ...values,
-          useremail: email,
-          token,
-        }
-      );
+      const response = await axios.post(`${api}/resetpassword`, {
+        ...values,
+        useremail: email,
+        token,
+      });
       // console.log("Responce : ", response);
       //if signup is successfull
       if (response.data.status === 200) {
@@ -84,14 +83,11 @@ export const ResetPassword = () => {
 
   const verifyToken = useCallback(async () => {
     setIsVerifying(true);
-    const res = await axios.post(
-      "https://nile-server-a3fg.onrender.com/verifyresettoken",
-      {
-        token: token,
-        useremail: email,
-        //   isVendor: isVendor,
-      }
-    );
+    const res = await axios.post(`${api}/verifyresettoken`, {
+      token: token,
+      useremail: email,
+      //   isVendor: isVendor,
+    });
     // console.log(res);
     if (res.data.status === 200) {
       setIsVerified(true);
@@ -100,7 +96,7 @@ export const ResetPassword = () => {
       setIsVerified(false);
     }
     setIsVerifying(false);
-  }, [email, token]);
+  }, [email, token, api]);
 
   useEffect(() => {
     verifyToken();

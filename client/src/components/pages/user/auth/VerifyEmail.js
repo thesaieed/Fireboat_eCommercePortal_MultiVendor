@@ -8,6 +8,7 @@ import {
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import Footer from "../../../layout/Footer";
+import useAllContext from "../../../../context/useAllContext";
 
 export const VerifyEmail = () => {
   const { /*Header,*/ Content } = Layout;
@@ -17,7 +18,7 @@ export const VerifyEmail = () => {
   const [extraMessage, setExtraMessage] = useState("");
   const [showMailInfo, setShowMailInfo] = useState(true);
   const [isVerifiedMessage, setIsVerifiedMessage] = useState("");
-
+  const { api } = useAllContext();
   const [loading, setIsLoading] = useState(false);
   const { Title } = Typography;
   const [searchParams] = useSearchParams();
@@ -37,14 +38,11 @@ export const VerifyEmail = () => {
 
   const verifyToken = useCallback(async () => {
     setIsVerifying(true);
-    const res = await axios.post(
-      "https://nile-server-a3fg.onrender.com/verifyEmail",
-      {
-        token: token,
-        email: email,
-        isVendor: isVendor,
-      }
-    );
+    const res = await axios.post(`${api}/verifyEmail`, {
+      token: token,
+      email: email,
+      isVendor: isVendor,
+    });
     // console.log(res);
     if (res.data.status === 200) {
       message.success(res.data.message);
@@ -70,14 +68,14 @@ export const VerifyEmail = () => {
       setIsVerified(false);
     }
     setIsVerifying(false);
-  }, [email, isVendor, token]);
+  }, [email, isVendor, token, api]);
   const handleReVerify = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.post(
-        "https://nile-server-a3fg.onrender.com/resendEmailverification",
-        { email: email, isVendor: isVendor }
-      );
+      const res = await axios.post(`${api}/resendEmailverification`, {
+        email: email,
+        isVendor: isVendor,
+      });
       console.log(res);
       if (res.data.status === 200) {
         setMailSent(true);

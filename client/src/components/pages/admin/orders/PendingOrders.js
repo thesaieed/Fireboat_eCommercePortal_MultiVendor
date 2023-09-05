@@ -11,7 +11,7 @@ import useAllContext from "../../../../context/useAllContext";
 import axios from "axios";
 
 const AllOrders = () => {
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const [search, setSearch] = useState("");
   const [allOrders, setAllOrders] = useState();
   const [filteredOrders, setFilteredOrders] = useState();
@@ -23,13 +23,10 @@ const AllOrders = () => {
   const getAllOrders = useCallback(async () => {
     setLoading(true);
     try {
-      var orders = await axios.post(
-        "https://nile-server-a3fg.onrender.com/orders/pending",
-        {
-          vendor_id: appUser.id,
-          is_super_admin: appUser.is_super_admin,
-        }
-      );
+      var orders = await axios.post(`${api}/orders/pending`, {
+        vendor_id: appUser.id,
+        is_super_admin: appUser.is_super_admin,
+      });
       setAllOrders(orders.data.orders);
       setFilteredOrders(orders.data.orders);
       setOrderProducts(orders.data.products);
@@ -37,7 +34,7 @@ const AllOrders = () => {
       console.log(err);
     }
     setLoading(false);
-  }, [appUser.id, appUser.is_super_admin]);
+  }, [appUser.id, appUser.is_super_admin, api]);
   useEffect(() => {
     getAllOrders();
   }, [getAllOrders]);
@@ -57,7 +54,7 @@ const AllOrders = () => {
       orderProducts.map(async (product) => {
         try {
           const { data } = await axios.post(
-            "https://nile-server-a3fg.onrender.com/orders/getOrderProductDetails",
+            `${api}/orders/getOrderProductDetails`,
             {
               address_id: product.address_id,
               payment_details_id: product.payment_details_id,
@@ -82,10 +79,11 @@ const AllOrders = () => {
     const order_id = Object.keys(row)[0];
     setStatusChangeLoading(true);
     try {
-      const { data } = await axios.post(
-        "https://nile-server-a3fg.onrender.com/orders/changeorderstatus",
-        { vendor_id: appUser.id, newStatus: e, order_id }
-      );
+      const { data } = await axios.post(`${api}/orders/changeorderstatus`, {
+        vendor_id: appUser.id,
+        newStatus: e,
+        order_id,
+      });
       if (data) {
         message.success("Order Status Updated");
         getAllOrders();

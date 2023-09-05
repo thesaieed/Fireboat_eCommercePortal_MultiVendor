@@ -18,14 +18,12 @@ const SAPaymentCheckout = () => {
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [denyReasonModalVisible, setDenyReasonModalVisible] = useState("");
   const [search, setSearch] = useState("");
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const navigate = useNavigate();
   const getPaymentStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      const { data } = await axios.get(
-        "https://nile-server-a3fg.onrender.com/payments/admintransactions"
-      );
+      const { data } = await axios.get(`${api}/payments/admintransactions`);
 
       setTransactions(data);
       setFilteredTransactions(data);
@@ -33,7 +31,7 @@ const SAPaymentCheckout = () => {
       console.log(error);
     }
     setStatsLoading(false);
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     getPaymentStats();

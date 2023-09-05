@@ -38,7 +38,7 @@ const UserOrderDetails = () => {
     () => location.state?.completeProductsWithAllDetails || [],
     [location.state?.completeProductsWithAllDetails]
   );
-  const { appUser, isValidToken } = useAllContext();
+  const { appUser, isValidToken, api } = useAllContext();
   useEffect(() => {
     if (!isValidToken && !appUser.id) {
       message.info("You need to be Logged In!");
@@ -94,10 +94,7 @@ const UserOrderDetails = () => {
                               }}
                             >
                               <Image
-                                src={`https://nile-server-a3fg.onrender.com/${imgurl.replace(
-                                  /\\/g,
-                                  "/"
-                                )}`}
+                                src={`${api}/${imgurl.replace(/\\/g, "/")}`}
                                 style={{
                                   cursor: "pointer",
                                   padding: 0,

@@ -24,6 +24,7 @@ function UpdateBrands({
   filteredBrands,
   appUser,
   loading,
+  api,
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -66,9 +67,7 @@ function UpdateBrands({
       return newLoadings;
     });
     try {
-      const response = await axios.delete(
-        `https://nile-server-a3fg.onrender.com/updatebrands/${itemId}`
-      );
+      const response = await axios.delete(`${api}/updatebrands/${itemId}`);
 
       if (response.status === 200) {
         getBrands();
@@ -102,7 +101,7 @@ function UpdateBrands({
     setEditButtonLoading(true);
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/updatebrands/${selectedRowId}`,
+        `${api}/updatebrands/${selectedRowId}`,
         values
       );
       if (response.status === 200) {

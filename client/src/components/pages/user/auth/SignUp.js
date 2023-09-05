@@ -29,6 +29,7 @@ export default function SignUp() {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [form] = Form.useForm();
   const {
+    api,
     isValidToken,
     setAppUser,
     appUser,
@@ -52,10 +53,7 @@ export default function SignUp() {
   const onFinish = async (values) => {
     setButtonLoading(true);
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/signup",
-        values
-      );
+      const response = await axios.post(`${api}/signup`, values);
       if (response.data.status === 200) {
         setErrorMessage("");
         setSuccessMessage(response.data.message);
@@ -93,10 +91,7 @@ export default function SignUp() {
         email_verified: user.email_verified,
       };
       setButtonLoading(true);
-      const res = await axios.post(
-        "https://nile-server-a3fg.onrender.com/googlelogin",
-        values
-      );
+      const res = await axios.post(`${api}/googlelogin`, values);
       switch (res.data.loginStatus) {
         case 200:
           const userToken = generateRandomString(12);
@@ -108,14 +103,11 @@ export default function SignUp() {
           setUserTokenIsAdmin(false);
           setAppUser(res.data.user);
           try {
-            await axios.post(
-              "https://nile-server-a3fg.onrender.com/addusersloggedintokens",
-              {
-                token: userToken,
-                id: res.data.user.id,
-                isvendor: false,
-              }
-            );
+            await axios.post(`${api}/addusersloggedintokens`, {
+              token: userToken,
+              id: res.data.user.id,
+              isvendor: false,
+            });
             setIsValidToken(true);
           } catch (err) {
             console.error(err);
@@ -151,6 +143,7 @@ export default function SignUp() {
       setButtonLoading(false);
     },
     [
+      api,
       form,
       generateRandomString,
       setAppUser,

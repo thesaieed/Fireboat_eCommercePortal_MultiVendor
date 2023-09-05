@@ -1,9 +1,16 @@
 import axios from "axios";
-import React, { createContext, useEffect, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 
 const Context = createContext();
 
 function Provider({ children }) {
+  const api = useMemo(() => process.env.REACT_APP_API_URL, []);
   const [appUser, setAppUser] = useState({});
   const [isValidToken, setIsValidToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,12 +24,9 @@ function Provider({ children }) {
 
   const updateNumberOfCartItems = async () => {
     try {
-      const res = await axios.post(
-        "https://nile-server-a3fg.onrender.com/numberofcartproducts",
-        {
-          userId: appUser.id,
-        }
-      );
+      const res = await axios.post(`${api}/numberofcartproducts`, {
+        userId: appUser.id,
+      });
       setNumberOfProductsInCart(res.data.itemCount);
       // console.log(res);
     } catch (err) {
@@ -33,14 +37,11 @@ function Provider({ children }) {
 
   const removeSavedUserToken = async (userToken, id) => {
     try {
-      await axios.post(
-        "https://nile-server-a3fg.onrender.com/removeusersloggedintokens",
-        {
-          userToken,
-          id,
-          isvendor: userTokenIsAdmin,
-        }
-      );
+      await axios.post(`${api}/removeusersloggedintokens`, {
+        userToken,
+        id,
+        isvendor: userTokenIsAdmin,
+      });
       // console.log("remomve user TOken res :", res);
     } catch (err) {}
   };
@@ -49,10 +50,10 @@ function Provider({ children }) {
     try {
       // console.log("isvendor: ", userTokenIsAdmin);
       // console.log("isvendorTYPE: ", typeof userTokenIsAdmin);
-      const res = await axios.post(
-        "https://nile-server-a3fg.onrender.com/checkusersloggedintokens",
-        { userToken, isvendor: userTokenIsAdmin }
-      );
+      const res = await axios.post(`${api}/checkusersloggedintokens`, {
+        userToken,
+        isvendor: userTokenIsAdmin,
+      });
       // console.log("async res.data : ", res.data);
       // console.log(" is Valid Tokken : ", res.data);
       setIsValidToken(res.data);
@@ -66,23 +67,17 @@ function Provider({ children }) {
 
   const fetchUserDetails = useCallback(async () => {
     try {
-      const userdata = await axios.post(
-        "https://nile-server-a3fg.onrender.com/userdetails",
-        {
-          userToken,
-          isvendor: userTokenIsAdmin,
-        }
-      );
+      const userdata = await axios.post(`${api}/userdetails`, {
+        userToken,
+        isvendor: userTokenIsAdmin,
+      });
       // console.log("user Data : ", userdata);
       setAppUser(userdata.data);
       if (!userdata.data.is_admin) {
         try {
-          const res = await axios.post(
-            "https://nile-server-a3fg.onrender.com/numberofcartproducts",
-            {
-              userId: userdata.data.id,
-            }
-          );
+          const res = await axios.post(`${api}/numberofcartproducts`, {
+            userId: userdata.data.id,
+          });
           setNumberOfProductsInCart(res.data.itemCount);
           // console.log(res);
         } catch (err) {
@@ -95,7 +90,7 @@ function Provider({ children }) {
       setAppUser({});
       setIsLoading(false);
     }
-  }, [userToken, userTokenIsAdmin]);
+  }, [userToken, userTokenIsAdmin, api]);
 
   const logout = () => {
     localStorage.removeItem("userToken");
@@ -122,12 +117,8 @@ function Provider({ children }) {
   const fetchCategories = useCallback(async () => {
     if (appUser.id) {
       try {
-        const response = await axios.get(
-          "https://nile-server-a3fg.onrender.com/admin/categories"
-        );
-        const allVendors = await axios.get(
-          "https://nile-server-a3fg.onrender.com/allvendors"
-        );
+        const response = await axios.get(`${api}/admin/categories`);
+        const allVendors = await axios.get(`${api}/allvendors`);
         var categories = [];
         response.data.categories.map((category) => {
           categories.push({
@@ -145,15 +136,13 @@ function Provider({ children }) {
       }
     } else {
       try {
-        const response = await axios.get(
-          "https://nile-server-a3fg.onrender.com/admin/categories"
-        );
+        const response = await axios.get(`${api}/admin/categories`);
         setCategories(response.data.categories);
       } catch (error) {
         console.log(error);
       }
     }
-  }, [appUser.id]);
+  }, [appUser.id, api]);
 
   useEffect(() => {
     if (isValidToken) {
@@ -183,6 +172,7 @@ function Provider({ children }) {
     categories,
     numberOfProductsInCart,
     updateNumberOfCartItems,
+    api,
   };
 
   return (

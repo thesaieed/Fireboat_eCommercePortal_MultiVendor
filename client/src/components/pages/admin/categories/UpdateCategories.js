@@ -29,13 +29,13 @@ function Updatecategories() {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [search, setSearch] = useState("");
   const [refreshPage, setRefreshPage] = useState(false);
-  const { categories, fetchCategories, appUser } = useAllContext();
+  const { categories, fetchCategories, appUser, api } = useAllContext();
   const [buttonLoading, setButtonLoading] = useState([]);
   const [editButtonLoading, setEditButtonLoading] = useState(false);
   // const getCategories = async () => {
   //   try {
   //     const response = await axios.get(
-  //       "https://nile-server-a3fg.onrender.com/updatecategories"
+  //       "${api}/updatecategories"
   //     );
   //     setCategories(response.data);
   //     // console.log(response.data)
@@ -82,9 +82,7 @@ function Updatecategories() {
       return newLoadings;
     });
     try {
-      const response = await axios.delete(
-        `https://nile-server-a3fg.onrender.com/updatecategories/${itemId}`
-      );
+      const response = await axios.delete(`${api}/updatecategories/${itemId}`);
 
       if (response.status === 200) {
         fetchCategories((prevData) =>
@@ -119,7 +117,7 @@ function Updatecategories() {
     setEditButtonLoading(true);
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/updatecategories/${selectedRowId}`,
+        `${api}/updatecategories/${selectedRowId}`,
         values
       );
       if (response.status === 200) {

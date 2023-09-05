@@ -17,7 +17,7 @@ function AllUsers() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState([]);
   const navigate = useNavigate();
@@ -25,19 +25,16 @@ function AllUsers() {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const allUsers = await axios.get(
-        "https://nile-server-a3fg.onrender.com/allusers",
-        {
-          is_super_admin: appUser.is_super_admin,
-        }
-      );
+      const allUsers = await axios.get(`${api}/allusers`, {
+        is_super_admin: appUser.is_super_admin,
+      });
       //   console.log(allUsers.data);
       setUsers(allUsers.data);
     } catch (err) {
       setUsers([]);
     }
     setLoading(false);
-  }, [appUser.is_super_admin]);
+  }, [appUser.is_super_admin, api]);
   useEffect(() => {
     if (!appUser.is_super_admin) {
       navigate("/admin/dashboard");
@@ -60,9 +57,7 @@ function AllUsers() {
     });
 
     try {
-      const results = await axios.delete(
-        `https://nile-server-a3fg.onrender.com/deleteuser/${userId}`
-      );
+      const results = await axios.delete(`${api}/deleteuser/${userId}`);
 
       //   console.log(userId);
       if (results.status === 200) {
@@ -90,9 +85,7 @@ function AllUsers() {
     });
     // console.log(userId);
     try {
-      const results = await axios.put(
-        `https://nile-server-a3fg.onrender.com/disableuser/${userId}`
-      );
+      const results = await axios.put(`${api}/disableuser/${userId}`);
 
       //   console.log(userId);
       if (results.status === 200) {
@@ -122,9 +115,7 @@ function AllUsers() {
     });
     // console.log(userId);
     try {
-      const results = await axios.put(
-        `https://nile-server-a3fg.onrender.com/enableuser/${userId}`
-      );
+      const results = await axios.put(`${api}/enableuser/${userId}`);
 
       //   console.log(userId);
       if (results.status === 200) {

@@ -104,19 +104,16 @@ const Checkout = () => {
   ];
   const countries = ["India"];
   const [form] = Form.useForm();
-  const { appUser, generateRandomString, isValidToken } = useAllContext();
+  const { appUser, generateRandomString, isValidToken, api } = useAllContext();
 
   const fetchAddress = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "https://nile-server-a3fg.onrender.com/shippingaddress",
-        {
-          params: {
-            id: appUser.id,
-          },
-        }
-      );
+      const response = await axios.get(`${api}/shippingaddress`, {
+        params: {
+          id: appUser.id,
+        },
+      });
 
       // console.log(response.data);
       setAddress(response.data);
@@ -124,16 +121,13 @@ const Checkout = () => {
       console.error(error);
     }
     setLoading(false);
-  }, [appUser.id]);
+  }, [appUser.id, api]);
   const fetchQuantity = useCallback(async () => {
     try {
       const ids = productData.map((item) => item.id);
-      const response = await axios.get(
-        "https://nile-server-a3fg.onrender.com/checkout",
-        {
-          params: { ids },
-        }
-      );
+      const response = await axios.get(`${api}/checkout`, {
+        params: { ids },
+      });
       const updatedQuantity = response.data;
 
       const updatedItemDetails = itemDetails.map((item) => {
@@ -154,7 +148,7 @@ const Checkout = () => {
     } catch (error) {
       console.error("server error", error);
     }
-  }, [itemDetails, productData]);
+  }, [itemDetails, productData, api]);
   const handleUseAddress = () => {
     const userselectedaddress = address.find(
       (address) => address.id === selectedAddressId
@@ -167,7 +161,7 @@ const Checkout = () => {
 
   const updateQuantityInDatabase = async (itemId, quantity) => {
     try {
-      await axios.put(`https://nile-server-a3fg.onrender.com/cart/${itemId}`, {
+      await axios.put(`${api}/cart/${itemId}`, {
         quantity,
       });
     } catch (error) {
@@ -216,10 +210,7 @@ const Checkout = () => {
     const values = form.getFieldsValue();
     values.id = appUser.id;
     try {
-      const response = await axios.post(
-        "https://nile-server-a3fg.onrender.com/addshippingaddress",
-        values
-      );
+      const response = await axios.post(`${api}/addshippingaddress`, values);
       // console.log(response.status);
       if (response.status === 200) {
         fetchAddress();
@@ -307,6 +298,7 @@ const Checkout = () => {
           itemDetails={itemDetails}
           onIncrement={handleIncrement}
           onDecrement={handleDecrement}
+          api={api}
         />
       ),
     },
@@ -320,6 +312,7 @@ const Checkout = () => {
           itemDetails={itemDetails}
           txnid={txnid}
           appUser={appUser}
+          api={api}
         />
       ),
     },
@@ -394,26 +387,23 @@ const Checkout = () => {
     transactionID = `${transactionID}${Date.now()}`;
     var { id, name, email } = appUser;
     try {
-      const getdata = await axios.post(
-        "https://nile-server-a3fg.onrender.com/payments/initpayment",
-        {
-          user_id: id,
-          products,
-          transactionID,
-          orderID,
-          fullname: name,
-          address_id: selectedAddress.id,
-          email,
-          phone: selectedAddress.phone_number,
-          amount: Number(
-            totalPrice +
-              deliveryCharge -
-              Math.floor(
-                (totalPrice + deliveryCharge) * (discountPercentage / 100)
-              )
-          ).toFixed(2),
-        }
-      );
+      const getdata = await axios.post(`${api}/payments/initpayment`, {
+        user_id: id,
+        products,
+        transactionID,
+        orderID,
+        fullname: name,
+        address_id: selectedAddress.id,
+        email,
+        phone: selectedAddress.phone_number,
+        amount: Number(
+          totalPrice +
+            deliveryCharge -
+            Math.floor(
+              (totalPrice + deliveryCharge) * (discountPercentage / 100)
+            )
+        ).toFixed(2),
+      });
       if (getdata.data?.url?.length) {
         setPaymentFormData({
           url: getdata.data.url,

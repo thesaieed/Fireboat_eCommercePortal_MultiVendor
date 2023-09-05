@@ -34,7 +34,7 @@ function AllVendors() {
   const [errorMessage, setErrorMessage] = useState("");
   const [form] = Form.useForm();
   const [rejectReason, setRejectReason] = useState("");
-  const { appUser } = useAllContext();
+  const { appUser, api } = useAllContext();
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [approveButtonLoading, setApproveButtonLoading] = useState([]);
@@ -45,7 +45,7 @@ function AllVendors() {
     setLoading(true);
     try {
       const allVendors = await axios.post(
-        "https://nile-server-a3fg.onrender.com/vendor/getapprovevendorslist",
+        `${api}/vendor/getapprovevendorslist`,
         { is_super_admin: appUser.is_super_admin }
       );
       // console.log("allvendors : ", allVendors);
@@ -54,7 +54,7 @@ function AllVendors() {
       setVendors([]);
     }
     setLoading(false);
-  }, [appUser.is_super_admin]);
+  }, [appUser.is_super_admin, api]);
   useEffect(() => {
     if (!appUser.is_super_admin) {
       navigate("/admin/dashboard");
@@ -86,11 +86,10 @@ function AllVendors() {
     });
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
-      const approveRequest = await axios.post(
-        "https://nile-server-a3fg.onrender.com/vendor/approvevendor",
-        { itemId }
-      );
-      // axios.delete(`https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`),
+      const approveRequest = await axios.post(`${api}/vendor/approvevendor`, {
+        itemId,
+      });
+      // axios.delete(`${api}/deleteImage/${encodedImagePath}`),
       const vendorApprovalStatus = approveRequest.data.status;
       //   const imageDeletionStatus = results[1].status;
 
@@ -129,11 +128,11 @@ function AllVendors() {
     });
     // const encodedImagePath = encodeURIComponent(imagePath);
     try {
-      const rejectRequest = await axios.post(
-        "https://nile-server-a3fg.onrender.com/vendor/rejectvendor",
-        { itemId: selectedRowId, rejectionReason: rejectReason }
-      );
-      // axios.delete(`https://nile-server-a3fg.onrender.com/deleteImage/${encodedImagePath}`),
+      const rejectRequest = await axios.post(`${api}/vendor/rejectvendor`, {
+        itemId: selectedRowId,
+        rejectionReason: rejectReason,
+      });
+      // axios.delete(`${api}/deleteImage/${encodedImagePath}`),
       const rejectStatus = rejectRequest.data.status;
       //   const imageDeletionStatus = results[1].status;
 

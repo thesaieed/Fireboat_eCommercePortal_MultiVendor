@@ -20,7 +20,7 @@ import { FcDataEncryption } from "react-icons/fc";
 import { BiSolidEditAlt } from "react-icons/bi";
 function LoginAndSecurity() {
   const navigate = useNavigate();
-  const { appUser, fetchUserDetails, isValidToken } = useAllContext();
+  const { appUser, fetchUserDetails, isValidToken, api } = useAllContext();
   const handleSearch = (e) => {
     navigate(`/browse/?search=${e.target.value}`);
   };
@@ -57,7 +57,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editprofilename/${appUser.id}`,
+        `${api}/editprofilename/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -75,7 +75,7 @@ function LoginAndSecurity() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editemail/${appUser.id}`,
+        `${api}/editemail/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -93,7 +93,7 @@ function LoginAndSecurity() {
     const values = form.getFieldsValue();
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editphonenumber/${appUser.id}`,
+        `${api}/editphonenumber/${appUser.id}`,
         values
       );
       if (response.status === 200) {
@@ -110,7 +110,7 @@ function LoginAndSecurity() {
     // console.log(values);
     try {
       const response = await axios.put(
-        `https://nile-server-a3fg.onrender.com/editpassword/${appUser.id}`,
+        `${api}/editpassword/${appUser.id}`,
         values
       );
       if (response.status === 200) {
