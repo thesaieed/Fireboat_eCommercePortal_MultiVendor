@@ -153,7 +153,6 @@ const Browse = () => {
             });
             return null;
           });
-          // console.log("prods : ", products);
           setNoProductMessage(false);
           setBrowseProducts(products);
           setShownProducts(products);
