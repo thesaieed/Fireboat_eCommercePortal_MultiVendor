@@ -197,19 +197,21 @@ function AllProducts() {
       newLoadings[itemId] = true;
       return newLoadings;
     });
-    const encodedImagePath = encodeURIComponent(imagePath);
+    // const encodedImagePath = encodeURIComponent(imagePath);
     try {
       const deleteRequests = [
         axios.delete(`${api}/viewproducts/${itemId}`),
-        axios.delete(`${api}/deleteImage/${encodedImagePath}`),
+        // axios.delete(`${api}/deleteImage/${encodedImagePath}`),
       ];
 
       const results = await axios.all(deleteRequests);
 
       const itemDeletionStatus = results[0].status;
-      const imageDeletionStatus = results[1].status;
+      // const imageDeletionStatus = results[1].status;
 
-      if (itemDeletionStatus === 200 && imageDeletionStatus === 200) {
+      if (itemDeletionStatus === 200 )
+        // && imageDeletionStatus === 200)
+       {
         setProducts((prevData) =>
           prevData.filter((item) => item.id !== itemId)
         );
@@ -264,7 +266,8 @@ function AllProducts() {
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <Image
-                    src={`${api}/${imgurl.replace(/\\/g, "/")}`}
+                    // src={`${api}/${imgurl.replace(/\\/g, "/")}`}
+                    src={imgurl}
                     style={{
                       cursor: "pointer",
                       padding: 0,
@@ -803,7 +806,8 @@ function AllProducts() {
                 {productImages.map((imagePath, index) => (
                   <div key={index}>
                     <Image
-                      src={`${api}/${imagePath.replace(/\\/g, "/")}`}
+                      // src={`${api}/${imagePath.replace(/\\/g, "/")}`}
+                      src={imagePath}
                       alt=""
                       style={{
                         cursor: "pointer",
@@ -890,7 +894,8 @@ function AllProducts() {
                 checked={selectedImages.includes(index)}
               >
                 <Image
-                  src={`${api}/${imagePath.replace(/\\/g, "/")}`}
+                  // src={`${api}/${imgurl.replace(/\\/g, "/")}`}
+                  src={imagePath}
                   alt=""
                   style={{
                     cursor: "pointer",

@@ -18,22 +18,25 @@ const orderRoutes = require("./routes/orders");
 // const { count } = require("console");
 // const { error } = require("console");
 
+const { storage,cloudinary } = require("./utils/cloudinary/index");
+const upload = multer({ storage });
+
 const app = express(); // running app
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 //Alternate storage object with simple file name
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    return cb(null, "./uploads");
-  },
-  filename: function (req, file, cb) {
-    return cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     return cb(null, "./uploads");
+//   },
+//   filename: function (req, file, cb) {
+//     return cb(null, `${Date.now()}-${file.originalname}`);
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 app.use("/vendor", vendorRoutes);
 app.use("/review", reviewRoutes);
@@ -435,7 +438,6 @@ app.post("/admin/addproduct", upload.array("image", 5), async (req, res) => {
 
   try {
     const imagePaths = req.files.map((file) => file.path); // Get an array of image paths
-
     const newProduct = await pool.query(
       "INSERT INTO products(category_id, name, description, price, stock_available, image, brand_id, vendor_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
@@ -901,7 +903,15 @@ app.post("/viewproducts", async (req, res) => {
 app.get("/viewproducts", async (req, res) => {
   try {
     const products = await pool.query(`select * from products`);
-    res.send(products.rows);
+    const imgsRes = await pool.query("SELECT image from products where id=$1", [
+      134,
+    ]);
+    const imgURLs = imgsRes.rows[0].image;
+    // Extract the public IDs from the URLs
+    const publicIds = imgURLs.map((url) => url.split("/").pop().split(".")[0]);
+
+console.log(publicIds);   
+res.send(products.rows);
   } catch (err) {
     console.error(err);
   }
@@ -911,6 +921,23 @@ app.get("/viewproducts", async (req, res) => {
 app.delete("/viewproducts/:itemId", async (req, res) => {
   const itemId = req.params.itemId;
   try {
+    //delete images
+    const imgsRes = await pool.query("SELECT image from products where id=$1", [
+      itemId,
+    ]);
+    const imgURLs = imgsRes.rows[0].image;
+    // Extract the public IDs from the URLs
+  
+    const publicIds = imgURLs.map((url) => 'NILE/' + url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')));
+    publicIds.forEach((publicId) => {
+      cloudinary.uploader.destroy(publicId, (error, result) => {
+        if (error) {
+          console.error("Error:", error);
+          throw Error(error);
+        }
+      });
+    });
+
     await pool.query("DELETE FROM products WHERE id = $1", [itemId]);
     res
       .status(200)
@@ -922,15 +949,23 @@ app.delete("/viewproducts/:itemId", async (req, res) => {
 });
 
 app.delete("/deleteImage/:imagePaths", (req, res) => {
-  const imagePaths = req.params.imagePaths.split(","); // Split the image paths into an array
-
-  imagePaths.forEach((imagePath) => {
-    fs.unlink(imagePath, (err) => {
-      if (err) {
-        console.error("Error deleting image:", err);
+  const imagePaths = req.params.imagePaths; // Split the image paths into an array
+  const publicIds = imagePaths.map((url) => 'NILE/' + url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')));
+  publicIds.forEach((publicId) => {
+    cloudinary.uploader.destroy(publicId, (error, result) => {
+      if (error) {
+        console.error("Error:", error);
+        throw Error(error);
       }
     });
   });
+  // imagePaths.forEach((imagePath) => {
+  //   fs.unlink(imagePath, (err) => {
+  //     if (err) {
+  //       console.error("Error deleting image:", err);
+  //     }
+  //   });
+  // });
 
   res.sendStatus(200);
 });
@@ -1223,14 +1258,23 @@ app.post("/admin/deleteproductimage", async (req, res) => {
     ]);
 
     // console.log(selectedImagePaths);
-    filteredImagePaths.forEach((imagePath) => {
-      fs.unlink(imagePath, (error) => {
+    const publicIds = selectedImagePaths.map((url) => 'NILE/' + url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')));
+    publicIds.forEach((publicId) => {
+      cloudinary.uploader.destroy(publicId, (error, result) => {
         if (error) {
-          console.error("Error deleting image:", imagePath, error);
-        } // } else {
-        //   console.log("Image deleted successfully:", imagePath);
-        // }
+          console.error("Error:", error);
+          throw Error(error);
+        }
       });
+
+    // filteredImagePaths.forEach((imagePath) => {
+    //   fs.unlink(imagePath, (error) => {
+    //     if (error) {
+    //       console.error("Error deleting image:", imagePath, error);
+    //     } // } else {
+    //     //   console.log("Image deleted successfully:", imagePath);
+    //     // }
+    //   });
     });
 
     // console.log("Image paths deleted successfully");

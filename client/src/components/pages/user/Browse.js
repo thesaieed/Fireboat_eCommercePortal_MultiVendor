@@ -90,8 +90,6 @@ const Browse = () => {
     setCategory(searchParams.get("category"));
   }, [searchParams]);
 
-  const baseImgUrl = `${api}/`;
-
   const { Paragraph, Title } = Typography;
 
   const { Content, Sider } = Layout;
@@ -312,7 +310,7 @@ const Browse = () => {
                   className="productImg"
                   height={300}
                   alt="example"
-                  src={baseImgUrl + product.image[0]}
+                  src={product.image[0]}
                 />
               }
             >

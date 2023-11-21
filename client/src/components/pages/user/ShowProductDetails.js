@@ -67,7 +67,7 @@ function ShowProductDetails() {
   // const { productId } = useParams();
   // console.log(productId);
   // const productId = props.match.params.id;
-  const baseImgUrl = `${api}/`;
+  // const baseImgUrl = `${api}/`;
   const [searchParams] = useSearchParams();
   const productId = searchParams.get("id");
   const { Title, Paragraph, Text } = Typography; // console.log(productId);
@@ -281,7 +281,7 @@ function ShowProductDetails() {
                           className="productImg"
                           style={{ minWidth: 200, height: 200, maxWidth: 200 }}
                           alt="productImage"
-                          src={baseImgUrl + product.image[0]}
+                          src={product.image[0]}
                         />
                         <Row>
                           <Link to={`/product/?id=${product.id}`}>
@@ -420,7 +420,7 @@ function ShowProductDetails() {
                       }}
                     >
                       <Image
-                        src={baseImgUrl + imgurl.replace(/\\/g, "/")}
+                        src={imgurl}
                         style={{
                           cursor: "pointer",
                           padding: 0,
