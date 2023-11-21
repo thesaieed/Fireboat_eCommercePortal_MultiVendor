@@ -227,7 +227,7 @@ function Dashboard() {
                   {topStats?.topProduct?.product?.image?.length > 0 && (
                     <Image
                       height={60}
-                      src={`${api}/${topStats?.topProduct?.product?.image[0]}`}
+                      src={topStats?.topProduct?.product?.image[0].replace('/upload/', '/upload/w_250,h_250/')}
                     />
                   )}
                   {/* </div> */}

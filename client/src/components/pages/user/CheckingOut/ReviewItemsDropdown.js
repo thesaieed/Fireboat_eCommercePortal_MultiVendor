@@ -45,7 +45,7 @@ function ReviewItemsDropdown({
             <Col span={8}>
               <Image
                 style={{ maxWidth: "180px" }}
-                src={item.image[0]}
+                src={item.image[0].replace('/upload/', '/upload/w_250,h_250/')}
                 // src={`${api}/${item.image[0].replace(/\\/g, "/")}`}
                 alt="ProductImg"
               />

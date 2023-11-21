@@ -64,7 +64,7 @@ function PaymentModeDropdown({
         <Image
           style={{ maxWidth: "80px" }}
           // src={`${api}/${item.image[0].replace(/\\/g, "/")}`}
-          src={item.image[0]}
+          src={item.image[0].replace('/upload/', '/upload/w_250,h_250/')}
           alt="ProductImg"
         />
       ),
