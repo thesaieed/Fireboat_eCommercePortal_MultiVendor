@@ -267,7 +267,7 @@ function AllProducts() {
                 >
                   <Image
                     // src={`${api}/${imgurl.replace(/\\/g, "/")}`}
-                    src={imgurl}
+                    src={imgurl.replace('/upload/', '/upload/w_250,h_250/')}
                     style={{
                       cursor: "pointer",
                       padding: 0,
@@ -807,7 +807,7 @@ function AllProducts() {
                   <div key={index}>
                     <Image
                       // src={`${api}/${imagePath.replace(/\\/g, "/")}`}
-                      src={imagePath}
+                      src={imagePath.replace('/upload/', '/upload/w_350,h_350/')}
                       alt=""
                       style={{
                         cursor: "pointer",
@@ -895,7 +895,7 @@ function AllProducts() {
               >
                 <Image
                   // src={`${api}/${imgurl.replace(/\\/g, "/")}`}
-                  src={imagePath}
+                  src={imagePath.replace('/upload/', '/upload/w_350,h_350/')}
                   alt=""
                   style={{
                     cursor: "pointer",

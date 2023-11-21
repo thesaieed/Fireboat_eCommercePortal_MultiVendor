@@ -281,7 +281,7 @@ function ShowProductDetails() {
                           className="productImg"
                           style={{ minWidth: 200, height: 200, maxWidth: 200 }}
                           alt="productImage"
-                          src={product.image[0]}
+                          src={product.image[0].replace('/upload/', '/upload/w_7000,h_700/')}
                         />
                         <Row>
                           <Link to={`/product/?id=${product.id}`}>
@@ -420,7 +420,7 @@ function ShowProductDetails() {
                       }}
                     >
                       <Image
-                        src={imgurl}
+                        src={imgurl.replace('/upload/', '/upload/w_700,h_700/')}
                         style={{
                           cursor: "pointer",
                           padding: 0,

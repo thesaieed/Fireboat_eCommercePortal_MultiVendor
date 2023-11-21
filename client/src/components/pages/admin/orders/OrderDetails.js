@@ -72,7 +72,7 @@ const OrderDetails = () => {
                           >
                             <Image
                               // src={`${api}/${imgurl.replace(/\\/g, "/")}`}
-                              src={imgurl}
+                              src={imgurl.replace('/upload/', '/upload/w_250,h_250/')}
                               style={{
                                 cursor: "pointer",
                                 padding: 0,

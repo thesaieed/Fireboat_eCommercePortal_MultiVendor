@@ -198,7 +198,7 @@ const Home = () => {
                           className="productImg"
                           style={{ minWidth: 200, height: 200, maxWidth: 200 }}
                           alt="productImage"
-                          src={product.image[0]}
+                          src={product.image[0].replace('/upload/', '/upload/w_250,h_250/')}
                         />
                         <Row>
                           <Link to={`/product/?id=${product.id}`}>
@@ -394,7 +394,7 @@ const Home = () => {
                         className="productImg"
                         style={{ minWidth: 200, height: 200, maxWidth: 200 }}
                         alt="productImage"
-                        src={product.image[0]}
+                        src={product.image[0].replace('/upload/', '/upload/w_250,h_250/')}
                       />
                       <Row>
                         <Link to={`/product/?id=${product.id}`}>

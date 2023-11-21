@@ -310,7 +310,7 @@ const Browse = () => {
                   className="productImg"
                   height={300}
                   alt="example"
-                  src={product.image[0]}
+                  src={product.image[0].replace('/upload/', '/upload/w_400,h_400/')}
                 />
               }
             >
