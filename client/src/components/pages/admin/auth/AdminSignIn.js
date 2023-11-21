@@ -231,8 +231,7 @@ function AdminSignIn() {
     try {
       /* global google */
       google.accounts.id.initialize({
-        client_id:
-          "402186760945-tk052016gctjgnh0cj8ido7elii6uuur.apps.googleusercontent.com",
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
         callback: handleGoogleauthCallback,
       });
       google.accounts.id.renderButton(
