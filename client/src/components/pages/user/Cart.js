@@ -306,7 +306,8 @@ function Cart() {
                 <div className="d-flex justify-content-center">
                   <Image
                     style={{ maxWidth: "180px" }}
-                    src={`${api}/${item.image[0].replace(/\\/g, "/")}`}
+                    // src={`${api}/${item.image[0].replace(/\\/g, "/")}`}
+                    src={item.image[0]}
                     alt="ProductImg"
                   />
                 </div>

@@ -30,7 +30,6 @@ const Home = () => {
 
   const { Paragraph, Title, Text } = Typography;
   const { Content } = Layout;
-  const baseImgUrl = `${api}/`;
 
   //quick buy
   const handleQuickBuy = async (productId) => {
@@ -199,7 +198,7 @@ const Home = () => {
                           className="productImg"
                           style={{ minWidth: 200, height: 200, maxWidth: 200 }}
                           alt="productImage"
-                          src={baseImgUrl + product.image[0]}
+                          src={product.image[0]}
                         />
                         <Row>
                           <Link to={`/product/?id=${product.id}`}>
@@ -395,7 +394,7 @@ const Home = () => {
                         className="productImg"
                         style={{ minWidth: 200, height: 200, maxWidth: 200 }}
                         alt="productImage"
-                        src={baseImgUrl + product.image[0]}
+                        src={product.image[0]}
                       />
                       <Row>
                         <Link to={`/product/?id=${product.id}`}>

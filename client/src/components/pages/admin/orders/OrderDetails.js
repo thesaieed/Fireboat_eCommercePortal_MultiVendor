@@ -23,7 +23,7 @@ const OrderDetails = () => {
     [location.state?.completeProductsWithAllDetails]
   );
   // console.log(orderDetails);
-  const { appUser, api } = useAllContext();
+  const { appUser } = useAllContext();
   return (
     <Card>
       <Row justify="space-evenly" align="top">
@@ -71,7 +71,8 @@ const OrderDetails = () => {
                             }}
                           >
                             <Image
-                              src={`${api}/${imgurl.replace(/\\/g, "/")}`}
+                              // src={`${api}/${imgurl.replace(/\\/g, "/")}`}
+                              src={imgurl}
                               style={{
                                 cursor: "pointer",
                                 padding: 0,
