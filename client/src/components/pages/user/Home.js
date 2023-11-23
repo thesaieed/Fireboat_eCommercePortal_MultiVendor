@@ -193,13 +193,18 @@ const Home = () => {
                         // }}
                         style={{ width: 300, margin: 10, marginRight: 0 }}
                       >
-                        <img
-                          // width="100%"
-                          className="productImg"
-                          style={{ minWidth: 200, height: 200, maxWidth: 200 }}
-                          alt="productImage"
-                          src={product.image[0].replace('/upload/', '/upload/w_250,h_250/')}
-                        />
+                        <div style={{ textAlign: "center" }}>
+                          <img
+                            // width="100%"
+                            className="productImg"
+                            style={{ width: 200, height: 200 }}
+                            alt="productImage"
+                            src={product.image[0].replace(
+                              "/upload/",
+                              "/upload/w_250,h_250/"
+                            )}
+                          />
+                        </div>
                         <Row>
                           <Link to={`/product/?id=${product.id}`}>
                             <Title className="one-line" level={5}>
@@ -389,13 +394,18 @@ const Home = () => {
                       // }}
                       style={{ width: 300, margin: 10, marginRight: 0 }}
                     >
-                      <img
-                        // width="100%"
-                        className="productImg"
-                        style={{ minWidth: 200, height: 200, maxWidth: 200 }}
-                        alt="productImage"
-                        src={product.image[0].replace('/upload/', '/upload/w_250,h_250/')}
-                      />
+                      <div style={{ textAlign: "center" }}>
+                        <img
+                          // width="100%"
+                          className="productImg"
+                          style={{ minWidth: 200, height: 200, maxWidth: 200 }}
+                          alt="productImage"
+                          src={product.image[0].replace(
+                            "/upload/",
+                            "/upload/w_250,h_250/"
+                          )}
+                        />
+                      </div>
                       <Row>
                         <Link to={`/product/?id=${product.id}`}>
                           <Title className="one-line" level={5}>
@@ -445,7 +455,6 @@ const Home = () => {
                           {product.category}
                         </Paragraph>
                       </Row>
-
                       <Row style={{ marginTop: 14 }}>
                         <div>
                           <StarRatings

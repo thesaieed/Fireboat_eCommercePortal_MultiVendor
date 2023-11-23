@@ -276,13 +276,17 @@ function ShowProductDetails() {
                         // }}
                         style={{ width: 300, margin: 10, marginRight: 0 }}
                       >
+                         <div style={{ textAlign:"center"}}>
                         <img
                           // width="100%"
                           className="productImg"
-                          style={{ minWidth: 200, height: 200, maxWidth: 200 }}
+                          style={{ width: 200, height: 200 }}
                           alt="productImage"
-                          src={product.image[0].replace('/upload/', '/upload/w_7000,h_700/')}
-                        />
+                          src={product.image[0].replace(
+                            "/upload/",
+                            "/upload/w_250,h_250/"
+                          )}
+                        /></div>
                         <Row>
                           <Link to={`/product/?id=${product.id}`}>
                             <Title className="one-line" level={5}>
@@ -420,7 +424,7 @@ function ShowProductDetails() {
                       }}
                     >
                       <Image
-                        src={imgurl.replace('/upload/', '/upload/w_700,h_700/')}
+                        src={imgurl.replace("/upload/", "/upload/w_700,h_700/")}
                         style={{
                           cursor: "pointer",
                           padding: 0,
